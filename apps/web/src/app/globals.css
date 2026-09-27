@@ -1,0 +1,587 @@
+@import "tailwindcss";
+@import "@fontsource-variable/geist";
+@import "@fontsource-variable/geist-mono";
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-text-fill-color: var(--foreground) !important;
+  -webkit-box-shadow: 0 0 0 1000px transparent inset !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+@custom-variant dark (&:is(.dark *));
+
+/* A finger, not a mouse. Not the same question as "is the window narrow": a
+   tablet in landscape is wide and still cannot hover, and a narrow desktop
+   window can. Used for anything whose *reachability* depends on hover -- a
+   control revealed on hover has to be visible from the start here. */
+@custom-variant touch (@media (hover: none) and (pointer: coarse));
+
+/* ---------------------------------------------------------------------------
+   Mobile foundation
+   ---------------------------------------------------------------------------
+   The app runs under `viewport-fit=cover`, so the window reaches under the
+   notch and the home indicator. Nothing is inset automatically: every edge
+   that meets a system area pads itself with the utilities below.
+
+   Heights use `100dvh`, never `100vh`. On iOS Safari `100vh` is the height the
+   page would have with the browser chrome hidden, so a `100vh` shell is always
+   taller than the window and the bottom row of anything sits under the toolbar.
+   --------------------------------------------------------------------------- */
+
+:root {
+  /* Kept in step with MobileAppBar and MobileTabBar. Heights only -- the
+     safe-area inset is added where the value is consumed. */
+  --app-bar-height: 3.25rem;
+  --tab-bar-height: 3.5rem;
+
+  /* The strip the fixed bottom tab bar occupies, inset included. The bar only
+     renders below `md`, so this is 0 above it and the same arithmetic holds at
+     every width. */
+  --tab-bar-total: 0px;
+
+  /* Tracks window.visualViewport while the on-screen keyboard is open, so a
+     composer can sit above the keyboard instead of behind it. The
+     useViewportHeight hook writes it; with no hook mounted it stays at the
+     window height. */
+  --visual-viewport-height: 100dvh;
+}
+
+@media (max-width: 767px) {
+  :root {
+    --tab-bar-total: calc(
+      var(--tab-bar-height) + env(safe-area-inset-bottom, 0px)
+    );
+  }
+
+  /* useViewportHeight sets this while the on-screen keyboard is open. The bar
+     hides itself then -- it would float over the keyboard -- so nothing needs
+     to leave room for it, and the reserved strip goes back to the composer. */
+  html[data-keyboard-open] {
+    --tab-bar-total: 0px;
+  }
+}
+
+@layer base {
+  html {
+    /* iOS enlarges text in landscape on its own, and the app already sets its
+       own scale per breakpoint. */
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  body {
+    /* A rubber-band scroll at the document level drags the whole shell away
+       from the status bar. Panes meant to scroll opt back in. */
+    overscroll-behavior-y: none;
+  }
+
+  /* The grey flash on tap reads as a rendering fault beside the app's own
+     press states, which every interactive element already has. */
+  a,
+  button,
+  [role="button"],
+  [role="menuitem"],
+  [role="option"],
+  [role="tab"],
+  label,
+  summary {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Safari zooms the page in when a field whose text is under 16px takes
+     focus, and never zooms back out. Only coarse pointers need the floor, so
+     desktop keeps the app's compact field sizes. */
+  @media (pointer: coarse) {
+    input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+    select,
+    textarea,
+    [contenteditable="true"] {
+      font-size: max(1rem, 1em);
+    }
+  }
+}
+
+@utility app-height {
+  height: var(--visual-viewport-height);
+}
+
+@utility app-min-height {
+  min-height: 100dvh;
+}
+
+/* Pad one edge clear of its system area. `pb-safe` is the common one: it holds
+   a fixed bottom bar above the home indicator.
+
+   These SET the padding rather than adding to it, so they belong on an element
+   that has no other padding on that axis -- a bar, a sheet. Content that wants
+   a gutter AND the inset uses `px-gutter`/`px-bar` below, or an explicit
+   `pb-[calc(--spacing(n)+env(safe-area-inset-bottom,0px))]`. */
+@utility pt-safe {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+@utility pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+@utility ps-safe {
+  padding-inline-start: env(safe-area-inset-left, 0px);
+}
+
+@utility pe-safe {
+  padding-inline-end: env(safe-area-inset-right, 0px);
+}
+
+@utility px-safe {
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
+}
+
+@utility inset-safe-top {
+  top: env(safe-area-inset-top, 0px);
+}
+
+/* The `*-safe` utilities above set padding outright, which silently drops an
+   existing `px-*` on the same element. These add the inset to the app's own
+   gutter instead, for content that wants both. */
+@utility px-gutter {
+  padding-inline-start: calc(1rem + env(safe-area-inset-left, 0px));
+  padding-inline-end: calc(1rem + env(safe-area-inset-right, 0px));
+}
+
+/* A bar's own small horizontal padding, plus a landscape notch. */
+@utility px-bar {
+  padding-inline-start: calc(0.5rem + env(safe-area-inset-left, 0px));
+  padding-inline-end: calc(0.5rem + env(safe-area-inset-right, 0px));
+}
+
+/* Reserve the tab bar's strip so the last row of a scrolling pane stays
+   reachable. Zero above `md`, where no bar renders. */
+@utility pb-tab-bar {
+  padding-bottom: var(--tab-bar-total);
+}
+
+@utility mb-tab-bar {
+  margin-bottom: var(--tab-bar-total);
+}
+
+@utility bottom-tab-bar {
+  bottom: var(--tab-bar-total);
+}
+
+/* A horizontally scrolling rail whose children come to rest one per screen --
+   the board's columns. Pair with `snap-start` on each child. */
+@utility snap-rail {
+  scroll-snap-type: x mandatory;
+  overscroll-behavior-x: contain;
+}
+
+/* Same, but the children only prefer to settle: a filter strip stays
+   draggable to an arbitrary offset. */
+@utility snap-rail-loose {
+  scroll-snap-type: x proximity;
+  overscroll-behavior-x: contain;
+}
+
+/* Hide the scrollbar on a rail whose content already shows it can scroll.
+   Used only where a visible bar would sit on top of the content. */
+@utility no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+  }
+}
+
+/* Floor a control at the 44px both Apple and Google publish, under a coarse
+   pointer only, so desktop density is untouched. For controls that have to
+   stay visually small, put this on a wrapper. */
+@utility tap-safe {
+  @media (pointer: coarse) {
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+  }
+}
+
+/* The task list's row: an id, a title, and the four properties.
+   Six fixed columns need about 620px, so on a phone the properties drop onto a
+   second line as a wrapped chip row while the id and title keep the first. The
+   properties keep their own fixed sub-grid above `md`, which is what holds the
+   columns in line between the header and every row. */
+@utility list-row {
+  display: grid;
+  align-items: center;
+  column-gap: 0.75rem;
+  grid-template-columns: 4.5rem minmax(0, 1fr) auto;
+
+  @media (max-width: 767px) {
+    grid-template-columns: auto minmax(0, 1fr);
+    row-gap: 0.375rem;
+    column-gap: 0.5rem;
+
+    /* Across both columns, on its own line. */
+    > [data-list-meta] {
+      grid-column: 1 / -1;
+    }
+  }
+}
+
+@utility list-row-meta {
+  display: grid;
+  align-items: center;
+  column-gap: 0.75rem;
+  grid-template-columns: 8.5rem 7rem 9rem 6rem;
+
+  @media (max-width: 767px) {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.25rem 0.5rem;
+  }
+}
+
+/* Pins a table's first column while the rest scrolls sideways.
+   For a grid whose columns ARE the data -- a week's seven days, a month's
+   thirty -- dropping columns destroys the view, so the table keeps scrolling
+   and the row's label stays put instead. Needs an opaque background, or the
+   columns passing underneath show through. */
+@utility sticky-col {
+  @media (max-width: 767px) {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    /* Whatever surface the table sits on. A table inside a card sets
+       `--sticky-col-bg: var(--card)` on itself; the page default is the app
+       background. */
+    background-color: var(--sticky-col-bg, var(--background));
+  }
+}
+
+/* An inner scroller that must not hand its overscroll to whatever is behind
+   it -- a sheet's body, a chat log. */
+@utility scroll-pane {
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+}
+
+/* Reduced motion: keep opacity feedback, drop movement (scale/translate) and
+   container morphs. Tailwind v4 scale/translate utilities use the standalone
+   CSS properties, so forcing them here neutralizes entrance/exit movement
+   while transition-property keeps the fade. */
+@media (prefers-reduced-motion: reduce) {
+  [data-slot="popover-popup"],
+  [data-slot="select-popup"],
+  [data-slot="menu-popup"],
+  [data-slot="menu-sub-content"],
+  [data-slot="tooltip-popup"],
+  [data-slot="dialog-popup"],
+  [data-slot="alert-dialog-popup"],
+  [data-slot="command-dialog-popup"],
+  [data-slot="sheet-popup"],
+  [data-slot="toast-popup"] {
+    transition-property: opacity !important;
+  }
+
+  [data-slot="sidebar-gap"],
+  [data-slot="sidebar-container"],
+  [data-slot="sidebar-group-content"],
+  [data-slot="sidebar-menu-badge"] {
+    transition: none !important;
+  }
+
+  /* dnd-kit writes the shuffle transition inline, so this needs !important. The
+     dragged element still tracks the pointer; only the reflow is neutralized. */
+  [data-kaneo-sortable] {
+    transition: none !important;
+  }
+}
+
+
+@theme inline {
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --animate-skeleton: skeleton 2s -1s infinite linear;
+  --animate-rise: rise 160ms var(--ease-out);
+  --font-sans: var(--font-sans);
+  --font-heading: var(--font-heading);
+  --font-mono: var(--font-mono);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-warning: var(--warning);
+  --color-success-foreground: var(--success-foreground);
+  --color-success: var(--success);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar: var(--sidebar);
+  --color-ring: var(--ring);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-input: var(--input);
+  --color-info-foreground: var(--info-foreground);
+  --color-info: var(--info);
+  --color-foreground: var(--foreground);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-destructive: var(--destructive);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-code-foreground: var(--code-foreground);
+  --color-code-highlight: var(--code-highlight);
+  --color-code: var(--code);
+  --color-border: var(--border);
+  --color-background: var(--background);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  @keyframes skeleton {
+    to {
+      background-position: -200% 0;
+    }
+  }
+  /* A panel or row arriving: a short fade up, nothing more. */
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-rise {
+    animation: none;
+  }
+}
+
+:root {
+  --font-sans:
+    "Geist Variable",
+    ui-sans-serif,
+    system-ui,
+    sans-serif;
+  --font-heading: var(--font-sans);
+  --font-mono:
+    "Geist Mono Variable",
+    ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    Monaco,
+    Consolas,
+    "Liberation Mono",
+    "Courier New",
+    monospace;
+  --radius: 0.625rem;
+  --accent: --alpha(var(--color-black) / 4%);
+  --accent-foreground: var(--color-neutral-800);
+  --background: var(--color-white);
+  --border: --alpha(var(--color-black) / 8%);
+  --card: var(--color-white);
+  --card-foreground: var(--color-neutral-800);
+  --destructive: var(--color-red-500);
+  --destructive-foreground: var(--color-red-700);
+  --foreground: var(--color-neutral-800);
+  --info: var(--color-blue-500);
+  --info-foreground: var(--color-blue-700);
+  --input: --alpha(var(--color-black) / 10%);
+  --muted: --alpha(var(--color-black) / 4%);
+  --muted-foreground: color-mix(in srgb, var(--color-neutral-500) 90%, var(--color-black));
+  --popover: var(--color-white);
+  --popover-foreground: var(--color-neutral-800);
+  --primary: var(--color-neutral-800);
+  --primary-foreground: var(--color-neutral-50);
+  --ring: var(--color-neutral-400);
+  --secondary: --alpha(var(--color-black) / 4%);
+  --secondary-foreground: var(--color-neutral-800);
+  --success: var(--color-emerald-500);
+  --success-foreground: var(--color-emerald-700);
+  --warning: var(--color-amber-500);
+  --warning-foreground: var(--color-amber-700);
+  --chart-1: var(--color-orange-600);
+  --chart-2: var(--color-teal-600);
+  --chart-3: var(--color-cyan-900);
+  --chart-4: var(--color-amber-400);
+  --chart-5: var(--color-amber-500);
+  --sidebar: var(--color-neutral-50);
+  --sidebar-foreground: color-mix(
+    in srgb,
+    var(--color-neutral-800) 64%,
+    var(--sidebar)
+  );
+  --sidebar-primary: var(--color-neutral-800);
+  --sidebar-primary-foreground: var(--color-neutral-50);
+  --sidebar-accent: --alpha(var(--color-black) / 4%);
+  --sidebar-accent-foreground: var(--color-neutral-800);
+  --sidebar-border: --alpha(var(--color-black) / 6%);
+  --sidebar-ring: var(--color-neutral-400);
+  --code: var(--color-white);
+  --code-foreground: var(--foreground);
+  --code-highlight: --alpha(var(--color-black) / 4%);
+}
+
+.dark {
+  --accent: --alpha(var(--color-white) / 4%);
+  --accent-foreground: var(--color-neutral-100);
+  --background: color-mix(
+    in srgb,
+    var(--color-neutral-950) 96%,
+    var(--color-white)
+  );
+  --border: --alpha(var(--color-white) / 6%);
+  --card: color-mix(in srgb, var(--background) 98%, var(--color-white));
+  --card-foreground: var(--color-neutral-100);
+  --destructive: color-mix(in srgb, var(--color-red-500) 90%, var(--color-white));
+  --destructive-foreground: var(--color-red-400);
+  --foreground: var(--color-neutral-100);
+  --info: var(--color-blue-500);
+  --info-foreground: var(--color-blue-400);
+  --input: --alpha(var(--color-white) / 8%);
+  --muted: --alpha(var(--color-white) / 4%);
+  --muted-foreground: color-mix(in srgb, var(--color-neutral-500) 90%, var(--color-white));
+  --popover: color-mix(in srgb, var(--background) 98%, var(--color-white));
+  --popover-foreground: var(--color-neutral-100);
+  --primary: var(--color-neutral-100);
+  --primary-foreground: var(--color-neutral-800);
+  --ring: var(--color-neutral-500);
+  --secondary: --alpha(var(--color-white) / 4%);
+  --secondary-foreground: var(--color-neutral-100);
+  --success: var(--color-emerald-500);
+  --success-foreground: var(--color-emerald-400);
+  --warning: var(--color-amber-500);
+  --warning-foreground: var(--color-amber-400);
+  --chart-1: var(--color-blue-700);
+  --chart-2: var(--color-emerald-500);
+  --chart-3: var(--color-amber-500);
+  --chart-4: var(--color-purple-500);
+  --chart-5: var(--color-rose-500);
+  --sidebar: color-mix(
+    in srgb,
+    var(--color-neutral-950) 97%,
+    var(--color-white)
+  );
+  --sidebar-foreground: color-mix(
+    in srgb,
+    var(--color-neutral-100) 64%,
+    var(--sidebar)
+  );
+  --sidebar-primary: var(--color-neutral-100);
+  --sidebar-primary-foreground: var(--color-neutral-800);
+  --sidebar-accent: --alpha(var(--color-white) / 4%);
+  --sidebar-accent-foreground: var(--color-neutral-100);
+  --sidebar-border: --alpha(var(--color-white) / 5%);
+  --sidebar-ring: var(--color-neutral-400);
+  --code: color-mix(in srgb, var(--background) 98%, var(--color-white));
+  --code-foreground: var(--foreground);
+  --code-highlight: --alpha(var(--color-white) / 4%);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background font-sans text-foreground antialiased;
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-heading font-semibold tracking-tight;
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+
+  *::-webkit-scrollbar {
+    @apply w-2 h-2;
+  }
+
+  *::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+}
+
+
+/* ---------------------------------------------------------------------------
+   Expense Wise additions
+   --------------------------------------------------------------------------- */
+
+@layer components {
+  /* A workspace reads as a mark before it reads as a name. */
+  .ew-workspace-mark {
+    background: oklch(0.65 0.13 var(--mark-hue, 250) / 16%);
+    color: oklch(0.5 0.14 var(--mark-hue, 250));
+  }
+
+  .dark .ew-workspace-mark {
+    background: oklch(0.72 0.13 var(--mark-hue, 250) / 20%);
+    color: oklch(0.82 0.12 var(--mark-hue, 250));
+  }
+}
+
+:root {
+  /* Money in and out, kept to the success/destructive families so a figure
+     means the same thing on every screen. */
+  --money-in: var(--color-emerald-600);
+  --money-out: var(--color-foreground);
+  --viz-series-1: #2a78d6;
+  --viz-series-2: #eb6834;
+}
+
+.dark {
+  --money-in: var(--color-emerald-400);
+  --viz-series-1: #3987e5;
+  --viz-series-2: #d95926;
+}
+
+@theme inline {
+  --color-money-in: var(--money-in);
+  --color-money-out: var(--money-out);
+  --color-viz-1: var(--viz-series-1);
+  --color-viz-2: var(--viz-series-2);
+}
+
+/* Reports print as documents: no navigation chrome, no shadows, full width. */
+@media print {
+  [data-slot="sidebar"],
+  [data-slot="sidebar-gap"],
+  [data-slot="mobile-app-bar"],
+  [data-slot="mobile-tab-bar"],
+  header,
+  .print\:hidden {
+    display: none !important;
+  }
+  [data-slot="sidebar-inset"] {
+    margin: 0 !important;
+    border: 0 !important;
+    box-shadow: none !important;
+  }
+  body {
+    background: white;
+  }
+}

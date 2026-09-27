@@ -1,0 +1,30 @@
+{
+  "name": "expense-wise",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.32.1",
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "scripts": {
+    "dev": "pnpm --parallel --filter @expensewise/api --filter @expensewise/web dev",
+    "build": "pnpm --filter @expensewise/api build && pnpm --filter @expensewise/web build",
+    "start": "pnpm --parallel --filter @expensewise/api --filter @expensewise/web start",
+    "worker": "pnpm --filter @expensewise/api worker",
+    "typecheck": "pnpm -r --workspace-concurrency=1 typecheck",
+    "test": "pnpm -r --workspace-concurrency=1 test",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "db:up": "docker compose up -d postgres",
+    "db:generate": "pnpm --filter @expensewise/api db:generate",
+    "db:migrate": "pnpm --filter @expensewise/api db:migrate",
+    "db:seed": "pnpm --filter @expensewise/api db:seed",
+    "desktop:dev": "pnpm --filter @expensewise/desktop dev",
+    "desktop:build": "pnpm --filter @expensewise/desktop build:msi"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.5.14",
+    "typescript": "7.0.2"
+  }
+}

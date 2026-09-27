@@ -1,0 +1,23 @@
+services:
+  postgres:
+    image: postgres:18-alpine
+    container_name: expensewise-postgres
+    environment:
+      POSTGRES_USER: expensewise
+      POSTGRES_PASSWORD: expensewise
+      POSTGRES_DB: expensewise
+    ports:
+      # 5432/5433 are commonly taken on developer machines.
+      - "5436:5432"
+    volumes:
+      - expensewise_postgres:/var/lib/postgresql
+      - ./scripts/db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U expensewise -d expensewise"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+volumes:
+  expensewise_postgres:

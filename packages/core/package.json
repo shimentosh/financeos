@@ -1,0 +1,23 @@
+{
+  "name": "@expensewise/core",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Pure finance engine and shared contracts. Erasable TypeScript: Node runs it through type stripping, Next transpiles it; there is no build step.",
+  "exports": {
+    ".": "./src/index.ts",
+    "./*": "./src/*.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.3",
+    "typescript": "7.0.2",
+    "vitest": "^5.0.2"
+  }
+}

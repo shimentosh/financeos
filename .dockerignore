@@ -1,0 +1,26 @@
+# Keep the build context small and free of secrets and local build output.
+.git
+.github
+.env
+.env.*
+!.env.example
+**/node_modules
+**/.next
+**/dist
+**/coverage
+# Local uploads only; the storage *source* folders must stay in the context.
+storage
+storage-*
+apps/api/storage
+apps/api/storage-*
+**/*.log
+**/*.tsbuildinfo
+**/test-results
+**/playwright-report
+**/next-env.d.ts
+apps/*/tests
+packages/*/tests
+apps/desktop/src-tauri
+docs
+**/Dockerfile
+compose*.yml

@@ -1,0 +1,49 @@
+{
+  "object": "list",
+  "url": "/v1/balance_transactions",
+  "has_more": false,
+  "data": [
+    {
+      "id": "txn_1PpPayout0001",
+      "object": "balance_transaction",
+      "amount": -15000,
+      "created": 1756780000,
+      "currency": "usd",
+      "description": "STRIPE PAYOUT",
+      "fee": 0,
+      "net": -15000,
+      "reporting_category": "payout",
+      "status": "available",
+      "type": "payout",
+      "source": "po_1PpPayout0001"
+    },
+    {
+      "id": "txn_1PpAdjust0001",
+      "object": "balance_transaction",
+      "amount": -500,
+      "created": 1756770000,
+      "currency": "usd",
+      "description": "Chargeback withdrawal",
+      "fee": 1500,
+      "net": -2000,
+      "reporting_category": "dispute",
+      "status": "available",
+      "type": "adjustment",
+      "source": "dp_1PpDispute"
+    },
+    {
+      "id": "txn_1PpTopup0001",
+      "object": "balance_transaction",
+      "amount": 100000,
+      "created": 1756760000,
+      "currency": "usd",
+      "description": "Top-up",
+      "fee": 0,
+      "net": 100000,
+      "reporting_category": "topup",
+      "status": "available",
+      "type": "topup",
+      "source": "tu_1PpTopup"
+    }
+  ]
+}

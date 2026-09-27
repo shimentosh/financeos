@@ -1,0 +1,15 @@
+{
+  "name": "@expensewise/desktop",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tauri dev",
+    "build": "tauri build",
+    "build:msi": "tauri build --bundles msi",
+    "icons": "tauri icon ../web/public/icon.svg"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.11.5"
+  }
+}

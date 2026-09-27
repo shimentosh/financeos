@@ -1,0 +1,20 @@
+{
+  "id": "evt_1PpPayoutEvent",
+  "object": "event",
+  "created": 1756820000,
+  "livemode": false,
+  "type": "payout.paid",
+  "data": {
+    "object": {
+      "id": "po_1PpPayout0002",
+      "object": "payout",
+      "amount": 20000,
+      "arrival_date": 1756900000,
+      "balance_transaction": "txn_1PpPayout0002",
+      "created": 1756820000,
+      "currency": "usd",
+      "description": "STRIPE PAYOUT",
+      "status": "paid"
+    }
+  }
+}

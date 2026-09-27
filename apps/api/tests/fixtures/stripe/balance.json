@@ -1,0 +1,6 @@
+{
+  "object": "balance",
+  "available": [{ "amount": 71828, "currency": "usd", "source_types": { "card": 71828 } }],
+  "pending": [{ "amount": 12000, "currency": "usd", "source_types": { "card": 12000 } }],
+  "livemode": false
+}

@@ -1,0 +1,50 @@
+{
+  "object": "list",
+  "url": "/v1/balance_transactions",
+  "has_more": true,
+  "data": [
+    {
+      "id": "txn_3PpQ2aCharge0001",
+      "object": "balance_transaction",
+      "amount": 4900,
+      "available_on": 1757030400,
+      "created": 1756800000,
+      "currency": "usd",
+      "description": "Team plan (monthly)",
+      "fee": 172,
+      "fee_details": [{ "amount": 172, "currency": "usd", "description": "Stripe processing fees", "type": "stripe_fee" }],
+      "net": 4728,
+      "reporting_category": "charge",
+      "status": "available",
+      "type": "charge",
+      "source": {
+        "id": "ch_3PpQ2aCharge0001",
+        "object": "charge",
+        "amount": 4900,
+        "billing_details": { "name": "Nimbus Labs", "email": "billing@nimbuslabs.io" },
+        "customer": "cus_Q1w2e3r4",
+        "description": "Team plan (monthly)",
+        "receipt_email": "billing@nimbuslabs.io"
+      }
+    },
+    {
+      "id": "txn_3PpQ2aRefund0001",
+      "object": "balance_transaction",
+      "amount": -2900,
+      "created": 1756790000,
+      "currency": "usd",
+      "description": "REFUND FOR CHARGE (Pro plan)",
+      "fee": 0,
+      "net": -2900,
+      "reporting_category": "refund",
+      "status": "available",
+      "type": "refund",
+      "source": {
+        "id": "re_3PpQ2aRefund0001",
+        "object": "refund",
+        "amount": 2900,
+        "charge": { "id": "ch_3PpQ1Old", "object": "charge", "billing_details": { "name": "Pixelwave" } }
+      }
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+"use client";
+
+import { Collapsible as CollapsiblePrimitive } from "@base-ui/react/collapsible";
+import * as React from "react";
+
+import { cn } from "@/lib/cn";
+
+function Collapsible({ ...props }: CollapsiblePrimitive.Root.Props) {
+  return <CollapsiblePrimitive.Root data-slot="collapsible" {...props} />;
+}
+
+function CollapsibleTrigger({
+  asChild = false,
+  className,
+  children,
+  render,
+  nativeButton,
+  ...props
+}: CollapsiblePrimitive.Trigger.Props & { asChild?: boolean }) {
+  const resolvedRender = asChild && React.isValidElement(children) ? children : render;
+
+  return (
+    <CollapsiblePrimitive.Trigger
+      className={cn("cursor-pointer", className)}
+      data-slot="collapsible-trigger"
+      nativeButton={render ? false : nativeButton}
+      render={resolvedRender}
+      {...props}
+    >
+      {asChild ? undefined : children}
+    </CollapsiblePrimitive.Trigger>
+  );
+}
+
+function CollapsiblePanel({ className, ...props }: CollapsiblePrimitive.Panel.Props) {
+  return (
+    <CollapsiblePrimitive.Panel
+      className={cn("h-(--collapsible-panel-height) overflow-hidden transition-[height] duration-200 data-ending-style:h-0 data-starting-style:h-0", className)}
+      data-slot="collapsible-panel"
+      {...props}
+    />
+  );
+}
+
+export { Collapsible, CollapsiblePanel, CollapsiblePanel as CollapsibleContent, CollapsibleTrigger };

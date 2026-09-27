@@ -1,0 +1,25 @@
+node_modules
+.next
+out
+coverage
+dist
+apps/*/dist
+*.tsbuildinfo
+next-env.d.ts
+*.log
+
+# Local uploads (STORAGE_DRIVER=local) and per-instance copies (storage-<name>).
+# Anchored: the storage *source* folders (apps/api/src/modules/storage,
+# apps/web/src/app/(app)/admin/storage) must stay tracked.
+/storage/
+/storage-*/
+/apps/api/storage/
+/apps/api/storage-*/
+
+.env
+.env.local
+.env.*.local
+.DS_Store
+.vercel
+test-results
+playwright-report

@@ -1,0 +1,118 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  NODE_ENV: test
+  NEXT_TELEMETRY_DISABLED: "1"
+  # Dummy values, valid only inside this workflow.
+  BETTER_AUTH_SECRET: ci-only-better-auth-secret-0123456789abcdef
+  ENCRYPTION_KEY: Y2ktb25seS1lbmNyeXB0aW9uLWtleS0zMi1ieXRlcyE= # base64 of 32 bytes
+  APP_URL: http://localhost:3100
+  API_INTERNAL_URL: http://localhost:4100
+  DATABASE_URL: postgres://expensewise:expensewise@localhost:5432/expensewise_test
+  DATABASE_URL_TEST: postgres://expensewise:expensewise@localhost:5432/expensewise_test
+
+jobs:
+  check:
+    name: Lint, typecheck, test, build
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: expensewise
+          POSTGRES_PASSWORD: expensewise
+          POSTGRES_DB: expensewise_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U expensewise -d expensewise_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    steps:
+      - uses: actions/checkout@v4
+
+      # pnpm version comes from package.json "packageManager".
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint (Biome)
+        run: pnpm exec biome check .
+
+      - name: Typecheck core
+        run: pnpm --filter @expensewise/core typecheck
+
+      - name: Typecheck API
+        run: pnpm --filter @expensewise/api typecheck
+
+      - name: Typecheck web
+        run: |
+          pnpm --filter @expensewise/web exec next typegen
+          pnpm --filter @expensewise/web typecheck
+
+      - name: Core tests
+        run: pnpm --filter @expensewise/core test
+
+      - name: Migrate the test database
+        run: pnpm --filter @expensewise/api db:migrate:test
+
+      - name: API unit tests
+        run: pnpm --filter @expensewise/api test:unit
+
+      - name: API integration tests
+        run: pnpm --filter @expensewise/api test:integration
+
+      - name: Build API
+        run: pnpm --filter @expensewise/api build
+
+      - name: Build web
+        run: pnpm --filter @expensewise/web build
+
+  images:
+    name: Docker images
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Build API image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: apps/api/Dockerfile
+          push: false
+          build-args: APP_VERSION=${{ github.sha }}
+          cache-from: type=gha,scope=api
+          cache-to: type=gha,mode=max,scope=api
+
+      - name: Build web image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: apps/web/Dockerfile
+          push: false
+          build-args: API_INTERNAL_URL=http://api:4100
+          cache-from: type=gha,scope=web
+          cache-to: type=gha,mode=max,scope=web

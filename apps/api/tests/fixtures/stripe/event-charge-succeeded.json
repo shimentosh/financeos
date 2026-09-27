@@ -1,0 +1,24 @@
+{
+  "id": "evt_3PpQ9zEvent0001",
+  "object": "event",
+  "api_version": "2024-06-20",
+  "created": 1756810000,
+  "livemode": false,
+  "type": "charge.succeeded",
+  "data": {
+    "object": {
+      "id": "ch_3PpQ9zCharge0002",
+      "object": "charge",
+      "amount": 9900,
+      "amount_captured": 9900,
+      "balance_transaction": "txn_3PpQ9zCharge0002",
+      "billing_details": { "name": "Riverstone Ltd", "email": "ap@riverstone.co.uk" },
+      "created": 1756810000,
+      "currency": "usd",
+      "customer": "cus_R1v3r",
+      "description": "Team plan (annual)",
+      "paid": true,
+      "status": "succeeded"
+    }
+  }
+}

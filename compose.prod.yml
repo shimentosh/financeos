@@ -1,0 +1,119 @@
+# Expense Wise — production stack on one host (see docs/deploy.md).
+#
+#   cp .env.example .env        # production values: APP_URL, secrets, POSTGRES_PASSWORD,
+#                               # DATABASE_URL=postgres://expensewise:<password>@postgres:5432/expensewise
+#   docker compose -f compose.prod.yml up -d --build
+#
+# Order on every deploy: postgres (healthy) → migrate (runs once, must succeed)
+# → api + worker → web. Put a TLS reverse proxy (Caddy, nginx, a load balancer)
+# in front of the web container; the API is not published, the web server
+# proxies /api/* to it.
+#
+# Managed PostgreSQL instead of the bundled one: point DATABASE_URL at it and
+# delete the `postgres` service and the `depends_on: postgres` entries.
+
+name: expensewise
+
+# api, worker and migrate run the same image (built once; the others hit the cache).
+x-api-image: &api-image
+  image: expensewise-api:${APP_VERSION:-latest}
+  build:
+    context: .
+    dockerfile: apps/api/Dockerfile
+    args:
+      APP_VERSION: ${APP_VERSION:-}
+  env_file: .env
+  restart: unless-stopped
+
+x-api-env: &api-env
+  NODE_ENV: production
+  LOG_FORMAT: ${LOG_FORMAT:-json}
+  # Uploads stay on a volume unless a bucket is configured (Admin → Storage or S3_*).
+  STORAGE_LOCAL_DIR: /app/apps/api/storage
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-expensewise}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: ${POSTGRES_DB:-expensewise}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+
+  # The release step: applies pending migrations, then exits. api and worker
+  # start only after it succeeded.
+  migrate:
+    <<: *api-image
+    environment:
+      <<: *api-env
+    command: ["node", "--enable-source-maps", "dist/scripts/migrate.js"]
+    restart: "no"
+    healthcheck:
+      disable: true
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  api:
+    <<: *api-image
+    environment:
+      <<: *api-env
+      API_PORT: "4100"
+      # Jobs and schedules run in the worker service.
+      RUN_WORKER_IN_PROCESS: "false"
+    volumes:
+      - uploads:/app/apps/api/storage
+    depends_on:
+      postgres:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+
+  worker:
+    <<: *api-image
+    environment:
+      <<: *api-env
+    command: ["node", "--enable-source-maps", "dist/worker.js"]
+    volumes:
+      - uploads:/app/apps/api/storage
+    # No HTTP server; its liveness is the heartbeat in GET /api/admin/system.
+    healthcheck:
+      disable: true
+    depends_on:
+      postgres:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+
+  web:
+    image: expensewise-web:${APP_VERSION:-latest}
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      args:
+        # Baked into the build: where the web server reaches the API.
+        API_INTERNAL_URL: http://api:4100
+    # The web server needs no secrets: only the public origin.
+    environment:
+      NODE_ENV: production
+      APP_URL: ${APP_URL:?set APP_URL in .env}
+      PORT: "3100"
+      HOSTNAME: 0.0.0.0
+    ports:
+      # Loopback only: the TLS reverse proxy on this host forwards to it.
+      - "127.0.0.1:${WEB_PORT:-3100}:3100"
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  uploads:

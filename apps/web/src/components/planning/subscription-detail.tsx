@@ -1,12 +1,12 @@
 "use client";
 
-import { formatDay, relativeDays, today } from "@expensewise/core";
+import { DEFAULT_REMINDER_OFFSETS, formatDay, relativeDays, today } from "@expensewise/core";
 import { Ban, CalendarClock, CheckCircle2, MoreHorizontal, Paperclip, Pause, Pencil, Play, Receipt, Trash2, TrendingUp, Wallet } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useId, useState } from "react";
 import { useApp } from "@/components/app/app-context";
-import { CategoryChip, EmptyNote, Facts, Section, StatCard, StatusBadge } from "@/components/app/blocks";
+import { CategoryChip, EmptyNote, Facts, Section, StatCard } from "@/components/app/blocks";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/menu";
@@ -20,6 +20,7 @@ import { ConfirmDialog, OccurrenceTable } from "./occurrence-history";
 import { MarkPaidDialog, type PayTarget, SkipDialog, type SkipTarget, undoPayment } from "./payment-dialogs";
 import { AutoRenewBadge, DueDate, Field, PriceChangeBadge, renewalStatement } from "./shared";
 import { SubscriptionFormDialog } from "./subscription-form";
+import { StatusMenu } from "./subscription-status";
 
 export function SubscriptionDetailView({ subscription: s }: { subscription: SubscriptionDetail }) {
   const { money, canWrite, workspace, isBusiness } = useApp();
@@ -97,7 +98,7 @@ export function SubscriptionDetailView({ subscription: s }: { subscription: Subs
     }
   };
 
-  const reminders = s.reminderOffsets?.length ? s.reminderOffsets : (workspace.settings.reminderOffsets ?? [30, 14, 7, 3, 1, 0]);
+  const reminders = s.reminderOffsets?.length ? s.reminderOffsets : (workspace.settings.reminderOffsets ?? DEFAULT_REMINDER_OFFSETS);
 
   return (
     <div className="space-y-4">
@@ -106,7 +107,7 @@ export function SubscriptionDetailView({ subscription: s }: { subscription: Subs
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-1.5">
-                <StatusBadge status={s.derivedStatus} label={s.statusLabel} />
+                <StatusMenu subscription={s} today={day} />
                 <AutoRenewBadge autoRenew={s.autoRenew} />
                 {s.categoryName && <CategoryChip name={s.categoryName} icon={s.categoryIcon} />}
               </div>

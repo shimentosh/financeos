@@ -77,7 +77,22 @@ export function PayrollView({ tab, employees, runs, run }: { tab: string; employ
 
 // ---------------------------------------------------------------- employees
 
-function EmployeesTab({ employees }: { employees: EmployeeList }) {
+/** One project's people: who it pays, and a way into the monthly run (which covers every project). */
+export function ProjectPayroll({ employees, projectId }: { employees: EmployeeList; projectId: string }) {
+  return (
+    <div className="space-y-4">
+      <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg bg-muted/30 px-3 py-2 text-xs text-muted-foreground">
+        <span>Salaries post as Payroll expenses on this project when you post the month's payroll run. Don't also enter them by hand.</span>
+        <Button size="xs" variant="outline" render={<Link href="/business/payroll?tab=runs" />}>
+          <Send className="size-3.5" /> Run monthly payroll
+        </Button>
+      </div>
+      <EmployeesTab employees={employees} projectId={projectId} />
+    </div>
+  );
+}
+
+function EmployeesTab({ employees, projectId }: { employees: EmployeeList; projectId?: string }) {
   const { money, canWrite } = useApp();
   const [editing, setEditing] = useState<Employee | null>(null);
   const [creating, setCreating] = useState(false);
@@ -88,8 +103,12 @@ function EmployeesTab({ employees }: { employees: EmployeeList }) {
       <>
         <EmptyState
           icon={Users}
-          title="Add the people you pay"
-          description="Salary, pay day, the account they are paid from and the project their cost belongs to. Each month's run then posts one expense per person."
+          title={projectId ? "No one is paid from this project yet" : "Add the people you pay"}
+          description={
+            projectId
+              ? "Add an employee here and their salary counts as this project's cost when the month's payroll is posted."
+              : "Salary, pay day, the account they are paid from and the project their cost belongs to. Each month's run then posts one expense per person."
+          }
           action={
             canWrite ? (
               <Button size="sm" onClick={() => setCreating(true)}>
@@ -98,7 +117,7 @@ function EmployeesTab({ employees }: { employees: EmployeeList }) {
             ) : undefined
           }
         />
-        <EmployeeFormDialog open={creating} onOpenChange={setCreating} />
+        <EmployeeFormDialog open={creating} onOpenChange={setCreating} defaultProjectId={projectId} />
       </>
     );
   }
@@ -133,7 +152,7 @@ function EmployeesTab({ employees }: { employees: EmployeeList }) {
               <th>Employee</th>
               <th className="text-right!">Monthly salary</th>
               <th className="hidden md:table-cell">Pay day</th>
-              <th className="hidden lg:table-cell">Project</th>
+              {!projectId && <th className="hidden lg:table-cell">Project</th>}
               <th className="hidden lg:table-cell">Paid from</th>
               <th className="hidden w-24 sm:table-cell">Status</th>
               {canWrite && <th className="w-12" />}
@@ -150,7 +169,7 @@ function EmployeesTab({ employees }: { employees: EmployeeList }) {
                 </td>
                 <td className="text-right tabular-nums">{money(e.salary, e.currency)}</td>
                 <td className="hidden text-xs md:table-cell">{ordinal(e.payDay)}</td>
-                <td className="hidden text-xs lg:table-cell">{e.projectName ?? "—"}</td>
+                {!projectId && <td className="hidden text-xs lg:table-cell">{e.projectName ?? "—"}</td>}
                 <td className="hidden text-xs lg:table-cell">{e.accountName ?? <span className="text-amber-600 dark:text-amber-400">Not set</span>}</td>
                 <td className="hidden sm:table-cell">
                   <StatusBadge status={e.status === "active" ? "active" : "cancelled"} label={e.status} />
@@ -167,7 +186,7 @@ function EmployeesTab({ employees }: { employees: EmployeeList }) {
           </tbody>
         </table>
       </div>
-      <EmployeeFormDialog open={creating} onOpenChange={setCreating} />
+      <EmployeeFormDialog open={creating} onOpenChange={setCreating} defaultProjectId={projectId} />
       <EmployeeFormDialog open={editing !== null} onOpenChange={(open) => !open && setEditing(null)} employee={editing} />
     </div>
   );
@@ -178,7 +197,18 @@ function ordinal(day: number) {
   return `${day}${suffix} of the month`;
 }
 
-export function EmployeeFormDialog({ open, onOpenChange, employee }: { open: boolean; onOpenChange: (open: boolean) => void; employee?: Employee | null }) {
+export function EmployeeFormDialog({
+  open,
+  onOpenChange,
+  employee,
+  defaultProjectId,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  employee?: Employee | null;
+  /** A new employee starts on this project. */
+  defaultProjectId?: string;
+}) {
   const id = useId();
   const refresh = useRefresh();
   const { workspace } = useApp();
@@ -208,14 +238,14 @@ export function EmployeeFormDialog({ open, onOpenChange, employee }: { open: boo
     setSalary(employee ? minorToInput(employee.salary, employee.currency) : "");
     setCurrency(employee?.currency ?? workspace.baseCurrency);
     setPayDay(String(employee?.payDay ?? 1));
-    setProjectId(employee?.defaultProjectId ?? null);
+    setProjectId(employee ? employee.defaultProjectId : (defaultProjectId ?? null));
     setAccountId(employee?.accountId ?? null);
     setStartDate(employee?.startDate ?? "");
     setEndDate(employee?.endDate ?? "");
     setStatus(employee?.status ?? "active");
     setNotes(employee?.notes ?? "");
     setCommitment(false);
-  }, [open, employee, workspace.baseCurrency]);
+  }, [open, employee, defaultProjectId, workspace.baseCurrency]);
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();

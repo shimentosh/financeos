@@ -1,6 +1,6 @@
 "use client";
 
-import { TYPE_LABELS } from "@expensewise/core";
+import { monthKey, TYPE_LABELS } from "@expensewise/core";
 import { AlertTriangle, Check, FileText, Loader2, Paperclip, Pencil, Trash2, X } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -25,6 +25,7 @@ import { ATTACHMENT_ACCEPT, attachmentProblem, deleteFile, fileUrl, uploadFile }
 import type { TransactionDetail } from "@/lib/api/types";
 import { cn } from "@/lib/cn";
 import { formatBytes, formatDateTime, formatDay, titleFromKind } from "@/lib/format";
+import { formatMonth } from "@/lib/format-client";
 import { toast } from "@/lib/toast";
 
 const ACTION_LABELS: Record<string, string> = {
@@ -122,7 +123,13 @@ export function TransactionDetailDrawer({ id, onClose }: { id: string | null; on
                     <div className="mt-1 flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground">
                       <span>{TYPE_LABELS[detail.type]}</span>
                       <span>·</span>
-                      <span>{formatDay(detail.date, "long")}</span>
+                      {detail.type === "income" ? (
+                        <span>
+                          Profit month {formatMonth(monthKey(detail.date))} · recorded {formatDateTime(detail.createdAt)}
+                        </span>
+                      ) : (
+                        <span>{formatDay(detail.date, "long")}</span>
+                      )}
                       <StatusBadge status={detail.status} label={detail.status === "draft" ? "Needs review" : undefined} />
                     </div>
                   </div>

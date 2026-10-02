@@ -1,6 +1,6 @@
 "use client";
 
-import { TYPE_LABELS } from "@expensewise/core";
+import { monthKey, TYPE_LABELS } from "@expensewise/core";
 import { ArrowLeftRight, ChevronLeft, ChevronRight, Paperclip, Plus, Search, Sparkles, X } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
@@ -14,6 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import type { Account, Category, Project, TransactionListItem, TransactionPage } from "@/lib/api/types";
 import { cn } from "@/lib/cn";
 import { formatDay } from "@/lib/format";
+import { formatMonth } from "@/lib/format-client";
 import { PERIODS, type TransactionFilters, TYPE_TABS } from "./filters";
 
 const ALL = "__all__";
@@ -305,13 +306,15 @@ function Row({ tx, isBusiness, onOpen }: { tx: TransactionListItem; isBusiness: 
       : (tx.counterpartyName ?? tx.merchant ?? tx.description ?? TYPE_LABELS[tx.type]);
   const secondary = tx.type === "transfer" ? tx.description : tx.counterpartyName || tx.merchant ? tx.description : null;
   const foreign = tx.baseCurrency && tx.currency !== tx.baseCurrency;
+  // Income is entered per profit month, so it shows the month and year, not a day.
+  const when = tx.type === "income" ? formatMonth(monthKey(tx.date), "en-GB", true) : formatDay(tx.date);
 
   return (
     <tr onClick={onOpen} className="cursor-pointer transition-colors hover:bg-accent/40 [&>td]:px-3 [&>td]:py-2">
-      <td className="hidden text-xs tabular-nums text-muted-foreground md:table-cell">{formatDay(tx.date)}</td>
+      <td className="hidden text-xs tabular-nums text-muted-foreground md:table-cell">{when}</td>
       <td className="max-w-0">
         <p className="text-xs tabular-nums text-muted-foreground md:hidden">
-          {formatDay(tx.date)} · {tx.accountName}
+          {when} · {tx.accountName}
         </p>
         <div className="flex min-w-0 items-center gap-2">
           <span className="truncate font-medium">{title}</span>

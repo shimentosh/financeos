@@ -36,6 +36,13 @@
       "when": 1790395330573,
       "tag": "0004_platform_audit",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1790899953420,
+      "tag": "0005_reminders_daily_last_3_days",
+      "breakpoints": true
     }
   ]
 }

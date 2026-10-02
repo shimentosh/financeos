@@ -262,7 +262,7 @@ export function ReminderOffsetsField({
   const [custom, setCustom] = useState("");
   const own = value !== null;
   const chosen = value ?? workspaceDefault;
-  const presets = [...new Set([60, 30, 14, 7, 3, 1, 0, ...chosen])].sort((a, b) => b - a);
+  const presets = [...new Set([60, 30, 14, 7, 3, 2, 1, 0, ...chosen])].sort((a, b) => b - a);
   const toggle = (offset: number) => {
     const next = chosen.includes(offset) ? chosen.filter((o) => o !== offset) : [...chosen, offset];
     onChange(next.sort((a, b) => b - a));

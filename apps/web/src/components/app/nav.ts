@@ -26,7 +26,6 @@ import {
   Scale,
   Target,
   Upload,
-  Users,
   Wallet,
 } from "lucide-react";
 
@@ -99,7 +98,6 @@ export const SECTIONS: Array<{ id: string; title: string; tabs: SectionTab[]; se
     tabs: [
       { title: "Projects", href: "/business/projects", icon: FolderKanban },
       { title: "Revenue", href: "/business/revenue", icon: BadgeDollarSign },
-      { title: "Payroll", href: "/business/payroll", icon: Users },
     ],
   },
   {

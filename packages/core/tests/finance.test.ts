@@ -150,29 +150,31 @@ describe("schedules", () => {
 
 describe("subscription alerts", () => {
   it("fires each reminder offset once, catching up after a gap", () => {
-    expect(dueReminderOffset(30)).toBe(30);
-    expect(dueReminderOffset(29)).toBe(30);
-    expect(dueReminderOffset(7)).toBe(7);
-    expect(dueReminderOffset(5)).toBe(7);
+    // Default: two days before, the day before, and on the day.
+    expect(dueReminderOffset(3)).toBeNull();
+    expect(dueReminderOffset(2)).toBe(2);
+    expect(dueReminderOffset(1)).toBe(1);
     expect(dueReminderOffset(0)).toBe(0);
-    expect(dueReminderOffset(45)).toBeNull();
+    expect(dueReminderOffset(30)).toBeNull();
+    expect(dueReminderOffset(29, [30, 7])).toBe(30);
+    expect(dueReminderOffset(5, [30, 7])).toBe(7);
     expect(dueReminderOffset(45, [45, 7])).toBe(45);
   });
 
   it("says manual renewal is needed when auto-renew is off", () => {
-    const alerts = renewalAlerts({ name: "Figma", amountLabel: "$180", autoRenew: false, dueDate: "2027-10-10", expiryDate: "2027-10-10" }, "2027-10-03");
+    const alerts = renewalAlerts({ name: "Figma", amountLabel: "$180", autoRenew: false, dueDate: "2027-10-10", expiryDate: "2027-10-10" }, "2027-10-08");
     expect(alerts).toHaveLength(1);
-    expect(alerts[0]).toMatchObject({ kind: "renewal", offset: 7, stage: "soon" });
+    expect(alerts[0]).toMatchObject({ kind: "renewal", offset: 2, stage: "soon" });
     expect(alerts[0]?.body).toContain("Manual renewal required");
   });
 
   it("warns about a cancellation deadline separately from the renewal", () => {
     const alerts = renewalAlerts(
-      { name: "Figma", amountLabel: "$180", autoRenew: true, dueDate: "2027-10-10", cancellationDeadline: "2027-10-03" },
-      "2027-09-28",
+      { name: "Figma", amountLabel: "$180", autoRenew: true, dueDate: "2027-10-04", cancellationDeadline: "2027-10-03" },
+      "2027-10-02",
     );
     expect(alerts.map((a) => a.kind).sort()).toEqual(["cancellation_deadline", "renewal"]);
-    expect(alerts.find((a) => a.kind === "cancellation_deadline")?.title).toContain("in 5 days");
+    expect(alerts.find((a) => a.kind === "cancellation_deadline")?.title).toContain("tomorrow");
   });
 
   it("flags a renewal that passed without a recorded payment", () => {

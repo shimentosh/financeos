@@ -298,6 +298,7 @@ export function AssetFormDialog({ open, onOpenChange, asset }: { open: boolean; 
     const value = currentValue ? toMinor(currentValue, currency) : price;
     if (value === null) return setError("Enter what it is worth now (or its purchase price)");
     if (recordPayment && !accountId) return setError("Choose the account it was paid from");
+    if (recordPayment && !invoice.length) return setError("Attach the purchase invoice. If a file is still uploading, wait for it to finish.");
     if (recordPayment && !price) return setError("Enter the purchase price to record the payment");
     const common = {
       name: name.trim(),
@@ -409,8 +410,8 @@ export function AssetFormDialog({ open, onOpenChange, asset }: { open: boolean; 
                     <AttachmentField
                       value={invoice}
                       onChange={setInvoice}
-                      label="Purchase invoice"
-                      hint="Optional. Kept with the purchase transaction — handy for warranty claims."
+                      label="Purchase invoice (required)"
+                      hint="Kept with the purchase transaction — handy for warranty claims."
                     />
                   </>
                 )}

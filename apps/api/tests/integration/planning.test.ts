@@ -90,6 +90,9 @@ const monthly = (overrides: Record<string, unknown> = {}) => ({
   ...overrides,
 });
 
+/** A longer reminder list than the default, to exercise early reminders and once-per-offset dedupe. */
+const LONG_REMINDERS = [30, 14, 7, 3, 1, 0];
+
 describe("subscriptions", () => {
   it("links the purchase of an annual plan instead of recording it twice", async () => {
     const { transaction: purchase } = await transactions.create(user.personal, {
@@ -318,7 +321,7 @@ describe("subscriptions", () => {
   it("cancels, keeps the history and only sends the access-ends notice", async () => {
     const { subscription, commitment } = await subscriptions.create(
       user.personal,
-      monthly({ nextRenewalDate: addDays(T, 20), startDate: addDays(T, -10), expiryDate: addDays(T, 20) }),
+      monthly({ nextRenewalDate: addDays(T, 20), startDate: addDays(T, -10), expiryDate: addDays(T, 20), reminderOffsets: LONG_REMINDERS }),
     );
     const cancelled = await subscriptions.cancel(user.personal, subscription.id, { reason: "Too expensive" });
     expect(cancelled).toMatchObject({
@@ -699,6 +702,7 @@ describe("reminders", () => {
       startDate: T,
       nextRenewalDate: addDays(T, 30),
       accountId: card,
+      reminderOffsets: LONG_REMINDERS,
     });
     const manual = await subscriptions.create(user.personal, {
       provider: "Namecheap",
@@ -710,6 +714,7 @@ describe("reminders", () => {
       nextRenewalDate: addDays(T, 7),
       expiryDate: addDays(T, 7),
       autoRenew: false,
+      reminderOffsets: LONG_REMINDERS,
     });
     const deadline = await subscriptions.create(user.personal, {
       provider: "Gym",
@@ -719,6 +724,7 @@ describe("reminders", () => {
       startDate: T,
       nextRenewalDate: addDays(T, 10),
       cancellationDeadline: addDays(T, 3),
+      reminderOffsets: LONG_REMINDERS,
     });
 
     const first = await reminders.scan(user.personal, T);
@@ -756,6 +762,17 @@ describe("reminders", () => {
       "Anthropic renewal is due today",
     ]);
     expect((await subscriptions.get(user.personal, auto.subscription.id)).status).toBe("renewal_due");
+  });
+
+  it("by default reminds two days before, the day before and on the day", async () => {
+    const sub = await subscriptions.create(user.personal, monthly({ nextRenewalDate: addDays(T, 10), startDate: T }));
+    for (let day = 0; day <= 10; day++) await reminders.scan(user.personal, addDays(T, day));
+    const sent = (await sentFor(sub.subscription.id)).filter((n) => n.kind === "renewal");
+    expect(sent.map((n) => n.title)).toEqual([
+      "Netflix Standard renews in 2 days",
+      "Netflix Standard renewal is tomorrow",
+      "Netflix Standard renewal is due today",
+    ]);
   });
 
   it("flags a payment that was due and never recorded, once", async () => {

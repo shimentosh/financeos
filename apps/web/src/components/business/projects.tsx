@@ -1,7 +1,7 @@
 "use client";
 
 import { minorToInput } from "@expensewise/core";
-import { ArrowDownLeft, ArrowUpRight, Flame, FolderKanban, Hourglass, Plus, Repeat, TrendingUp } from "lucide-react";
+import { ArrowDownLeft, ArrowUpRight, ChevronRight, Flame, FolderKanban, Hourglass, Plus, Repeat, TrendingUp } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { type FormEvent, useEffect, useId, useState } from "react";
@@ -46,40 +46,32 @@ function ProjectCard({ row }: { row: ProjectOverviewRow }) {
   const net = actual.netContribution;
   const utilization = actual.budget?.utilization ?? null;
   return (
-    <div className="flex flex-col gap-3 rounded-xl border border-border bg-card p-4">
+    <Link
+      href={`/business/projects/${project.id}`}
+      className="group flex flex-col gap-3 rounded-xl border border-border bg-card p-4 transition-colors hover:border-foreground/20 hover:bg-accent/30"
+    >
       <div className="flex items-start justify-between gap-2">
-        <Link href={`/business/projects/${project.id}`} className="min-w-0 hover:underline underline-offset-4">
+        <div className="min-w-0">
           <p className="truncate text-sm font-medium">{project.name}</p>
           <p className="truncate text-xs text-muted-foreground">
             {[project.code, project.isDefault ? "Default project" : null].filter(Boolean).join(" · ") || " "}
           </p>
-        </Link>
+        </div>
         {project.status !== "active" && <StatusBadge status={project.status === "completed" ? "paid" : "paused"} label={STATUS_LABELS[project.status]} />}
       </div>
       <div className="grid grid-cols-3 gap-2 text-sm">
         <div className="min-w-0">
           <p className="text-[11px] text-muted-foreground">Revenue</p>
-          <Money value={actual.revenue.amount} href={drillHref(actual.revenue.drill)} className="text-money-in" />
+          <Money value={actual.revenue.amount} className="text-money-in" />
         </div>
         <div className="min-w-0">
           <p className="text-[11px] text-muted-foreground">Cost</p>
-          <Money value={actual.cost.amount} href={drillHref(actual.cost.drill)} />
+          <Money value={actual.cost.amount} />
         </div>
         <div className="min-w-0">
           <p className="text-[11px] text-muted-foreground">Net</p>
           <span className={cn("tabular-nums", net < 0 && "text-red-600 dark:text-red-400")}>{money(net, undefined, { signed: true })}</span>
         </div>
-      </div>
-      <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
-        <span className="inline-flex items-center gap-1">
-          <Flame className="size-3" /> {money(actual.monthlyBurn)}/mo burn
-        </span>
-        {actual.capitalInvested.amount > 0 && (
-          <Link href={drillHref(actual.capitalInvested.drill)} className="hover:text-foreground">
-            {money(actual.capitalInvested.amount)} capital in
-          </Link>
-        )}
-        {actual.receivablesOutstanding > 0 && <span>{money(actual.receivablesOutstanding)} owed to it</span>}
       </div>
       {actual.budget && (
         <div className="space-y-1">
@@ -90,13 +82,21 @@ function ProjectCard({ row }: { row: ProjectOverviewRow }) {
           <ProgressBar value={utilization ?? 0} tone={(utilization ?? 0) > 100 ? "danger" : (utilization ?? 0) > 80 ? "warn" : "good"} />
         </div>
       )}
-      {estimated.runwayMonths !== null && (
-        <p className="inline-flex items-center gap-1 text-xs text-muted-foreground">
-          <Hourglass className="size-3" /> About {estimated.runwayMonths} months of budget left at this burn{" "}
-          <span className="rounded bg-muted px-1 text-[10px] uppercase">estimate</span>
-        </p>
-      )}
-    </div>
+      <div className="mt-auto flex items-center justify-between gap-2 border-t border-border pt-3 text-xs text-muted-foreground">
+        <span className="inline-flex items-center gap-1">
+          <Flame className="size-3" /> {money(actual.monthlyBurn)}/mo burn
+          {estimated.runwayMonths !== null && (
+            <>
+              {" · "}
+              <Hourglass className="size-3" /> ~{estimated.runwayMonths} mo left
+            </>
+          )}
+        </span>
+        <span className="inline-flex items-center gap-0.5 font-medium text-foreground">
+          Open <ChevronRight className="size-3.5 transition-transform group-hover:translate-x-0.5" />
+        </span>
+      </div>
+    </Link>
   );
 }
 

@@ -125,6 +125,30 @@ export class ProjectFinanceService {
     return rows.map((row) => ({ ...row, total: Number(row.total) }));
   }
 
+  /** One project's revenue per month and category within the range, refunds paid out netted. */
+  private async revenueMonths(ctx: WorkspaceContext, range: { from: Day | null; to: Day }, projectId: string) {
+    const month = sql<string>`to_char(${transactions.date}, 'YYYY-MM')`;
+    const rows = await db
+      .select({
+        month,
+        categoryId: transactions.categoryId,
+        type: transactions.type,
+        direction: transactions.direction,
+        total: sql<string>`coalesce(sum(${transactions.baseAmount}), 0)`,
+      })
+      .from(transactions)
+      .where(
+        this.posted(ctx, [
+          inArray(transactions.type, ["income", "refund"]),
+          eq(transactions.projectId, projectId),
+          range.from ? gte(transactions.date, range.from) : undefined,
+          lte(transactions.date, range.to),
+        ]),
+      )
+      .groupBy(month, transactions.categoryId, transactions.type, transactions.direction);
+    return rows.map((row) => ({ ...row, total: Number(row.total) }));
+  }
+
   /** Revenue and cost per month for the last 12 months (this month included). */
   private async monthly(ctx: WorkspaceContext, projectId?: string) {
     const day = todayFor(ctx);
@@ -261,7 +285,7 @@ export class ProjectFinanceService {
     const range = resolveRange(ctx, financeRangeQuery.parse(raw), "lifetime");
     const day = todayFor(ctx);
     const lifetimeRange = { from: null, to: day };
-    const [flows, lifetime, series, first, recurring, byId, receivableViews, payableViews, vendors] = await Promise.all([
+    const [flows, lifetime, series, first, recurring, byId, receivableViews, payableViews, vendors, revenueRows] = await Promise.all([
       this.flows(ctx, range, projectId),
       this.flows(ctx, lifetimeRange, projectId, false),
       this.monthly(ctx, projectId),
@@ -271,6 +295,7 @@ export class ProjectFinanceService {
       this.receivables.find(ctx, { projectId }),
       this.liabilities.find(ctx, { kinds: PAYABLE_KINDS, projectId }),
       this.topVendors(ctx, range, projectId),
+      this.revenueMonths(ctx, range, projectId),
     ]);
 
     const drillRange = { from: range.from, to: range.to };
@@ -298,6 +323,48 @@ export class ProjectFinanceService {
         };
       })
       .sort((a, b) => b.amount - a.amount);
+    // Revenue by category (net of refunds paid out).
+    const byRevenueCategory = new Map<string | null, number>();
+    for (const row of flows) {
+      const value = row.type === "income" ? row.total : row.type === "refund" && row.direction === "out" ? -row.total : 0;
+      if (value) byRevenueCategory.set(row.categoryId, (byRevenueCategory.get(row.categoryId) ?? 0) + value);
+    }
+    const revenueByCategory = [...byRevenueCategory.entries()]
+      .map(([categoryId, amount]) => ({
+        categoryId,
+        name: (categoryId ? byId.get(categoryId)?.name : undefined) ?? "Uncategorized",
+        amount,
+        share: share(amount, revenue),
+        drill: txDrill(drillRange, ["income", "refund"], { projectId, categoryId }),
+      }))
+      .sort((a, b) => b.amount - a.amount);
+    // Revenue per profit month (newest first), each with its categories.
+    const revenueMonthMap = new Map<string, Map<string | null, number>>();
+    for (const row of revenueRows) {
+      const value = row.type === "income" ? row.total : row.direction === "out" ? -row.total : 0;
+      if (!value) continue;
+      const categoriesInMonth = revenueMonthMap.get(row.month) ?? new Map<string | null, number>();
+      categoriesInMonth.set(row.categoryId, (categoriesInMonth.get(row.categoryId) ?? 0) + value);
+      revenueMonthMap.set(row.month, categoriesInMonth);
+    }
+    const revenueByMonth = [...revenueMonthMap.entries()]
+      .sort(([a], [b]) => b.localeCompare(a))
+      .map(([month, categoriesInMonth]) => {
+        const monthRange = { from: `${month}-01`, to: endOfMonth(`${month}-01`) };
+        return {
+          month,
+          amount: [...categoriesInMonth.values()].reduce((acc, value) => acc + value, 0),
+          drill: txDrill(monthRange, ["income", "refund"], { projectId }),
+          categories: [...categoriesInMonth.entries()]
+            .map(([categoryId, amount]) => ({
+              categoryId,
+              name: (categoryId ? byId.get(categoryId)?.name : undefined) ?? "Uncategorized",
+              amount,
+              drill: txDrill(monthRange, ["income", "refund"], { projectId, categoryId }),
+            }))
+            .sort((a, b) => b.amount - a.amount),
+        };
+      });
     const costByGroup = COST_GROUPS.map((entry) => {
       const members = costByCategory.filter((row) => row.group === entry.group);
       const amount = members.reduce((acc, row) => acc + row.amount, 0);
@@ -380,6 +447,8 @@ export class ProjectFinanceService {
         ownerDrawings: figure(drawings, txDrill(drillRange, ["equity"], { projectId })),
         costByGroup,
         costByCategory,
+        revenueByCategory,
+        revenueByMonth,
         topVendors: vendors,
         monthly,
         burn: {

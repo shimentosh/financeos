@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { dayString } from "./common.ts";
+import { dayString, uuid } from "./common.ts";
 import { employeeInput } from "./operations.ts";
 
 // Request shapes for the business API that the base contracts do not cover.
@@ -38,4 +38,6 @@ export type EmployeeCreateInput = z.input<typeof employeeCreateInput>;
 
 export const employeeQuery = z.object({
   status: z.enum(["active", "inactive", "all"]).default("all"),
+  /** Only the people whose cost belongs to this project. */
+  projectId: uuid.optional(),
 });

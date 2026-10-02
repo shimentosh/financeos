@@ -69,8 +69,15 @@ export class PayrollService {
   async listEmployees(ctx: WorkspaceContext, raw: z.input<typeof employeeQuery> = {}) {
     assertBusiness(ctx);
     const query = employeeQuery.parse(raw);
+    if (query.projectId) await assertInWorkspace(db, projects, ctx.workspaceId, [query.projectId], "Project");
     const rows = await this.employeeSelect()
-      .where(and(eq(employees.workspaceId, ctx.workspaceId), query.status === "all" ? undefined : eq(employees.status, query.status)))
+      .where(
+        and(
+          eq(employees.workspaceId, ctx.workspaceId),
+          query.status === "all" ? undefined : eq(employees.status, query.status),
+          query.projectId ? eq(employees.defaultProjectId, query.projectId) : undefined,
+        ),
+      )
       .orderBy(asc(employees.status), asc(employees.name));
     const items = rows.map((row) => ({ ...row.employee, projectName: row.projectName, accountName: row.accountName, counterpartyName: row.counterpartyName }));
     const active = items.filter((item) => item.status === "active");

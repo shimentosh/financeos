@@ -1,32 +1,26 @@
 "use client";
 
-import { SUBSCRIPTION_STATUS_LABELS, type SubscriptionStatus } from "@expensewise/core";
-import { AlertTriangle, CalendarClock, CalendarRange, CircleAlert, Plus, Repeat, Search, Wallet, X } from "lucide-react";
+import { formatDay, SUBSCRIPTION_STATUS_LABELS, type SubscriptionStatus } from "@expensewise/core";
+import { AlertTriangle, CalendarClock, CircleAlert, Plus, Repeat, Search, Wallet, X } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useApp } from "@/components/app/app-context";
-import { CategoryChip, EmptyNote, EmptyState, Pill, ProgressBar, Section, StatCard, StatusBadge } from "@/components/app/blocks";
+import { CategoryChip, EmptyNote, EmptyState, Pill, ProgressBar, Section, StatCard } from "@/components/app/blocks";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { SubscriptionAnalytics, SubscriptionList, SubscriptionView } from "@/lib/api/types/planning";
 import { cn } from "@/lib/cn";
 import { MarkPaidDialog, type PayTarget } from "./payment-dialogs";
-import { AutoRenewBadge, DueDate, NONE, OptionSelect, renewalStatement, useQueryNav } from "./shared";
-import { BILLING_LABELS, SubscriptionFormDialog } from "./subscription-form";
+import { NONE, OptionSelect, renewalStatement, useQueryNav } from "./shared";
+import { SubscriptionFormDialog } from "./subscription-form";
+import { StatusMenu, statusTone, TONES, type Tone } from "./subscription-status";
 
 export type SubscriptionFilters = { q?: string; status?: string; billingCycle?: string; sort?: string };
 
-const SORTS = [
-  { value: "renewal_asc", label: "Next renewal" },
-  { value: "amount_desc", label: "Highest amount" },
-  { value: "monthly_desc", label: "Highest monthly cost" },
-  { value: "name_asc", label: "Name" },
-];
-
 const STATUS_FILTERS: Array<{ value: string; label: string }> = [
-  { value: NONE, label: "All statuses" },
-  { value: "trial,active,renewal_due,renewed", label: "Active" },
+  { value: NONE, label: "All subscriptions" },
+  { value: "trial,active,renewal_due,renewed", label: "Active only" },
   ...(["renewal_due", "trial", "cancellation_pending", "cancelled", "expired", "paused"] as SubscriptionStatus[]).map((status) => ({
     value: status,
     label: SUBSCRIPTION_STATUS_LABELS[status],
@@ -120,48 +114,31 @@ export function SubscriptionsView({
 
   return (
     <div className={cn("space-y-4 transition-opacity", pending && "opacity-70")}>
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
-        <StatCard
-          icon={Repeat}
-          label="Active"
-          value={analytics.activeCount}
-          hint={`${analytics.totalCount} tracked`}
-          href="/subscriptions?status=trial,active,renewal_due,renewed"
-        />
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
         <StatCard
           icon={Wallet}
-          label="Monthly equivalent"
+          label="You pay a month"
           value={money(analytics.monthlyTotal)}
-          hint="All active, base currency"
+          hint={`${money(analytics.annualTotal)} a year · ${analytics.activeCount} active`}
           href="/subscriptions?sort=monthly_desc"
         />
         <StatCard
-          icon={CalendarRange}
-          label="Annual cost"
-          value={money(analytics.annualTotal)}
-          hint="What they cost a year"
-          href="/commitments?tab=annual&kind=subscription"
-        />
-        <StatCard
           icon={CalendarClock}
-          label="Annual commitments"
-          value={money(analytics.annualCommitments.total)}
-          hint={`${analytics.annualCommitments.count} yearly plans${unconvertedNote(analytics.annualCommitments.unconverted)}`}
-          href="/subscriptions?billingCycle=yearly"
-        />
-        <StatCard
-          icon={CalendarClock}
-          label="Renewing in 30 days"
+          label="Due in the next 30 days"
           value={money(analytics.upcoming30.total)}
-          hint={`${analytics.upcoming30.count} renewals${unconvertedNote(analytics.upcoming30.unconverted)}`}
+          hint={
+            analytics.upcoming30.count
+              ? `${analytics.upcoming30.count} renewal${analytics.upcoming30.count === 1 ? "" : "s"}${unconvertedNote(analytics.upcoming30.unconverted)}`
+              : "Nothing renews soon"
+          }
           tone={analytics.upcoming30.count ? "info" : "default"}
           href="/commitments?tab=upcoming&kind=subscription&days=30"
         />
         <StatCard
           icon={AlertTriangle}
-          label="Payment not recorded"
+          label="Not paid yet"
           value={analytics.overdue.count}
-          hint={analytics.overdue.count ? money(analytics.overdue.total) : "Nothing overdue"}
+          hint={analytics.overdue.count ? `${money(analytics.overdue.total)} past its renewal date` : "All renewals are recorded"}
           tone={analytics.overdue.count ? "danger" : "default"}
           href="/commitments?tab=upcoming&kind=subscription"
         />
@@ -182,23 +159,7 @@ export function SubscriptionsView({
           value={filters.status ?? NONE}
           onChange={(v) => update({ status: v })}
           options={STATUS_FILTERS}
-          placeholder="All statuses"
-        />
-        <OptionSelect
-          size="sm"
-          className="w-40"
-          value={filters.billingCycle ?? NONE}
-          onChange={(v) => update({ billingCycle: v })}
-          options={[{ value: NONE, label: "Any billing cycle" }, ...Object.entries(BILLING_LABELS).map(([value, label]) => ({ value, label }))]}
-          placeholder="Any billing cycle"
-        />
-        <OptionSelect
-          size="sm"
-          className="w-44"
-          value={filters.sort ?? "renewal_asc"}
-          onChange={(v) => update({ sort: v === "renewal_asc" ? null : v })}
-          options={SORTS}
-          placeholder="Sort"
+          placeholder="All subscriptions"
         />
         {filtered && (
           <button
@@ -211,22 +172,15 @@ export function SubscriptionsView({
         )}
         <div className="relative ms-auto w-full sm:w-60">
           <Search className="pointer-events-none absolute top-1/2 left-2.5 z-10 size-3.5 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            size="sm"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search name, provider, project…"
-            aria-label="Search subscriptions"
-            className="pl-7"
-          />
+          <Input size="sm" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search…" aria-label="Search subscriptions" className="pl-7" />
         </div>
       </div>
 
       {list.items.length === 0 ? (
         <EmptyState
           icon={Search}
-          title="Nothing matches these filters"
-          description="Try another status or billing cycle, or clear the search."
+          title="Nothing matches"
+          description="Try another filter, or clear the search."
           action={
             <Button size="sm" variant="outline" render={<Link href="/subscriptions" />}>
               Clear filters
@@ -234,196 +188,206 @@ export function SubscriptionsView({
           }
         />
       ) : (
-        <div className="overflow-x-auto rounded-lg border border-border">
-          <table className="w-full text-sm">
-            <thead className="bg-muted/40 text-xs text-muted-foreground">
-              <tr className="[&>th]:px-3 [&>th]:py-2 [&>th]:text-left [&>th]:font-medium">
-                <th>Subscription</th>
-                <th className="hidden md:table-cell">Status</th>
-                <th className="text-right!">Amount</th>
-                <th className="hidden md:table-cell">Next renewal</th>
-                <th className="hidden lg:table-cell">Cancel by</th>
-                <th className="hidden w-24 sm:table-cell" />
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border">
-              {list.items.map((subscription) => (
-                <SubscriptionRow
-                  key={subscription.id}
-                  subscription={subscription}
-                  today={today}
-                  onPay={
-                    canWrite && subscription.nextOccurrenceId && subscription.daysUntilRenewal !== null && subscription.daysUntilRenewal <= 7
-                      ? () =>
-                          setPaying({
-                            occurrenceId: subscription.nextOccurrenceId as string,
-                            name: subscription.name,
-                            dueDate: subscription.nextRenewalDate as string,
-                            amount: subscription.amount,
-                            currency: subscription.currency,
-                            accountId: subscription.accountId,
-                            direction: "out",
-                            renewal: true,
-                          })
-                      : undefined
-                  }
-                />
-              ))}
-            </tbody>
-          </table>
+        <div className="overflow-hidden rounded-xl border border-border bg-card">
+          <div className="hidden grid-cols-[minmax(0,2fr)_minmax(0,1fr)_minmax(0,1.6fr)_7rem] items-center gap-4 border-b border-border px-4 py-2 text-xs font-medium text-muted-foreground md:grid">
+            <span>Subscription</span>
+            <span>Status</span>
+            <span>Next payment</span>
+            <span className="text-right">Cost</span>
+          </div>
+          <ul className="divide-y divide-border">
+            {list.items.map((subscription) => (
+              <SubscriptionRow
+                key={subscription.id}
+                subscription={subscription}
+                today={today}
+                onPay={
+                  canWrite && subscription.nextOccurrenceId && subscription.daysUntilRenewal !== null && subscription.daysUntilRenewal <= 7
+                    ? () =>
+                        setPaying({
+                          occurrenceId: subscription.nextOccurrenceId as string,
+                          name: subscription.name,
+                          dueDate: subscription.nextRenewalDate as string,
+                          amount: subscription.amount,
+                          currency: subscription.currency,
+                          accountId: subscription.accountId,
+                          direction: "out",
+                          renewal: true,
+                        })
+                    : undefined
+                }
+              />
+            ))}
+          </ul>
         </div>
       )}
 
-      <div className={cn("grid gap-4", isBusiness ? "lg:grid-cols-3" : "lg:grid-cols-2")}>
-        <Breakdown
-          title="By category"
-          rows={analytics.byCategory.map((g) => ({
-            key: g.categoryId ?? "none",
-            label: g.categoryName ?? "Uncategorized",
-            count: g.count,
-            monthly: g.monthly,
-            annual: g.annual,
-          }))}
-        />
-        <Breakdown
-          title="By billing cycle"
-          rows={analytics.byBillingCycle.map((g) => ({
-            key: g.billingCycle,
-            label: BILLING_LABELS[g.billingCycle],
-            count: g.count,
-            monthly: g.monthly,
-            annual: g.annual,
-            href: `/subscriptions?billingCycle=${g.billingCycle}`,
-          }))}
-        />
-        {isBusiness && (
-          <Breakdown
-            title="By project"
-            rows={analytics.byProject.map((g) => ({
-              key: g.projectId ?? "none",
-              label: g.projectName ?? "No project",
+      <Breakdown
+        groups={[
+          {
+            key: "category",
+            label: "By category",
+            rows: analytics.byCategory.map((g) => ({
+              key: g.categoryId ?? "none",
+              label: g.categoryName ?? "Uncategorized",
               count: g.count,
               monthly: g.monthly,
               annual: g.annual,
-            }))}
-          />
-        )}
-      </div>
+            })),
+          },
+          ...(isBusiness
+            ? [
+                {
+                  key: "project",
+                  label: "By project",
+                  rows: analytics.byProject.map((g) => ({
+                    key: g.projectId ?? "none",
+                    label: g.projectName ?? "No project",
+                    count: g.count,
+                    monthly: g.monthly,
+                    annual: g.annual,
+                  })),
+                },
+              ]
+            : []),
+        ]}
+      />
 
       <MarkPaidDialog target={paying} onClose={() => setPaying(null)} />
     </div>
   );
 }
 
+/** "in 31 days" as a chip that warms up as the day gets close. */
+function Countdown({ days }: { days: number }) {
+  const tone: Tone = days < 0 ? "red" : days <= 2 ? "red" : days <= 7 ? "amber" : "gray";
+  const text = days < 0 ? `${-days}d overdue` : days === 0 ? "Today" : days === 1 ? "Tomorrow" : `in ${days} days`;
+  return <span className={cn("rounded-md px-1.5 py-0.5 text-[11px] font-medium tabular-nums whitespace-nowrap", TONES[tone].pill)}>{text}</span>;
+}
+
 function SubscriptionRow({ subscription: s, today, onPay }: { subscription: SubscriptionView; today: string; onPay?: () => void }) {
   const { money } = useApp();
-  const router = useRouter();
   const statement = renewalStatement(s, money);
-  const open = () => router.push(`/subscriptions/${s.id}`);
+  const ended = s.derivedStatus === "cancellation_pending" || s.derivedStatus === "cancelled" || s.derivedStatus === "expired" || s.derivedStatus === "paused";
+  const tone = statusTone(s.derivedStatus);
+  const next = ended ? (
+    <span className="text-xs text-muted-foreground">{statement.text}</span>
+  ) : s.nextRenewalDate ? (
+    <div className="min-w-0 space-y-0.5">
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="text-sm tabular-nums">{formatDay(s.nextRenewalDate)}</span>
+        {s.daysUntilRenewal !== null && <Countdown days={s.daysUntilRenewal} />}
+      </div>
+      {s.cancellationDeadline && s.cancellationDeadline >= today && (
+        <span className="block text-xs text-muted-foreground">Cancel by {formatDay(s.cancellationDeadline)} to avoid paying</span>
+      )}
+      {!s.autoRenew && <span className="block text-xs text-amber-600 dark:text-amber-400">Pay it manually — doesn't auto-renew</span>}
+    </div>
+  ) : (
+    <span className="text-xs text-muted-foreground">—</span>
+  );
   return (
-    <tr className="cursor-pointer hover:bg-accent/40" onClick={open}>
-      <td className="max-w-0 px-3 py-2.5">
-        <Link href={`/subscriptions/${s.id}`} className="block truncate font-medium" onClick={(e) => e.stopPropagation()}>
-          {s.name}
-        </Link>
-        <div className="mt-0.5 flex min-w-0 flex-wrap items-center gap-1.5 text-xs text-muted-foreground">
-          {s.planName && <span className="truncate">{s.planName}</span>}
-          {s.categoryName && <CategoryChip name={s.categoryName} icon={s.categoryIcon} />}
-          <span className="md:hidden">
-            <StatusBadge status={s.derivedStatus} label={s.statusLabel} />
+    <li className="group relative">
+      <div
+        className={cn(
+          "grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 gap-y-2 px-4 py-3 transition-colors group-hover:bg-accent/40 md:grid-cols-[minmax(0,2fr)_minmax(0,1fr)_minmax(0,1.6fr)_7rem]",
+          ended && "opacity-70",
+        )}
+      >
+        <div className="flex min-w-0 items-center gap-3">
+          <span className={cn("grid size-9 shrink-0 place-items-center rounded-lg text-sm font-semibold uppercase", tone.pill)}>
+            {s.name.trim().charAt(0) || "?"}
           </span>
+          <div className="min-w-0">
+            <Link href={`/subscriptions/${s.id}`} className="block truncate font-medium after:absolute after:inset-0" title={s.name}>
+              {s.name}
+            </Link>
+            <div className="mt-0.5 flex min-w-0 items-center gap-1.5 text-xs text-muted-foreground">
+              {s.categoryName ? <CategoryChip name={s.categoryName} icon={s.categoryIcon} /> : <span>{s.provider}</span>}
+            </div>
+          </div>
         </div>
-        <p className={cn("mt-1 truncate text-xs md:hidden", statement.tone === "warn" ? "text-amber-600 dark:text-amber-400" : "text-muted-foreground")}>
-          {statement.text}
-        </p>
-      </td>
-      <td className="hidden px-3 py-2.5 md:table-cell">
-        <div className="flex flex-col items-start gap-1">
-          <StatusBadge status={s.derivedStatus} label={s.statusLabel} />
-          <AutoRenewBadge autoRenew={s.autoRenew} />
+
+        <div className="text-right md:order-last">
+          <div className="font-semibold tabular-nums">{money(s.amount, s.currency)}</div>
+          <div className="text-xs text-muted-foreground">
+            {s.billingLabel}
+            {s.currency !== s.baseCurrency && s.baseAmount !== null && <span className="block tabular-nums">≈ {money(s.baseAmount)}</span>}
+          </div>
         </div>
-      </td>
-      <td className="px-3 py-2.5 text-right">
-        <div className="font-medium tabular-nums">{money(s.amount, s.currency)}</div>
-        <div className="text-xs text-muted-foreground">{s.billingLabel}</div>
-        {s.currency !== s.baseCurrency && s.baseAmount !== null && (
-          <div className="text-[11px] text-muted-foreground tabular-nums">≈ {money(s.baseAmount)}</div>
-        )}
-      </td>
-      <td className="hidden px-3 py-2.5 md:table-cell">
-        <DueDate date={s.nextRenewalDate} today={today} />
-        <p
-          className={cn("mt-0.5 max-w-80 truncate text-xs", statement.tone === "warn" ? "text-amber-600 dark:text-amber-400" : "text-muted-foreground")}
-          title={statement.text}
-        >
-          {statement.text}
-        </p>
-      </td>
-      <td className="hidden px-3 py-2.5 lg:table-cell">
-        {s.cancellationDeadline ? (
-          <DueDate date={s.cancellationDeadline} today={today} className="text-xs" />
-        ) : (
-          <span className="text-muted-foreground">—</span>
-        )}
-      </td>
-      <td className="hidden px-3 py-2.5 text-right sm:table-cell">
-        {onPay && (
-          <Button
-            size="xs"
-            variant="outline"
-            onClick={(e) => {
-              e.stopPropagation();
-              onPay();
-            }}
-          >
-            Mark paid
-          </Button>
-        )}
-      </td>
-    </tr>
+
+        <div className="flex items-center md:order-none">
+          <StatusMenu subscription={s} today={today} />
+        </div>
+
+        <div className="col-span-2 flex items-center justify-between gap-3 md:col-span-1">
+          {next}
+          {onPay && (
+            <Button
+              size="xs"
+              variant="outline"
+              className="relative z-10 shrink-0"
+              onClick={(e) => {
+                e.stopPropagation();
+                onPay();
+              }}
+            >
+              Mark paid
+            </Button>
+          )}
+        </div>
+      </div>
+    </li>
   );
 }
 
-function Breakdown({
-  title,
-  rows,
-}: {
-  title: string;
-  rows: Array<{ key: string; label: string; count: number; monthly: number; annual: number; href?: string }>;
-}) {
+type BreakdownRow = { key: string; label: string; count: number; monthly: number; annual: number };
+
+/** Where the monthly cost goes, one grouping at a time. */
+function Breakdown({ groups }: { groups: Array<{ key: string; label: string; rows: BreakdownRow[] }> }) {
   const { money } = useApp();
-  const max = Math.max(1, ...rows.map((r) => r.monthly));
+  const [active, setActive] = useState(groups[0]?.key);
+  const group = groups.find((g) => g.key === active) ?? groups[0];
+  if (!group) return null;
+  const max = Math.max(1, ...group.rows.map((r) => r.monthly));
   return (
-    <Section title={title} hint="Monthly equivalent of active subscriptions">
-      {rows.length === 0 ? (
+    <Section title="Where the money goes" hint="What active subscriptions cost a month">
+      {groups.length > 1 && (
+        <div className="mb-3 inline-flex rounded-lg bg-muted p-0.5 text-xs">
+          {groups.map((g) => (
+            <button
+              key={g.key}
+              type="button"
+              onClick={() => setActive(g.key)}
+              className={cn(
+                "rounded-md px-2.5 py-1",
+                g.key === group.key ? "bg-background font-medium shadow-xs" : "text-muted-foreground hover:text-foreground",
+              )}
+            >
+              {g.label}
+            </button>
+          ))}
+        </div>
+      )}
+      {group.rows.length === 0 ? (
         <EmptyNote>No active subscriptions.</EmptyNote>
       ) : (
-        <ul className="space-y-2.5">
-          {rows.map((row) => {
-            const body = (
-              <>
-                <div className="flex items-baseline justify-between gap-2 text-sm">
-                  <span className="truncate">
-                    {row.label} <span className="text-xs text-muted-foreground">· {row.count}</span>
-                  </span>
-                  <span className="shrink-0 font-medium tabular-nums">{money(row.monthly)}</span>
-                </div>
-                <ProgressBar value={(row.monthly / max) * 100} className="mt-1" />
-                <div className="mt-0.5 text-right text-[11px] text-muted-foreground tabular-nums">{money(row.annual)} a year</div>
-              </>
-            );
-            return (
-              <li key={row.key}>
-                {row.href ? (
-                  <Link href={row.href} className="block rounded-md hover:bg-accent/40">
-                    {body}
-                  </Link>
-                ) : (
-                  body
-                )}
-              </li>
-            );
-          })}
+        <ul className="grid gap-x-8 gap-y-2.5 md:grid-cols-2">
+          {group.rows.map((row) => (
+            <li key={row.key}>
+              <div className="flex items-baseline justify-between gap-2 text-sm">
+                <span className="truncate">
+                  {row.label} <span className="text-xs text-muted-foreground">· {row.count}</span>
+                </span>
+                <span className="shrink-0 font-medium tabular-nums">
+                  {money(row.monthly)}
+                  <span className="text-xs font-normal text-muted-foreground">/mo</span>
+                </span>
+              </div>
+              <ProgressBar value={(row.monthly / max) * 100} className="mt-1" />
+              <div className="mt-0.5 text-right text-[11px] text-muted-foreground tabular-nums">{money(row.annual)} a year</div>
+            </li>
+          ))}
         </ul>
       )}
     </Section>

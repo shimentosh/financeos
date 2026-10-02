@@ -506,6 +506,7 @@ export function FlowDialog({
     if (!minor) return setError("Enter the amount");
     if (!accountId) return setError(direction === "out" ? "Choose the account the money came from" : "Choose the account the money went into");
     if (costBasis && basis === null) return setError("Enter the cost basis as a number");
+    if (!attachments.length) return setError("Attach the statement or receipt. If a file is still uploading, wait for it to finish.");
     setSaving(true);
     setError(null);
     try {
@@ -581,7 +582,7 @@ export function FlowDialog({
             <Field label="Note" htmlFor={`${id}-note`}>
               <Input id={`${id}-note`} value={note} onChange={(e) => setNote(e.target.value)} />
             </Field>
-            <AttachmentField value={attachments} onChange={setAttachments} label="Statement or receipt" hint="Optional. Saved with the transaction." />
+            <AttachmentField value={attachments} onChange={setAttachments} label="Statement or receipt (required)" hint="Saved with the transaction." />
             <FormError error={error} />
           </DialogPanel>
           <DialogFooter>

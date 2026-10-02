@@ -151,7 +151,7 @@ export type InboxKind = (typeof INBOX_KINDS)[number];
 export const SEVERITIES = ["info", "success", "warning", "critical"] as const;
 export type Severity = (typeof SEVERITIES)[number];
 
-export const DEFAULT_REMINDER_OFFSETS = [30, 14, 7, 3, 1, 0];
+export const DEFAULT_REMINDER_OFFSETS = [2, 1, 0];
 
 /** Where a type sits in reports. Only these move profit and loss. */
 export const TYPE_LABELS: Record<TransactionType, string> = {

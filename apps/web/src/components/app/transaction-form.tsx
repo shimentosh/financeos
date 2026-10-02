@@ -1,6 +1,17 @@
 "use client";
 
-import { COMMON_CURRENCIES, currencyDecimals, minorToInput, parseMoneyInput, type TransactionType, TYPE_LABELS, TYPE_RULES, today } from "@expensewise/core";
+import {
+  COMMON_CURRENCIES,
+  currencyDecimals,
+  endOfMonth,
+  minorToInput,
+  monthKey,
+  parseMoneyInput,
+  type TransactionType,
+  TYPE_LABELS,
+  TYPE_RULES,
+  today,
+} from "@expensewise/core";
 import { useRouter } from "next/navigation";
 import { type FormEvent, useEffect, useId, useMemo, useRef, useState } from "react";
 import { useApp } from "@/components/app/app-context";
@@ -14,11 +25,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { clientApi, errorMessage } from "@/lib/api/client";
 import type { Account, Category, Project, Transaction, TransactionDetail } from "@/lib/api/types";
 import { cn } from "@/lib/cn";
+import { formatMonth } from "@/lib/format-client";
 import { toast } from "@/lib/toast";
 import { invalidateApiCache, useApi } from "@/lib/use-api";
 
 const NONE = "__none__";
 const PRIMARY: TransactionType[] = ["expense", "income", "transfer"];
+/** Types that cannot be saved without an invoice, receipt or proof of payment. */
+const NEEDS_PROOF: TransactionType[] = ["income", "expense"];
 const MORE: TransactionType[] = ["refund", "adjustment", "investment", "asset_purchase", "debt_payment", "loan", "equity"];
 
 const DIRECTION_LABELS: Partial<Record<TransactionType, { in: string; out: string }>> = {
@@ -85,6 +99,15 @@ function initialState(type: TransactionType, baseCurrency: string, timezone: str
     notes: "",
     reference: "",
   };
+}
+
+/**
+ * Income is entered per profit month: it is booked on the month's last day, or
+ * today while that month is still running, so monthly reports count it there.
+ */
+function dayInMonth(month: string, timezone: string): string {
+  const now = today(timezone);
+  return month === monthKey(now) ? now : endOfMonth(`${month}-01`);
 }
 
 /**
@@ -178,6 +201,12 @@ export function TransactionFormDialog({
     if (!amount) return setError(`Enter the amount in ${form.currency}, e.g. 1,500 or 1500.50`);
     if (!form.accountId) return setError("Choose the account the money moved through");
     if (form.type === "transfer" && !form.toAccountId) return setError("Choose the account the money went to");
+    // Income and expenses need their invoice, receipt or proof of payment. Edits wait until the saved files have loaded.
+    const attachmentsKnown = !transaction || Boolean(savedAttachments || detail.data || attachmentsTouched);
+    if (NEEDS_PROOF.includes(form.type) && attachmentsKnown && attachments.length === 0)
+      return setError(
+        `Attach the ${form.type === "income" ? "invoice or proof of payment" : "invoice or receipt"}. If a file is still uploading, wait for it to finish.`,
+      );
     const accountAmount = needsAccountAmount && form.accountAmount ? parseMoneyInput(form.accountAmount, account?.currency ?? form.currency) : null;
     const toAccountAmount = needsToAmount && form.toAccountAmount ? parseMoneyInput(form.toAccountAmount, toAccount?.currency ?? form.currency) : null;
 
@@ -376,10 +405,23 @@ export function TransactionFormDialog({
             )}
 
             <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1">
-                <Label htmlFor={`${id}-date`}>Date</Label>
-                <Input id={`${id}-date`} type="date" value={form.date} onChange={(e) => set("date", e.target.value)} />
-              </div>
+              {form.type === "income" ? (
+                <div className="space-y-1">
+                  <Label htmlFor={`${id}-month`}>Profit month</Label>
+                  <Input
+                    id={`${id}-month`}
+                    type="month"
+                    required
+                    value={monthKey(form.date)}
+                    onChange={(e) => e.target.value && set("date", dayInMonth(e.target.value, workspace.timezone))}
+                  />
+                </div>
+              ) : (
+                <div className="space-y-1">
+                  <Label htmlFor={`${id}-date`}>Date</Label>
+                  <Input id={`${id}-date`} type="date" value={form.date} onChange={(e) => set("date", e.target.value)} />
+                </div>
+              )}
               {form.type !== "transfer" && (
                 <div className="space-y-1">
                   <Label htmlFor={`${id}-merchant`}>{form.type === "income" ? "From" : "Merchant / payee"}</Label>
@@ -392,6 +434,12 @@ export function TransactionFormDialog({
                 </div>
               )}
             </div>
+            {form.type === "income" && (
+              <p className="-mt-2 text-xs text-muted-foreground">
+                Counts toward {formatMonth(monthKey(form.date))} in profit and project reports.
+                {transaction ? "" : " The day you entered it is kept as the recorded date."}
+              </p>
+            )}
 
             {usesCategory && (
               <div className="space-y-1">
@@ -448,7 +496,7 @@ export function TransactionFormDialog({
             <AttachmentField
               value={attachments}
               onChange={changeAttachments}
-              label={form.type === "income" ? "Invoice or proof of payment" : "Invoice or receipt"}
+              label={`${form.type === "income" ? "Invoice or proof of payment" : "Invoice or receipt"}${NEEDS_PROOF.includes(form.type) ? " (required)" : ""}`}
               disabled={Boolean(transaction && !savedAttachments && !detail.data && !attachmentsTouched)}
               hint={
                 transaction && !savedAttachments && !detail.data

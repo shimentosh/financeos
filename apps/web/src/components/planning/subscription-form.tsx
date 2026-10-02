@@ -121,6 +121,9 @@ export function SubscriptionFormDialog({ open, onOpenChange, subscription, onSav
     if (open && !attachmentTouched && savedFile.data) setAttachments([savedFile.data]);
   }, [open, attachmentTouched, savedFile.data]);
 
+  // The saved file is still loading, so the attachment list is not known yet.
+  const savedFileLoading = Boolean(subscription?.attachmentFileId && !savedFile.data && !savedFile.error && !attachmentTouched);
+
   const changeAttachments = (next: Attachment[]) => {
     setAttachments(next);
     setAttachmentTouched(true);
@@ -144,6 +147,7 @@ export function SubscriptionFormDialog({ open, onOpenChange, subscription, onSav
     const amountMinor = parseMoneyInput(amount, currency);
     if (!amountMinor) return setError("Enter the renewal amount, e.g. 20 or 1,850");
     if (!provider.trim()) return setError("Who is the subscription with?");
+    if (!attachments.length && !savedFileLoading) return setError("Attach the invoice or receipt. If a file is still uploading, wait for it to finish.");
     if (!nextRenewalDate && !editing) return setError("When does it renew next?");
     const count = Number(intervalCount);
     if (billingCycle === "custom" && (!Number.isInteger(count) || count < 1)) return setError("Enter how many days, weeks, months or years per cycle");
@@ -406,8 +410,8 @@ export function SubscriptionFormDialog({ open, onOpenChange, subscription, onSav
               value={attachments}
               onChange={changeAttachments}
               max={1}
-              label="Invoice or receipt"
-              disabled={Boolean(subscription?.attachmentFileId && !savedFile.data && !savedFile.error && !attachmentTouched)}
+              label="Invoice or receipt (required)"
+              disabled={savedFileLoading}
               hint={recordPurchase ? "Also attached to the purchase expense recorded below." : "The purchase invoice or the latest receipt."}
             />
             <FormError message={error} />

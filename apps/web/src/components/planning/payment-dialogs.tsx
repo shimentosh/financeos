@@ -89,6 +89,11 @@ export function MarkPaidDialog({ target, onClose, onDone }: { target: PayTarget 
     if (!target) return;
     setError(null);
     if (!extra.existingTransactionId && (parsed === null || parsed <= 0)) return setError("Enter the amount paid, e.g. 1,850");
+    // Linking an existing transaction records nothing new, so only a new one needs its file.
+    if (!extra.existingTransactionId && !attachments.length)
+      return setError(
+        `Attach the ${target.direction === "in" ? "proof of payment" : "receipt or invoice"}. If a file is still uploading, wait for it to finish.`,
+      );
     setBusy(key);
     try {
       const body: MarkPaidBody = {
@@ -248,8 +253,8 @@ export function MarkPaidDialog({ target, onClose, onDone }: { target: PayTarget 
             <AttachmentField
               value={attachments}
               onChange={setAttachments}
-              label={target?.direction === "in" ? "Proof of payment" : "Receipt or invoice"}
-              hint="Optional. Saved with the transaction this records."
+              label={target?.direction === "in" ? "Proof of payment (required)" : "Receipt or invoice (required)"}
+              hint="Saved with the transaction this records."
             />
             <FormError message={error} />
           </DialogPanel>

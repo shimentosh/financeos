@@ -85,6 +85,19 @@ export type ProjectProfile = {
       share: number | null;
       drill: Drill;
     }>;
+    revenueByCategory: Array<{
+      categoryId: string | null;
+      name: string;
+      amount: number;
+      share: number | null;
+      drill: Drill;
+    }>;
+    revenueByMonth: Array<{
+      month: string;
+      amount: number;
+      drill: Drill;
+      categories: Array<{ categoryId: string | null; name: string; amount: number; drill: Drill }>;
+    }>;
     topVendors: Array<{
       counterpartyId: string | null;
       name: string;

@@ -1,5 +1,6 @@
 "use client";
 
+import { DEFAULT_REMINDER_OFFSETS } from "@expensewise/core";
 import { Copy, Download, KeyRound, Laptop, LogOut, MailCheck, ShieldCheck, ShieldOff, Smartphone } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useId, useMemo, useState } from "react";
@@ -308,7 +309,7 @@ export function NotificationSettings() {
   const { me, workspace, canManage } = useApp();
   const router = useRouter();
   const [email, setEmail] = useState(me.preferences.notifications?.email ?? true);
-  const [offsets, setOffsets] = useState((workspace.settings.reminderOffsets ?? [30, 14, 7, 3, 1, 0]).join(", "));
+  const [offsets, setOffsets] = useState((workspace.settings.reminderOffsets ?? DEFAULT_REMINDER_OFFSETS).join(", "));
   const [saving, setSaving] = useState(false);
 
   const save = async () => {

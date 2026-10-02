@@ -98,6 +98,9 @@ export function GoalFormDialog({ open, onOpenChange, goal, defaultKind = "saving
     setError(null);
     const targetAmount = parseMoneyInput(target, currency);
     if (!targetAmount) return setError(dream ? "Enter the price of what you want" : "Enter the target amount");
+    // An edit waits until the saved picture has loaded.
+    const pictureKnown = !goal?.imageFileId || pictureTouched || Boolean(savedPicture.data || savedPicture.error);
+    if (pictureKnown && !picture.length) return setError("Add a picture. If it is still uploading, wait for it to finish.");
     const plan = monthlyPlan ? parseMoneyInput(monthlyPlan, currency) : null;
     if (monthlyPlan && plan === null) return setError("Enter the monthly amount as a number");
     const start = starting ? parseMoneyInput(starting, currency) : 0;
@@ -249,7 +252,7 @@ export function GoalFormDialog({ open, onOpenChange, goal, defaultKind = "saving
               max={1}
               kind="other"
               imagesOnly
-              label={dream ? "Picture" : "Picture (optional)"}
+              label="Picture (required)"
               hint={dream ? "A photo of what you're saving for keeps it in sight." : null}
               disabled={Boolean(goal?.imageFileId && !savedPicture.data && !savedPicture.error && !pictureTouched)}
             />

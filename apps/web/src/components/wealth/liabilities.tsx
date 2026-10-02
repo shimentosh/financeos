@@ -680,6 +680,7 @@ export function PaymentDialog({ open, onOpenChange, liability }: { open: boolean
     if (!total) return setError("Enter the amount paid");
     if (interestMinor === null || interestMinor > total) return setError("Interest has to be part of the payment");
     if (!accountId) return setError("Choose the account you paid from");
+    if (!attachments.length) return setError("Attach the receipt. If a file is still uploading, wait for it to finish.");
     setSaving(true);
     setError(null);
     try {
@@ -778,7 +779,7 @@ export function PaymentDialog({ open, onOpenChange, liability }: { open: boolean
             <Field label="Note" htmlFor={`${id}-note`}>
               <Input id={`${id}-note`} value={note} onChange={(e) => setNote(e.target.value)} />
             </Field>
-            <AttachmentField value={attachments} onChange={setAttachments} label="Receipt" hint="Optional. Saved with the payment transaction." />
+            <AttachmentField value={attachments} onChange={setAttachments} label="Receipt (required)" hint="Saved with the payment transaction." />
             <FormError error={error} />
           </DialogPanel>
           <DialogFooter>

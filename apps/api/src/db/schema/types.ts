@@ -4,7 +4,7 @@ import type { AgentMemoryItem } from "@expensewise/core";
 // every figure that is summed or reported lives in a typed column instead.
 
 export type WorkspaceSettings = {
-  /** Days before a due date to remind, e.g. [30, 14, 7, 3, 1, 0]. */
+  /** Days before a due date to remind, e.g. [2, 1, 0]. */
   reminderOffsets?: number[];
   /** Posted amounts at or above this (base currency, minor units) need review. */
   reviewThreshold?: number | null;

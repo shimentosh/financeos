@@ -517,6 +517,7 @@ export function ReceivablePaymentDialog({ open, onOpenChange, receivable }: { op
     const minor = toMinor(amount, receivable.currency);
     if (!minor) return setError("Enter the amount received");
     if (!accountId) return setError("Choose the account it arrived in");
+    if (!attachments.length) return setError("Attach the proof of payment. If a file is still uploading, wait for it to finish.");
     setSaving(true);
     setError(null);
     try {
@@ -574,8 +575,8 @@ export function ReceivablePaymentDialog({ open, onOpenChange, receivable }: { op
             <AttachmentField
               value={attachments}
               onChange={setAttachments}
-              label="Proof of payment"
-              hint="Optional: a bank slip, bKash screenshot or receipt."
+              label="Proof of payment (required)"
+              hint="A bank slip, bKash screenshot or receipt."
             />
             <FormError error={error} />
           </DialogPanel>

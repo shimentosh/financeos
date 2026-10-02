@@ -1,4 +1,4 @@
-import { type DefaultCategory, defaultCategories, SEED_RATES_TO_BDT, today, type WorkspaceKind } from "@expensewise/core";
+import { DEFAULT_REMINDER_OFFSETS, type DefaultCategory, defaultCategories, SEED_RATES_TO_BDT, today, type WorkspaceKind } from "@expensewise/core";
 import { count, eq, inArray } from "drizzle-orm";
 import { db, type Executor } from "../../db/index.js";
 import { categories, exchangeRates, financialAccounts, projects, userSettings, users, workspaceMembers, workspaces } from "../../db/schema/index.js";
@@ -59,7 +59,7 @@ export async function createWorkspace(exec: Executor, ownerId: string, input: Ne
       baseCurrency,
       timezone: input.timezone ?? "Asia/Dhaka",
       fiscalYearStartMonth: input.fiscalYearStartMonth ?? (input.kind === "business" ? 7 : 1),
-      settings: { reminderOffsets: [30, 14, 7, 3, 1, 0], aiEnabled: true, autoPostHighConfidence: false },
+      settings: { reminderOffsets: [...DEFAULT_REMINDER_OFFSETS], aiEnabled: true, autoPostHighConfidence: false },
     })
     .returning();
   if (!workspace) throw new Error("Workspace was not created");

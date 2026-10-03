@@ -10,9 +10,9 @@ const sections: LegalSection[] = [
     title: "The service",
     body: (
       <p>
-        FinanceOS is software for recording and understanding personal and business finances: accounts, transactions, receipts, bills, budgets, goals,
-        assets, debts and reports. It is a record-keeping and planning tool. It does not hold or move your money, is not a bank or payment service, and does not
-        give financial, tax, investment or legal advice.
+        FinanceOS is software for recording and understanding personal and business finances: accounts, transactions, receipts, bills, budgets, goals, assets,
+        debts and reports. It is a record-keeping and planning tool. It does not hold or move your money, is not a bank or payment service, and does not give
+        financial, tax, investment or legal advice.
       </p>
     ),
   },

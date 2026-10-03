@@ -39,11 +39,7 @@ export class AccountController {
   @RateLimit("account-export", 30, 3600)
   async exportWorkspace(@Ctx() ctx: WorkspaceContext, @CurrentUser() user: SessionUser) {
     const data = await this.exports.workspace(ctx, user);
-    return download(
-      JSON.stringify(data, null, 2),
-      `financeos-${fileSlug(ctx.workspaceName)}-${today(ctx.timezone)}.json`,
-      "application/json; charset=utf-8",
-    );
+    return download(JSON.stringify(data, null, 2), `financeos-${fileSlug(ctx.workspaceName)}-${today(ctx.timezone)}.json`, "application/json; charset=utf-8");
   }
 
   /** The current workspace's transactions as CSV. Owners and admins only. */

@@ -1,11 +1,4 @@
-import {
-  type AgentMemoryInput,
-  agentMemoryInput,
-  type CopilotActionsInput,
-  type CopilotAskInput,
-  copilotActionsInput,
-  copilotAskInput,
-} from "@financeos/core";
+import { type AgentMemoryInput, agentMemoryInput, type CopilotActionsInput, type CopilotAskInput, copilotActionsInput, copilotAskInput } from "@financeos/core";
 import { Body, Controller, Delete, Get, HttpCode, Inject, Param, ParseUUIDPipe, Post } from "@nestjs/common";
 import type { WorkspaceContext } from "../../common/context.js";
 import { AllowViewer, Ctx, WorkspaceScoped } from "../../common/guards.js";

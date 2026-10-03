@@ -1,14 +1,4 @@
-import {
-  addDays,
-  type Day,
-  type DebtFlow,
-  diffDays,
-  type LiabilityKind,
-  liabilityInput,
-  liabilityOutstanding,
-  liabilityUpdate,
-  uuidv7,
-} from "@financeos/core";
+import { addDays, type Day, type DebtFlow, diffDays, type LiabilityKind, liabilityInput, liabilityOutstanding, liabilityUpdate, uuidv7 } from "@financeos/core";
 import {
   type LiabilityPaymentRequest,
   type LiabilityQuery,

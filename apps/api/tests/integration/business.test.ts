@@ -387,9 +387,7 @@ describe("payroll", () => {
     await expect(payroll.deleteRun(ctx, runId)).rejects.toMatchObject({ code: "run_has_payments" });
     await payroll.payEmployee(ctx, karim.id, { period, paidOn: m1, amount: 3_500_000, attachmentFileIds: [await proof()] });
     const posted = await payroll.post(ctx, runId);
-    const salaryTx = (await transactions.list(ctx, { type: ["expense"], categoryId: await category("Payroll") })).items.filter(
-      (t) => t.status !== "void",
-    );
+    const salaryTx = (await transactions.list(ctx, { type: ["expense"], categoryId: await category("Payroll") })).items.filter((t) => t.status !== "void");
     expect(salaryTx.map((t) => t.amount).sort()).toEqual([3_500_000, 5_000_000]);
     expect(posted.status).toBe("posted");
 

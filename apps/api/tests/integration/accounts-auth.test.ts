@@ -184,7 +184,7 @@ describe("two-factor sign-in", () => {
     const enabled = await auth.api.enableTwoFactor({ body: { password: PASSWORD }, headers: headers(person.cookie), asResponse: true });
     expect(enabled.status).toBe(200);
     const { totpURI, backupCodes } = (await enabled.json()) as { totpURI: string; backupCodes: string[] };
-    expect(totpURI).toMatch(/^otpauth:\/\/totp\/Expense%20Wise:/);
+    expect(totpURI).toMatch(/^otpauth:\/\/totp\/FinanceOS:/);
     expect(backupCodes).toHaveLength(10);
     // Not on until a code from the app proves it is set up.
     let [user] = await db.select().from(users).where(eq(users.id, person.id));

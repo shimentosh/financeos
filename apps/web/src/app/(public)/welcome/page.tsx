@@ -185,8 +185,8 @@ export default function WelcomePage() {
           </p>
           <h1 className="font-semibold text-4xl tracking-tight md:text-5xl">Know where every taka goes.</h1>
           <p className="max-w-xl text-lg text-muted-foreground">
-            Capture receipts, SMS and screenshots, connect bKash, banks and apps, and ask in English or বাংলা. FinanceOS keeps one clean ledger for your
-            household and your company — AI does the typing, you stay in control.
+            Capture receipts, SMS and screenshots, connect bKash, banks and apps, and ask in English or বাংলা. FinanceOS keeps one clean ledger for your household
+            and your company — AI does the typing, you stay in control.
           </p>
           <div className="flex flex-wrap gap-3">
             <Button size="lg" render={<Link href="/sign-up" />}>

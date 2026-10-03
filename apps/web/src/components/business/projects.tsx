@@ -1,6 +1,6 @@
 "use client";
 
-import { minorToInput } from "@expensewise/core";
+import { minorToInput } from "@financeos/core";
 import { ArrowDownLeft, ArrowUpRight, ChevronRight, Flame, FolderKanban, Hourglass, Plus, Repeat, TrendingUp } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";

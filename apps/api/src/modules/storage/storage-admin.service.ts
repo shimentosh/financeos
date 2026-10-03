@@ -10,7 +10,7 @@ import {
   storageConfigInput,
   storageConfigTestInput,
   uuidv7,
-} from "@expensewise/core";
+} from "@financeos/core";
 import { Inject, Injectable, Logger } from "@nestjs/common";
 import { count, desc, eq, sql } from "drizzle-orm";
 import { conflict, unprocessable } from "../../common/errors.js";
@@ -200,8 +200,8 @@ export class StorageAdminService {
   /** Writes, reads back and deletes a small object: the three things uploads need. */
   private async probe(driver: Driver, prefix: string | null, describe: (error: unknown) => string): Promise<StorageTestResult> {
     const started = Date.now();
-    const key = withPrefix(prefix, `.expensewise-check/${uuidv7()}.txt`);
-    const body = Buffer.from(`Expense Wise storage check ${new Date().toISOString()}`);
+    const key = withPrefix(prefix, `.financeos-check/${uuidv7()}.txt`);
+    const body = Buffer.from(`FinanceOS storage check ${new Date().toISOString()}`);
     const checks: StorageTestResult["checks"] = [];
     const step = async (name: StorageTestResult["checks"][number]["name"], run: () => Promise<string>) => {
       try {

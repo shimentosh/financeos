@@ -17,7 +17,7 @@ async function bootstrap() {
   configureHttpServer(app, { appUrl: env.APP_URL, trustProxy: env.TRUST_PROXY, logger });
   app.enableShutdownHooks();
   await app.listen(env.API_PORT);
-  logger.log(`Expense Wise API on http://localhost:${env.API_PORT}/api`, "Bootstrap");
+  logger.log(`FinanceOS API on http://localhost:${env.API_PORT}/api`, "Bootstrap");
 }
 
 bootstrap().catch(async (error: unknown) => {

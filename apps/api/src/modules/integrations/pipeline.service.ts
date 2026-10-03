@@ -1,5 +1,5 @@
-import { formatMoney, isUuid, LedgerError, normalizeName, type TransactionInput, type TransactionType } from "@expensewise/core";
-import { type CanonicalRecord, type CanonicalRecordInput, canonicalRecord } from "@expensewise/core/contracts/integrations-extra";
+import { formatMoney, isUuid, LedgerError, normalizeName, type TransactionInput, type TransactionType } from "@financeos/core";
+import { type CanonicalRecord, type CanonicalRecordInput, canonicalRecord } from "@financeos/core/contracts/integrations-extra";
 import { Inject, Injectable, Logger } from "@nestjs/common";
 import { and, eq, sql } from "drizzle-orm";
 import { ZodError } from "zod";
@@ -244,7 +244,7 @@ class Resolver {
 }
 
 /**
- * The one path from a provider's records into Expense Wise, shared by syncs
+ * The one path from a provider's records into FinanceOS, shared by syncs
  * and webhooks: normalize → validate → rules → hints → dedupe → ledger.
  * Every record is processed on its own, so one bad record never fails the
  * rest.

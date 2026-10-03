@@ -1,5 +1,5 @@
-import { type connectInput, uuidv7 } from "@expensewise/core";
-import type { connectionPatch, connectionRecordsQuery } from "@expensewise/core/contracts/integrations-extra";
+import { type connectInput, uuidv7 } from "@financeos/core";
+import type { connectionPatch, connectionRecordsQuery } from "@financeos/core/contracts/integrations-extra";
 import { Inject, Injectable } from "@nestjs/common";
 import { and, asc, count, desc, eq, gte, ilike, inArray, lte, or, type SQL } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";

@@ -9,8 +9,8 @@ import {
   type TransactionInput,
   type TransactionType,
   transactionInput,
-} from "@expensewise/core";
-import type { importCommitInput, importListQuery, importMappingRequest, importRowsQuery } from "@expensewise/core/contracts/integrations-extra";
+} from "@financeos/core";
+import type { importCommitInput, importListQuery, importMappingRequest, importRowsQuery } from "@financeos/core/contracts/integrations-extra";
 import { Inject, Injectable, Logger, type OnModuleInit } from "@nestjs/common";
 import { and, asc, count, desc, eq, gte, inArray, lte, ne, or, sql } from "drizzle-orm";
 import type { z } from "zod";

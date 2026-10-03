@@ -1,6 +1,6 @@
 "use client";
 
-import { COMMON_CURRENCIES, currencyDecimals, minorToInput, parseMoneyInput, type TransactionType, TYPE_LABELS, TYPE_RULES } from "@expensewise/core";
+import { COMMON_CURRENCIES, currencyDecimals, minorToInput, parseMoneyInput, type TransactionType, TYPE_LABELS, TYPE_RULES } from "@financeos/core";
 import { AlertTriangle, Briefcase, CheckCircle2, ExternalLink, ListTree, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { type ReactNode, useId, useMemo } from "react";

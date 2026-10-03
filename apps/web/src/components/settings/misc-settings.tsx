@@ -1,6 +1,6 @@
 "use client";
 
-import { COMMON_CURRENCIES, today } from "@expensewise/core";
+import { COMMON_CURRENCIES, today } from "@financeos/core";
 import { ChevronLeft, ChevronRight, Plus, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";

@@ -8,8 +8,8 @@ import {
   formatMoney,
   type Range,
   recentPeriods,
-} from "@expensewise/core";
-import { type BudgetDetailQuery, type BudgetQuery, budgetDetailQuery, budgetQuery } from "@expensewise/core/contracts/planning-extra";
+} from "@financeos/core";
+import { type BudgetDetailQuery, type BudgetQuery, budgetDetailQuery, budgetQuery } from "@financeos/core/contracts/planning-extra";
 import { Inject, Injectable } from "@nestjs/common";
 import { and, asc, desc, eq, gte, inArray, isNull, lte, or, type SQL, sql } from "drizzle-orm";
 import type { z } from "zod";

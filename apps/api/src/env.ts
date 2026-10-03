@@ -1,5 +1,5 @@
 import "./load-env.js";
-import { AI_PROVIDER_IDS } from "@expensewise/core";
+import { AI_PROVIDER_IDS } from "@financeos/core";
 import { z } from "zod";
 
 const booleanString = z
@@ -70,7 +70,7 @@ const schema = z.object({
     .transform((value) => value !== "false"),
   CRON_SECRET: z.string().optional(),
   RESEND_API_KEY: z.string().optional(),
-  EMAIL_FROM: z.string().default("Expense Wise <alerts@example.com>"),
+  EMAIL_FROM: z.string().default("FinanceOS <alerts@example.com>"),
   /** Where support requests and operational alerts go. */
   SUPPORT_EMAIL: z.string().optional(),
   /** Sign-in waits for a verified email. Defaults to on in production. */

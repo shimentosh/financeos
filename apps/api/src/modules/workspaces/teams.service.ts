@@ -1,5 +1,5 @@
 import { createHash, randomBytes } from "node:crypto";
-import { type AssignableRole, assignableRolesFor, canManageMember, INVITATION_TTL_DAYS, type InvitationStatus, type MemberRole } from "@expensewise/core";
+import { type AssignableRole, assignableRolesFor, canManageMember, INVITATION_TTL_DAYS, type InvitationStatus, type MemberRole } from "@financeos/core";
 import { Inject, Injectable } from "@nestjs/common";
 import { and, asc, count, desc, eq, gte, inArray, lt, ne, or, type SQL, sql } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
@@ -205,13 +205,13 @@ export class TeamsService {
     });
     await this.email.send({
       to: target.email,
-      subject: `You now own ${ctx.workspaceName} on Expense Wise`,
+      subject: `You now own ${ctx.workspaceName} on FinanceOS`,
       heading: `${ctx.workspaceName} is yours now`,
       paragraphs: [
         `${actor.name} made you the owner of the workspace "${ctx.workspaceName}". You can manage its members, its plan, and delete it if it is ever no longer needed.`,
         `${actor.name} stays in the workspace as an admin.`,
       ],
-      action: { label: "Open Expense Wise", url: appLink("/settings/workspace") },
+      action: { label: "Open FinanceOS", url: appLink("/settings/workspace") },
     });
     return { ownerId: targetUserId };
   }
@@ -240,7 +240,7 @@ export class TeamsService {
         subject: `${found.name} was deleted`,
         heading: `${found.name} was deleted`,
         paragraphs: [
-          `${actor.name} deleted the workspace "${found.name}" on Expense Wise, together with its records and files.`,
+          `${actor.name} deleted the workspace "${found.name}" on FinanceOS, together with its records and files.`,
           "Your other workspaces are not affected.",
         ],
       });
@@ -607,11 +607,11 @@ export class TeamsService {
     const kind = ctx.workspaceKind === "business" ? "business" : "personal";
     const result = await this.email.send({
       to: invitation.email,
-      subject: `${actor.name} invited you to ${ctx.workspaceName} on Expense Wise`,
+      subject: `${actor.name} invited you to ${ctx.workspaceName} on FinanceOS`,
       preview: `Join ${ctx.workspaceName} as ${article(invitation.role)} ${invitation.role}.`,
-      heading: `Join ${ctx.workspaceName} on Expense Wise`,
+      heading: `Join ${ctx.workspaceName} on FinanceOS`,
       paragraphs: [
-        `${actor.name} (${actor.email}) invited you to the ${kind} workspace "${ctx.workspaceName}" on Expense Wise. ${ROLE_IN_EMAIL[invitation.role]}`,
+        `${actor.name} (${actor.email}) invited you to the ${kind} workspace "${ctx.workspaceName}" on FinanceOS. ${ROLE_IN_EMAIL[invitation.role]}`,
         `Sign in, or create an account, with ${invitation.email} to accept.`,
       ],
       action: { label: "Accept invitation", url: invitationLink(token) },

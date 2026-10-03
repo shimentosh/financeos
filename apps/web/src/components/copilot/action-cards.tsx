@@ -1,6 +1,6 @@
 "use client";
 
-import type { CopilotAction, CopilotActionKind, CopilotActionOutcome, CopilotMessageView } from "@expensewise/core";
+import type { CopilotAction, CopilotActionKind, CopilotActionOutcome, CopilotMessageView } from "@financeos/core";
 import {
   AlertTriangle,
   ArrowUpRight,

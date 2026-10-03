@@ -14,7 +14,7 @@ import {
   parseQuestion,
   truncate,
   uuidv7,
-} from "@expensewise/core";
+} from "@financeos/core";
 import { Inject, Injectable } from "@nestjs/common";
 import { and, asc, desc, eq, sql } from "drizzle-orm";
 import { ZodError } from "zod";
@@ -33,7 +33,7 @@ type Lang = "bn" | "en";
 type ThreadRow = typeof copilotThreads.$inferSelect;
 type MessageRow = typeof copilotMessages.$inferSelect;
 
-const SYSTEM_HEAD = `You are Expense Wise Copilot, a careful assistant for one person's (or one company's) own financial records.
+const SYSTEM_HEAD = `You are FinanceOS Copilot, a careful assistant for one person's (or one company's) own financial records.
 
 How to answer:
 - Use the tools for every figure. Never invent, estimate or recall a number that no tool returned. If the tools cannot answer, say what is missing and where in the app to add it.

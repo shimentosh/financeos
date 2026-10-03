@@ -1,6 +1,6 @@
 "use client";
 
-import { addDays, addMonths, addYears, COMMON_CURRENCIES, INTERVAL_UNITS, type IntervalUnit, minorToInput, parseMoneyInput, today } from "@expensewise/core";
+import { addDays, addMonths, addYears, COMMON_CURRENCIES, INTERVAL_UNITS, type IntervalUnit, minorToInput, parseMoneyInput, today } from "@financeos/core";
 import { useRouter } from "next/navigation";
 import { type FormEvent, useEffect, useId, useState } from "react";
 import { useApp } from "@/components/app/app-context";

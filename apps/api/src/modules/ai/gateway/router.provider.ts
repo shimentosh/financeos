@@ -1,4 +1,4 @@
-import type { AiCapabilities, AiProviderId, AiStructuredMode } from "@expensewise/core";
+import type { AiCapabilities, AiProviderId, AiStructuredMode } from "@financeos/core";
 import { Logger } from "@nestjs/common";
 import { eq } from "drizzle-orm";
 import { db } from "../../../db/index.js";
@@ -168,7 +168,7 @@ export function buildProvider(resolved: ResolvedModel, deps: ProviderDeps = {}):
     // The older deepseek-chat/-reasoner cap answers at 8K; the V4 models don't.
     maxOutputTokens: resolved.provider === "deepseek" && /^deepseek-(chat|reasoner)$/.test(resolved.model) ? 8_192 : 16_000,
     fetch: deps.fetch,
-    headers: resolved.provider === "openrouter" ? { "HTTP-Referer": env.APP_URL, "X-Title": "Expense Wise" } : undefined,
+    headers: resolved.provider === "openrouter" ? { "HTTP-Referer": env.APP_URL, "X-Title": "FinanceOS" } : undefined,
   });
 }
 

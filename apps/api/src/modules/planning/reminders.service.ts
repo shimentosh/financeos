@@ -1,4 +1,4 @@
-import { type Day, diffDays, formatDay, formatMoney, type RenewalAlert, renewalAlerts } from "@expensewise/core";
+import { type Day, diffDays, formatDay, formatMoney, type RenewalAlert, renewalAlerts } from "@financeos/core";
 import { Inject, Injectable } from "@nestjs/common";
 import { and, eq, or } from "drizzle-orm";
 import { todayFor, type WorkspaceContext } from "../../common/context.js";

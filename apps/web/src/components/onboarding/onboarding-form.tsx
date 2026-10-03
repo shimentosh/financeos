@@ -1,6 +1,6 @@
 "use client";
 
-import { COMMON_CURRENCIES } from "@expensewise/core";
+import { COMMON_CURRENCIES } from "@financeos/core";
 import { Building2, Coins, Globe, Wallet } from "lucide-react";
 import { type FormEvent, type ReactNode, useEffect, useId, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -106,7 +106,7 @@ export function OnboardingForm({
         <span className="flex size-9 items-center justify-center rounded-xl bg-primary text-primary-foreground">
           <Wallet className="size-5" />
         </span>
-        <span className="text-lg font-semibold tracking-tight">Expense Wise</span>
+        <span className="text-lg font-semibold tracking-tight">FinanceOS</span>
       </div>
       <form onSubmit={submit} className="w-full max-w-md space-y-5 rounded-2xl border border-border bg-card p-6 shadow-xs/5">
         <div>
@@ -187,7 +187,7 @@ export function OnboardingForm({
             Skip for now
           </Button>
           <Button type="submit" loading={busy === "save"} disabled={busy !== null}>
-            Start using Expense Wise
+            Start using FinanceOS
           </Button>
         </div>
       </form>

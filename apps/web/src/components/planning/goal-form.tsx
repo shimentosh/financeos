@@ -1,6 +1,6 @@
 "use client";
 
-import { COMMON_CURRENCIES, GOAL_KINDS, type GoalKind, minorToInput, parseMoneyInput, today } from "@expensewise/core";
+import { COMMON_CURRENCIES, GOAL_KINDS, type GoalKind, minorToInput, parseMoneyInput, today } from "@financeos/core";
 import { useRouter } from "next/navigation";
 import { type FormEvent, useEffect, useId, useState } from "react";
 import { useApp } from "@/components/app/app-context";

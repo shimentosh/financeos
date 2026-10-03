@@ -1,6 +1,6 @@
 "use client";
 
-import { formatMoney, type MoneyFormatOptions } from "@expensewise/core";
+import { formatMoney, type MoneyFormatOptions } from "@financeos/core";
 import { createContext, type ReactNode, useContext, useMemo } from "react";
 import type { CurrentWorkspace, Me } from "@/lib/api/types";
 

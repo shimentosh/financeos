@@ -1,6 +1,6 @@
 "use client";
 
-import { parseMoneyInput } from "@expensewise/core";
+import { parseMoneyInput } from "@financeos/core";
 import { CalendarClock, Coins, CreditCard, Search, Sparkles, TrendingUp, Users } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";

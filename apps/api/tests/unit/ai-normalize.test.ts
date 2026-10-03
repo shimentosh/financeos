@@ -1,4 +1,4 @@
-import { parseEntry } from "@expensewise/core";
+import { parseEntry } from "@financeos/core";
 import { describe, expect, it } from "vitest";
 import { accountsForMethod, DraftBuilder, type ResolvedDraft } from "../../src/modules/ai/capture/draft-builder.js";
 import {

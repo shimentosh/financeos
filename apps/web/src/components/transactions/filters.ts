@@ -1,4 +1,4 @@
-import { type Day, type PeriodPreset, presetRange } from "@expensewise/core";
+import { type Day, type PeriodPreset, presetRange } from "@financeos/core";
 
 export const PERIODS: Array<{ value: PeriodPreset; label: string }> = [
   { value: "this_month", label: "This month" },

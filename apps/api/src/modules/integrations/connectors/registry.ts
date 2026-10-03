@@ -117,7 +117,7 @@ const COMING_SOON: ComingSoonEntry[] = [
     category: "projects",
     icon: "kanban",
     website: "https://linear.app",
-    description: "Projects and teams as Expense Wise projects, for cost tracking per project.",
+    description: "Projects and teams as FinanceOS projects, for cost tracking per project.",
     capabilities: SYNC,
   },
 ];
@@ -164,7 +164,7 @@ const FILE_IMPORT: CatalogEntry = {
   webhook: null,
 };
 
-/** Every provider Expense Wise knows. No provider-specific logic lives outside the connectors. */
+/** Every provider FinanceOS knows. No provider-specific logic lives outside the connectors. */
 @Injectable()
 export class ConnectorRegistry {
   private readonly connectors = new Map<string, AnyConnector>();

@@ -1,6 +1,6 @@
 "use client";
 
-import { COMMON_CURRENCIES, formatDay, type InboxKind, minorToInput, parseMoneyInput } from "@expensewise/core";
+import { COMMON_CURRENCIES, formatDay, type InboxKind, minorToInput, parseMoneyInput } from "@financeos/core";
 import {
   AlertOctagon,
   AlertTriangle,

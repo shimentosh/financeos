@@ -16,8 +16,8 @@ import {
   nextDueOnOrAfter,
   type PriceChange,
   type SubscriptionStatus,
-} from "@expensewise/core";
-import { type CommitmentQuery, commitmentQuery } from "@expensewise/core/contracts/planning-extra";
+} from "@financeos/core";
+import { type CommitmentQuery, commitmentQuery } from "@financeos/core/contracts/planning-extra";
 import { Inject, Injectable } from "@nestjs/common";
 import { and, asc, desc, eq, ilike, inArray, isNotNull, isNull, lt, or, type SQL, sql } from "drizzle-orm";
 import type { z } from "zod";

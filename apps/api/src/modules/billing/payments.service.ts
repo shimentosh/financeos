@@ -6,7 +6,7 @@ import {
   type PaymentPurpose,
   type PaymentStatus,
   type PlanId,
-} from "@expensewise/core";
+} from "@financeos/core";
 import { Inject, Injectable, Logger } from "@nestjs/common";
 import { and, eq, ne } from "drizzle-orm";
 import { db, type Executor } from "../../db/index.js";

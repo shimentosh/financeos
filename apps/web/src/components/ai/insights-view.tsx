@@ -1,6 +1,6 @@
 "use client";
 
-import { formatDay, percentChange } from "@expensewise/core";
+import { formatDay, percentChange } from "@financeos/core";
 import { ArrowDownLeft, ArrowUpRight, Bot, CalendarClock, PiggyBank, Repeat, Scale, Sparkles, TrendingUp } from "lucide-react";
 import Link from "next/link";
 import { useApp } from "@/components/app/app-context";

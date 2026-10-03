@@ -1,4 +1,4 @@
-import { addDays, addMonths, monthKey, projectMetrics, startOfMonth } from "@expensewise/core";
+import { addDays, addMonths, monthKey, projectMetrics, startOfMonth } from "@financeos/core";
 import { and, eq } from "drizzle-orm";
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { todayFor, type WorkspaceContext } from "../../src/common/context.js";

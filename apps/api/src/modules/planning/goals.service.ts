@@ -9,8 +9,8 @@ import {
   goalUpdate,
   startOfMonth,
   today as todayIn,
-} from "@expensewise/core";
-import { type GoalQuery, goalQuery } from "@expensewise/core/contracts/planning-extra";
+} from "@financeos/core";
+import { type GoalQuery, goalQuery } from "@financeos/core/contracts/planning-extra";
 import { Inject, Injectable } from "@nestjs/common";
 import { and, asc, desc, eq, inArray, isNotNull, type SQL, sql } from "drizzle-orm";
 import type { z } from "zod";

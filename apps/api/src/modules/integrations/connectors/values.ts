@@ -1,4 +1,4 @@
-import { type Day, isDay, parseDay, parseMoneyInput, today, toMinor } from "@expensewise/core";
+import { type Day, isDay, parseDay, parseMoneyInput, today, toMinor } from "@financeos/core";
 
 const FORBIDDEN_SEGMENTS = new Set(["__proto__", "prototype", "constructor"]);
 const MAX_DEPTH = 20;

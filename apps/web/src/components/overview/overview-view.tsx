@@ -1,6 +1,6 @@
 "use client";
 
-import { formatMoney, relativeDays } from "@expensewise/core";
+import { formatMoney, relativeDays } from "@financeos/core";
 import {
   AlertTriangle,
   ArrowDownLeft,

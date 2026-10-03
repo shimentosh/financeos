@@ -4,7 +4,7 @@ import { DomainError } from "./errors.js";
 
 /**
  * Validates and coerces a request body, query or param with a Zod schema from
- * @expensewise/core. Usage: `@Body(zod(transactionInput)) input`.
+ * @financeos/core. Usage: `@Body(zod(transactionInput)) input`.
  */
 export class ZodPipe<T extends z.ZodType> implements PipeTransform {
   constructor(private readonly schema: T) {}

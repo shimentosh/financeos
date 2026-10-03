@@ -1,5 +1,5 @@
-import { addMonths, type Day, daysInMonth, employeeUpdate, endOfMonth, payrollItemUpdate, payrollRunInput } from "@expensewise/core";
-import { type EmployeeCreateInput, employeeCreateInput, employeeQuery } from "@expensewise/core/contracts/business-extra";
+import { addMonths, type Day, daysInMonth, employeeUpdate, endOfMonth, payrollItemUpdate, payrollRunInput } from "@financeos/core";
+import { type EmployeeCreateInput, employeeCreateInput, employeeQuery } from "@financeos/core/contracts/business-extra";
 import { Inject, Injectable } from "@nestjs/common";
 import { and, asc, desc, eq, gte, inArray, isNull, lte, or } from "drizzle-orm";
 import type { z } from "zod";

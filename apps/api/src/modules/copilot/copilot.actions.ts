@@ -29,7 +29,7 @@ import {
   transactionInput,
   transactionUpdate,
   uuidv7,
-} from "@expensewise/core";
+} from "@financeos/core";
 import { Inject, Injectable } from "@nestjs/common";
 import { z } from "zod";
 import { todayFor, type WorkspaceContext } from "../../common/context.js";

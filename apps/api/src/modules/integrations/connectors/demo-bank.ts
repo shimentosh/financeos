@@ -1,4 +1,4 @@
-import { addDays, type Day } from "@expensewise/core";
+import { addDays, type Day } from "@financeos/core";
 import { z } from "zod";
 import { between, compactDay, pageOf, pick, random, revealedDays, seedFrom, simulationClock } from "./simulation.js";
 import { defineConnector, type RawRecord } from "./types.js";

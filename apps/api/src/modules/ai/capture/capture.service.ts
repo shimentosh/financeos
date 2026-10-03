@@ -1,4 +1,4 @@
-import { type ParsedEntry, parseEntry, type SubscriptionInput, type TransactionSource } from "@expensewise/core";
+import { type ParsedEntry, parseEntry, type SubscriptionInput, type TransactionSource } from "@financeos/core";
 import {
   type CaptureConfirmInput,
   type CaptureConfirmResult,
@@ -13,7 +13,7 @@ import {
   captureListQuery,
   captureRetryInput,
   type SubscriptionSuggestion,
-} from "@expensewise/core/contracts/ai-extra";
+} from "@financeos/core/contracts/ai-extra";
 import { Inject, Injectable, Logger, type OnModuleInit } from "@nestjs/common";
 import { and, count, desc, eq, inArray, ne, or, sql } from "drizzle-orm";
 import type { z } from "zod";

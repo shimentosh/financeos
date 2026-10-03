@@ -17,7 +17,7 @@ import {
   transactionInput,
   transactionQuery,
   transactionUpdate,
-} from "@expensewise/core";
+} from "@financeos/core";
 import { Body, Controller, Delete, Get, HttpCode, Inject, Param, ParseUUIDPipe, Patch, Post, Put, Query } from "@nestjs/common";
 import { z } from "zod";
 import type { WorkspaceContext } from "../../common/context.js";

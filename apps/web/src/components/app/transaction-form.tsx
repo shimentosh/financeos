@@ -11,7 +11,7 @@ import {
   TYPE_LABELS,
   TYPE_RULES,
   today,
-} from "@expensewise/core";
+} from "@financeos/core";
 import { useRouter } from "next/navigation";
 import { type FormEvent, useEffect, useId, useMemo, useRef, useState } from "react";
 import { useApp } from "@/components/app/app-context";

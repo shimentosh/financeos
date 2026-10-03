@@ -1,4 +1,4 @@
-import { type Day, type MemberRole, today, type WorkspaceKind } from "@expensewise/core";
+import { type Day, type MemberRole, today, type WorkspaceKind } from "@financeos/core";
 import type { Request } from "express";
 import type { WorkspaceSettings } from "../db/schema/types.js";
 

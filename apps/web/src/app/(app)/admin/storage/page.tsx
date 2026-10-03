@@ -1,4 +1,4 @@
-import type { StorageConfigView } from "@expensewise/core";
+import type { StorageConfigView } from "@financeos/core";
 import { AdminPage } from "@/components/admin/admin-page";
 import { StorageSettings } from "@/components/admin/storage-settings";
 import { api } from "@/lib/api/server";

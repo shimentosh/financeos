@@ -1,6 +1,6 @@
-# Deploying Expense Wise
+# Deploying FinanceOS
 
-This guide takes Expense Wise from a clone to a public service: what runs,
+This guide takes FinanceOS from a clone to a public service: what runs,
 what it needs, how to ship it with Docker, and how to keep it healthy.
 
 ## Architecture
@@ -62,6 +62,9 @@ with `ENCRYPTION_KEY` and never shown again.
 
 ## Docker Compose (one server)
 
+On a Dokploy-managed server, follow [dokploy.md](dokploy.md) instead
+(`compose.dokploy.yml`, PostgreSQL as a Dokploy database service).
+
 `compose.prod.yml` runs PostgreSQL, the release step, the API, a worker and
 the web server on one host.
 
@@ -79,7 +82,7 @@ the web server on one host.
    #   BETTER_AUTH_SECRET=<openssl rand -base64 32>
    #   ENCRYPTION_KEY=<openssl rand -base64 32>
    #   ADMIN_EMAILS=you@example.com
-   #   RESEND_API_KEY=...  EMAIL_FROM="Expense Wise <hello@example.com>"
+   #   RESEND_API_KEY=...  EMAIL_FROM="FinanceOS <hello@example.com>"
    #   SENTRY_DSN=...      (optional)
    chmod 600 .env
    ```
@@ -129,8 +132,8 @@ Kubernetes, Nomad, Fly.io, Render, ECS: build the two images and run
 | web (≥1) | web | default (`node apps/web/server.js`) | `GET /icon.svg` on :3100 |
 
 ```bash
-docker build -f apps/api/Dockerfile -t expensewise-api --build-arg APP_VERSION=$(git rev-parse --short HEAD) .
-docker build -f apps/web/Dockerfile -t expensewise-web --build-arg API_INTERNAL_URL=http://api:4100 .
+docker build -f apps/api/Dockerfile -t financeos-api --build-arg APP_VERSION=$(git rev-parse --short HEAD) .
+docker build -f apps/web/Dockerfile -t financeos-web --build-arg API_INTERNAL_URL=http://api:4100 .
 ```
 
 `API_INTERNAL_URL` is compiled into the web image (it is the `/api/*` rewrite
@@ -164,10 +167,10 @@ worker, so this mode suits small installs only.
 - **Bundled postgres:** a nightly logical dump from the host's cron:
 
   ```bash
-  # /etc/cron.d/expensewise-backup — 02:30 every night, keep 30 days
-  30 2 * * * root cd /srv/expensewise && docker compose -f compose.prod.yml exec -T postgres \
-    pg_dump -U expensewise -Fc expensewise > /var/backups/expensewise-$(date +\%F).dump \
-    && find /var/backups -name 'expensewise-*.dump' -mtime +30 -delete
+  # /etc/cron.d/financeos-backup — 02:30 every night, keep 30 days
+  30 2 * * * root cd /srv/financeos && docker compose -f compose.prod.yml exec -T postgres \
+    pg_dump -U expensewise -Fc expensewise > /var/backups/financeos-$(date +\%F).dump \
+    && find /var/backups -name 'financeos-*.dump' -mtime +30 -delete
   ```
 
   Copy the dumps off the server (restic, rclone to R2/S3, or your backup
@@ -177,7 +180,7 @@ worker, so this mode suits small installs only.
 ### Restore drill (do it quarterly)
 
 1. Restore the latest dump into a scratch database:
-   `createdb expensewise_restore && pg_restore -d expensewise_restore --no-owner /var/backups/expensewise-YYYY-MM-DD.dump`
+   `createdb expensewise_restore && pg_restore -d expensewise_restore --no-owner /var/backups/financeos-YYYY-MM-DD.dump`
    (managed: restore a PITR branch/instance to a timestamp).
 2. Run the release step against it:
    `DATABASE_URL=postgres://…/expensewise_restore node dist/scripts/migrate.js`.
@@ -203,7 +206,7 @@ workspace only.
    **SPF** (TXT, `include:` Resend), **DKIM** (the CNAME/TXT keys) and a
    **DMARC** policy (`_dmarc` TXT, start with `p=none; rua=mailto:…`, move to
    `quarantine` once reports are clean).
-2. `RESEND_API_KEY=re_…` and `EMAIL_FROM="Expense Wise <hello@your-domain>"`
+2. `RESEND_API_KEY=re_…` and `EMAIL_FROM="FinanceOS <hello@your-domain>"`
    (an address on the verified domain).
 3. Sign up with a new address and check the verification email arrives and
    passes SPF/DKIM (Gmail: "Show original").
@@ -272,7 +275,7 @@ To rotate it without downtime:
    ```bash
    docker compose -f compose.prod.yml run --rm api node dist/scripts/rotate-keys.js --dry-run
    docker compose -f compose.prod.yml run --rm api node dist/scripts/rotate-keys.js
-   # from a checkout: pnpm --filter @expensewise/api rotate-keys [--dry-run]
+   # from a checkout: pnpm --filter @financeos/api rotate-keys [--dry-run]
    ```
 
    It is idempotent, prints a summary per kind of secret, and exits 1 if any

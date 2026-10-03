@@ -1,4 +1,4 @@
-import { presetRange, today } from "@expensewise/core";
+import { presetRange, today } from "@financeos/core";
 import type { Metadata } from "next";
 import { PageShell } from "@/components/app/page-shell";
 import { OverviewView } from "@/components/overview/overview-view";

@@ -1,6 +1,6 @@
 "use client";
 
-import { monthKey, TYPE_LABELS } from "@expensewise/core";
+import { monthKey, TYPE_LABELS } from "@financeos/core";
 import { AlertTriangle, Check, FileText, Loader2, Paperclip, Pencil, Trash2, X } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";

@@ -1,4 +1,4 @@
-import type { BillingInterval } from "@expensewise/core";
+import type { BillingInterval } from "@financeos/core";
 
 const DAY_MS = 86_400_000;
 

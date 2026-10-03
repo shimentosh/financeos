@@ -1,4 +1,4 @@
-import { dayString, reportGenerateInput } from "@expensewise/core";
+import { dayString, reportGenerateInput } from "@financeos/core";
 import { Body, Controller, Delete, Get, Inject, Param, ParseUUIDPipe, Post, Query } from "@nestjs/common";
 import { z } from "zod";
 import { todayFor, type WorkspaceContext } from "../../common/context.js";

@@ -7,7 +7,7 @@ import {
   memberRoleInput,
   resendInvitationInput,
   transferOwnershipInput,
-} from "@expensewise/core";
+} from "@financeos/core";
 import { Body, Controller, Delete, Get, HttpCode, Inject, Param, ParseUUIDPipe, Patch, Post, Query, Req, Res } from "@nestjs/common";
 import { fromNodeHeaders } from "better-auth/node";
 import type { Response } from "express";

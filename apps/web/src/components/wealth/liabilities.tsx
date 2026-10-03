@@ -1,6 +1,6 @@
 "use client";
 
-import { FREQUENCY_LABELS, formatDay, minorToInput, today } from "@expensewise/core";
+import { FREQUENCY_LABELS, formatDay, minorToInput, today } from "@financeos/core";
 import { AlarmClock, CalendarClock, CircleAlert, HandCoins, Landmark, Pencil, Percent, Plus, Receipt, Trash2, Wallet } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";

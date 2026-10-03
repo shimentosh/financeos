@@ -47,7 +47,7 @@ describe("DSN parsing", () => {
   });
 
   it("builds the X-Sentry-Auth header", () => {
-    expect(authHeader({ key: "abc123" })).toBe("Sentry sentry_version=7, sentry_key=abc123, sentry_client=expensewise/0.1");
+    expect(authHeader({ key: "abc123" })).toBe("Sentry sentry_version=7, sentry_key=abc123, sentry_client=financeos/0.1");
   });
 });
 
@@ -178,7 +178,7 @@ describe("ErrorReporter", () => {
     const [url, init] = fetch.mock.calls[0] as unknown as [string, RequestInit];
     expect(url).toBe("https://sentry.example.com/api/9/envelope/");
     expect(init.method).toBe("POST");
-    expect((init.headers as Record<string, string>)["x-sentry-auth"]).toBe("Sentry sentry_version=7, sentry_key=abc, sentry_client=expensewise/0.1");
+    expect((init.headers as Record<string, string>)["x-sentry-auth"]).toBe("Sentry sentry_version=7, sentry_key=abc, sentry_client=financeos/0.1");
     expect((init.headers as Record<string, string>)["content-type"]).toBe("application/x-sentry-envelope");
     expect(String(init.body)).toContain('"release":"1.0.0"');
     expect(String(init.body)).not.toContain("Bearer x");

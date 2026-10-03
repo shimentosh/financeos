@@ -120,7 +120,7 @@ describe("email verification", () => {
     expect(settings?.preferences.onboarded).toBe(false);
 
     const message = lastEmailTo(email);
-    expect(message?.subject).toBe("Verify your email for Expense Wise");
+    expect(message?.subject).toBe("Verify your email for FinanceOS");
     const link = linkParams(message);
     expect(link.url.pathname).toBe("/api/auth/verify-email");
     // Lands on our page, remembering where sign-up was headed.
@@ -153,7 +153,7 @@ describe("email verification", () => {
     const person = await verified("Existing Person");
     const { response } = await signUp("Impostor", person.email);
     expect(response.status).toBe(200);
-    expect(lastEmailTo(person.email)?.subject).toBe("You already have an Expense Wise account");
+    expect(lastEmailTo(person.email)?.subject).toBe("You already have an FinanceOS account");
   });
 });
 
@@ -162,7 +162,7 @@ describe("password reset", () => {
     const person = await verified("Reset Person");
     await auth.api.requestPasswordReset({ body: { email: person.email, redirectTo: "/reset-password" } });
     const message = lastEmailTo(person.email);
-    expect(message?.subject).toBe("Reset your Expense Wise password");
+    expect(message?.subject).toBe("Reset your FinanceOS password");
     const url = new URL(message?.action?.url ?? "");
     expect(url.pathname).toBe("/reset-password");
     const token = url.searchParams.get("token") ?? "";
@@ -170,7 +170,7 @@ describe("password reset", () => {
 
     await auth.api.resetPassword({ body: { token, newPassword: "a brand new passphrase" } });
     expect(await db.select().from(sessions).where(eq(sessions.userId, person.id))).toHaveLength(0);
-    expect(lastEmailTo(person.email)?.subject).toBe("Your Expense Wise password was changed");
+    expect(lastEmailTo(person.email)?.subject).toBe("Your FinanceOS password was changed");
     expect((await auth.api.signInEmail({ body: { email: person.email, password: PASSWORD }, asResponse: true })).status).toBe(401);
     expect((await auth.api.signInEmail({ body: { email: person.email, password: "a brand new passphrase" }, asResponse: true })).status).toBe(200);
     // The link works once.

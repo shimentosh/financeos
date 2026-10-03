@@ -1,4 +1,4 @@
-import { addDays, addMonths, addYears, dueDatesBetween } from "@expensewise/core";
+import { addDays, addMonths, addYears, dueDatesBetween } from "@financeos/core";
 import { and, asc, count, eq, like, sql } from "drizzle-orm";
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { todayFor } from "../../src/common/context.js";

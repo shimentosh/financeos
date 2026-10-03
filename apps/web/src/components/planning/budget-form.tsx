@@ -1,6 +1,6 @@
 "use client";
 
-import { minorToInput, parseMoneyInput, startOfMonth, today } from "@expensewise/core";
+import { minorToInput, parseMoneyInput, startOfMonth, today } from "@financeos/core";
 import { useRouter } from "next/navigation";
 import { type FormEvent, useEffect, useId, useState } from "react";
 import { useApp } from "@/components/app/app-context";

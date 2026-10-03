@@ -2,5 +2,5 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 fn main() {
-    expensewise_desktop_lib::run()
+    financeos_desktop_lib::run()
 }

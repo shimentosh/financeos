@@ -1,6 +1,6 @@
 "use client";
 
-import type { SupportStatus } from "@expensewise/core";
+import type { SupportStatus } from "@financeos/core";
 import { CheckCircle2, Inbox, Mail, RotateCcw } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";

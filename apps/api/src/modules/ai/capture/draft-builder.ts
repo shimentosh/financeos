@@ -1,5 +1,5 @@
-import { type Day, formatMoney, type RuleOutcome, type TransactionInput, type TransactionSource, TYPE_RULES } from "@expensewise/core";
-import type { CaptureDraftView, ConfidenceField, DuplicateCandidateView, SuggestedRef } from "@expensewise/core/contracts/ai-extra";
+import { type Day, formatMoney, type RuleOutcome, type TransactionInput, type TransactionSource, TYPE_RULES } from "@financeos/core";
+import type { CaptureDraftView, ConfidenceField, DuplicateCandidateView, SuggestedRef } from "@financeos/core/contracts/ai-extra";
 import { Inject, Injectable } from "@nestjs/common";
 import { and, asc, eq, ne } from "drizzle-orm";
 import type { WorkspaceContext } from "../../../common/context.js";

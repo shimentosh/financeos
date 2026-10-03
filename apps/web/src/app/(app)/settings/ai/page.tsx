@@ -1,4 +1,4 @@
-import { type AgentMemoryItem, monthKey, today } from "@expensewise/core";
+import { type AgentMemoryItem, monthKey, today } from "@financeos/core";
 import { AiUsageReport } from "@/components/ai/usage-report";
 import { AgentMemorySettings } from "@/components/settings/agent-memory";
 import { AiSettings } from "@/components/settings/misc-settings";

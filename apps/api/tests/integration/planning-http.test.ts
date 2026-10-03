@@ -1,5 +1,5 @@
 import type { AddressInfo } from "node:net";
-import { addDays, today } from "@expensewise/core";
+import { addDays, today } from "@financeos/core";
 import type { INestApplication } from "@nestjs/common";
 import { Test } from "@nestjs/testing";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";

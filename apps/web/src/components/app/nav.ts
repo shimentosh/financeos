@@ -1,4 +1,4 @@
-import type { WorkspaceKind } from "@expensewise/core";
+import type { WorkspaceKind } from "@financeos/core";
 import {
   ArrowLeftRight,
   BadgeDollarSign,

@@ -1,4 +1,4 @@
-import type { CopilotMessageView, CopilotThreadView } from "@expensewise/core";
+import type { CopilotMessageView, CopilotThreadView } from "@financeos/core";
 
 export type CopilotThreadList = {
   items: CopilotThreadView[];

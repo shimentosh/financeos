@@ -1,4 +1,4 @@
-import { addDays, type Day, today } from "@expensewise/core";
+import { addDays, type Day, today } from "@financeos/core";
 import { z } from "zod";
 
 // Deterministic feeds for the demo connectors. Everything is derived from a

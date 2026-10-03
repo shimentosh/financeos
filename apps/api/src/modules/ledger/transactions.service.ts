@@ -16,7 +16,7 @@ import {
   transactionInput,
   transactionQuery,
   transactionUpdate,
-} from "@expensewise/core";
+} from "@financeos/core";
 import { Inject, Injectable } from "@nestjs/common";
 import { and, asc, count, desc, eq, gte, ilike, inArray, isNull, lte, ne, or, type SQL, sql } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";

@@ -1,5 +1,5 @@
-import { addDays, type Day } from "@expensewise/core";
-import type { CanonicalRecordInput } from "@expensewise/core/contracts/integrations-extra";
+import { addDays, type Day } from "@financeos/core";
+import type { CanonicalRecordInput } from "@financeos/core/contracts/integrations-extra";
 import { z } from "zod";
 import { randomBase62 } from "../crypto.js";
 import { signTimestampedHeader, verifyTimestampedHeader } from "./signatures.js";

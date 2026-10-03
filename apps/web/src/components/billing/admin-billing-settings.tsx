@@ -1,6 +1,6 @@
 "use client";
 
-import { minorToInput, parseMoneyInput } from "@expensewise/core";
+import { minorToInput, parseMoneyInput } from "@financeos/core";
 import { Check, CircleAlert, Copy, FlaskConical, Plus, Save, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { type ReactNode, useState } from "react";

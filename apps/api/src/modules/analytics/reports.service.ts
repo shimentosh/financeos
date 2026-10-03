@@ -10,7 +10,7 @@ import {
   startOfMonth,
   startOfQuarter,
   startOfWeek,
-} from "@expensewise/core";
+} from "@financeos/core";
 import { Inject, Injectable } from "@nestjs/common";
 import { and, count, desc, eq, gte, inArray, lte, sql } from "drizzle-orm";
 import { todayFor, type WorkspaceContext } from "../../common/context.js";

@@ -1,4 +1,4 @@
-import { type AiConfigInput, type AiConfigTestInput, aiConfigInput, aiConfigTestInput } from "@expensewise/core";
+import { type AiConfigInput, type AiConfigTestInput, aiConfigInput, aiConfigTestInput } from "@financeos/core";
 import { Body, Controller, Delete, Get, HttpCode, Inject, Post, Put, UseGuards } from "@nestjs/common";
 import type { SessionUser } from "../../common/context.js";
 import { AdminGuard, CurrentUser } from "../../common/guards.js";

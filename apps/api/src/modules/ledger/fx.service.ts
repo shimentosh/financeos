@@ -1,4 +1,4 @@
-import { convertMinor, type Day, invertRate } from "@expensewise/core";
+import { convertMinor, type Day, invertRate } from "@financeos/core";
 import { Inject, Injectable } from "@nestjs/common";
 import { and, asc, desc, eq, gt, lte } from "drizzle-orm";
 import type { WorkspaceContext } from "../../common/context.js";

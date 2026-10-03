@@ -1,6 +1,6 @@
 "use client";
 
-import { formatDay, SUBSCRIPTION_STATUS_LABELS, type SubscriptionStatus } from "@expensewise/core";
+import { formatDay, SUBSCRIPTION_STATUS_LABELS, type SubscriptionStatus } from "@financeos/core";
 import { AlertTriangle, CalendarClock, CircleAlert, Plus, Repeat, Search, Wallet, X } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -95,7 +95,7 @@ export function SubscriptionsView({
         <EmptyState
           icon={Repeat}
           title="You're not tracking any subscriptions yet"
-          description="Add Netflix, Claude, your domain or hosting renewal. Expense Wise reminds you before each renewal, spots price changes and shows what they cost a year."
+          description="Add Netflix, Claude, your domain or hosting renewal. FinanceOS reminds you before each renewal, spots price changes and shows what they cost a year."
           action={
             canWrite ? (
               <Button size="sm" onClick={() => setCreating(true)}>

@@ -1,6 +1,6 @@
-# Expense Wise — engineering guide
+# FinanceOS — engineering guide
 
-Expense Wise is a personal + business financial operating system: Capture → Connect → Understand → Act. The **ledger is the source of truth**; AI extracts, classifies, suggests and explains, but never becomes the record.
+FinanceOS is a personal + business financial operating system: Capture → Connect → Understand → Act. The **ledger is the source of truth**; AI extracts, classifies, suggests and explains, but never becomes the record.
 
 This is an operating guide for anyone (human or agent) changing the code.
 
@@ -25,10 +25,10 @@ apps/desktop    Tauri 2 shell (Windows MSI via `pnpm desktop:build`). Loads a ru
 
 ```
 pnpm dev                          # api + web
-pnpm --filter @expensewise/api build | typecheck | test
-pnpm --filter @expensewise/core test
+pnpm --filter @financeos/api build | typecheck | test
+pnpm --filter @financeos/core test
 pnpm db:generate / db:migrate / db:seed
-pnpm --filter @expensewise/api migrate:prod | rotate-keys   # production (see docs/deploy.md)
+pnpm --filter @financeos/api migrate:prod | rotate-keys   # production (see docs/deploy.md)
 ```
 
 API integration tests use `DATABASE_URL_TEST`. Parallel runners must each use their own
@@ -57,7 +57,7 @@ Ports 3100/4100 belong to the developer's own `pnpm dev`. Agents never start ser
 - Money is **integer minor units** (`bigint` mode number). Never floats in arithmetic.
 - Every transaction keeps: original `amount` + `currency`, `accountAmount` (account currency),
   `baseAmount` + `baseCurrency`, and the `fxRate` used. Never overwrite the original currency.
-- Financial dates are days: `"YYYY-MM-DD"` strings. Use `@expensewise/core` date helpers.
+- Financial dates are days: `"YYYY-MM-DD"` strings. Use `@financeos/core` date helpers.
 - Transfers, investments, asset purchases, loans, debt payments and equity are **not**
   income or expense. `pnlEffect`/`incomeStatement` in core define P&L; use them.
 
@@ -84,7 +84,7 @@ Ports 3100/4100 belong to the developer's own `pnpm dev`. Agents never start ser
 - **Every query filters by `ctx.workspaceId`.** Any id arriving in a request (account, category,
   project, counterparty, linked record, file) must be checked with
   `assertInWorkspace(exec, table, ctx.workspaceId, ids, "Entity")` before use.
-- Validate bodies/queries with Zod contracts from `@expensewise/core` via `@Body(zod(schema))`.
+- Validate bodies/queries with Zod contracts from `@financeos/core` via `@Body(zod(schema))`.
   Put new request schemas in `packages/core/src/contracts/`.
 - Throw `DomainError` helpers from `src/common/errors.ts` (`notFound`, `badRequest`,
   `unprocessable`, `conflict`, `forbidden`). The global filter maps them to JSON.
@@ -138,7 +138,7 @@ Ports 3100/4100 belong to the developer's own `pnpm dev`. Agents never start ser
 
 ## Schema
 
-`apps/api/src/db/schema/*`. Enum values come from `@expensewise/core` constants. Changing the
+`apps/api/src/db/schema/*`. Enum values come from `@financeos/core` constants. Changing the
 schema requires a generated migration (`pnpm db:generate`), reviewed SQL, and applying it to
 every database. Prefer existing JSONB `metadata`/`config`/`data` columns for flexible data.
 

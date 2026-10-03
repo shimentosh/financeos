@@ -1,4 +1,4 @@
-import { type BillingStatus, DEFAULT_PLANS, PAST_DUE_GRACE_DAYS, type PlanId, type PlanLimits, UNLIMITED_LIMITS } from "@expensewise/core";
+import { type BillingStatus, DEFAULT_PLANS, PAST_DUE_GRACE_DAYS, type PlanId, type PlanLimits, UNLIMITED_LIMITS } from "@financeos/core";
 import { Injectable } from "@nestjs/common";
 import { and, asc, count, eq, gt, inArray, sql } from "drizzle-orm";
 import { planLimit } from "../../common/errors.js";

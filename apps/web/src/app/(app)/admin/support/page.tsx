@@ -1,4 +1,4 @@
-import type { SupportStatus } from "@expensewise/core";
+import type { SupportStatus } from "@financeos/core";
 import { AdminPage } from "@/components/admin/admin-page";
 import { type SupportList, SupportRequests } from "@/components/admin/support-requests";
 import { api } from "@/lib/api/server";

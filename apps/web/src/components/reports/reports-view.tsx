@@ -1,6 +1,6 @@
 "use client";
 
-import { formatMoney } from "@expensewise/core";
+import { formatMoney } from "@financeos/core";
 import { ArrowDownLeft, ArrowUpRight, FileText, Loader2, PiggyBank, Sparkles, TrendingUp } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";

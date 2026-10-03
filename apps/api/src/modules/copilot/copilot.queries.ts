@@ -11,7 +11,7 @@ import {
   previousRange,
   type Range,
   startOfMonth,
-} from "@expensewise/core";
+} from "@financeos/core";
 import { Inject, Injectable } from "@nestjs/common";
 import { and, eq, sql } from "drizzle-orm";
 import { todayFor, type WorkspaceContext } from "../../common/context.js";

@@ -1,5 +1,5 @@
-import type { apiKeyInput } from "@expensewise/core";
-import type { ApiKeyScope } from "@expensewise/core/contracts/integrations-extra";
+import type { apiKeyInput } from "@financeos/core";
+import type { ApiKeyScope } from "@financeos/core/contracts/integrations-extra";
 import { Inject, Injectable } from "@nestjs/common";
 import { and, desc, eq } from "drizzle-orm";
 import type { z } from "zod";

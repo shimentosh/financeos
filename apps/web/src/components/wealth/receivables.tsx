@@ -1,6 +1,6 @@
 "use client";
 
-import { formatDay, minorToInput, today } from "@expensewise/core";
+import { formatDay, minorToInput, today } from "@financeos/core";
 import { AlarmClock, CircleAlert, CircleCheck, FileText, HandCoins, Pencil, Plus, Trash2, Wallet } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";

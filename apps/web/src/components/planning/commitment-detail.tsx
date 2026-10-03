@@ -1,6 +1,6 @@
 "use client";
 
-import { formatDay, today } from "@expensewise/core";
+import { formatDay, today } from "@financeos/core";
 import { ExternalLink, Pause, Pencil, Play, Square, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";

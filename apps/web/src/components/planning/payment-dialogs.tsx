@@ -1,6 +1,6 @@
 "use client";
 
-import { formatDay, minorToInput, parseMoneyInput, today } from "@expensewise/core";
+import { formatDay, minorToInput, parseMoneyInput, today } from "@financeos/core";
 import { AlertTriangle, ExternalLink, Link2, Plus } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";

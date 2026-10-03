@@ -5,9 +5,9 @@ import { ThemeScript } from "./theme-script";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: { default: "Expense Wise", template: "%s · Expense Wise" },
+  title: { default: "FinanceOS", template: "%s · FinanceOS" },
   description: "Your personal and business finances in one place: capture, connect, understand, act.",
-  applicationName: "Expense Wise",
+  applicationName: "FinanceOS",
   icons: { icon: "/icon.svg" },
 };
 

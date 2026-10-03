@@ -13,7 +13,7 @@ import { env } from "../../env.js";
  *
  * Rotation: new values are always sealed with ENCRYPTION_KEY; decryption tries
  * ENCRYPTION_KEY, then each key in ENCRYPTION_KEY_PREVIOUS. After changing the
- * key, list the old one there and run `pnpm --filter @expensewise/api
+ * key, list the old one there and run `pnpm --filter @financeos/api
  * rotate-keys` to re-seal every stored secret; then the old key can go.
  */
 const VERSION = "v1";

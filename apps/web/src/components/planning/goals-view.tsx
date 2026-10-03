@@ -1,6 +1,6 @@
 "use client";
 
-import { formatDay, formatMoney, type GoalKind } from "@expensewise/core";
+import { formatDay, formatMoney, type GoalKind } from "@financeos/core";
 import { CheckCircle2, Gem, PiggyBank, Plus, Target, TrendingUp, Trophy, Wallet } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";

@@ -1,4 +1,4 @@
-import { uuidv7 } from "@expensewise/core";
+import { uuidv7 } from "@financeos/core";
 import { Inject, Injectable, Logger, type OnModuleInit } from "@nestjs/common";
 import { and, desc, eq } from "drizzle-orm";
 import { badRequest, DomainError, notFound, tooManyRequests, unauthorized } from "../../common/errors.js";

@@ -1,5 +1,5 @@
 import "server-only";
-import { today } from "@expensewise/core";
+import { today } from "@financeos/core";
 import { api } from "@/lib/api/server";
 import { fromSearchParams } from "@/lib/api/shared";
 import type { Account, Category, CurrentWorkspace, Project, TransactionPage } from "@/lib/api/types";

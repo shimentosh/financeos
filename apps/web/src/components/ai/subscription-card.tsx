@@ -1,6 +1,6 @@
 "use client";
 
-import { COMMON_CURRENCIES, minorToInput, parseMoneyInput } from "@expensewise/core";
+import { COMMON_CURRENCIES, minorToInput, parseMoneyInput } from "@financeos/core";
 import { Repeat } from "lucide-react";
 import { useId } from "react";
 import { ConfidenceMeter } from "@/components/app/blocks";

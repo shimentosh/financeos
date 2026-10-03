@@ -1,5 +1,5 @@
-import { assetInput, assetUpdate, type Day, diffDays, valuationInput } from "@expensewise/core";
-import { type AssetQuery, type AssetSellInput, assetQuery, assetSellInput } from "@expensewise/core/contracts/wealth-extra";
+import { assetInput, assetUpdate, type Day, diffDays, valuationInput } from "@financeos/core";
+import { type AssetQuery, type AssetSellInput, assetQuery, assetSellInput } from "@financeos/core/contracts/wealth-extra";
 import { Inject, Injectable } from "@nestjs/common";
 import { and, asc, desc, eq, inArray, ne } from "drizzle-orm";
 import type { z } from "zod";

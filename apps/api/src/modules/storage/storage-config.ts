@@ -1,4 +1,4 @@
-import { type R2Jurisdiction, r2Endpoint, type StorageProvider } from "@expensewise/core";
+import { type R2Jurisdiction, r2Endpoint, type StorageProvider } from "@financeos/core";
 import { Logger } from "@nestjs/common";
 import { eq } from "drizzle-orm";
 import { db } from "../../db/index.js";

@@ -1,4 +1,4 @@
-import { type SupportRequestInput, type SupportStatus, supportRequestInput } from "@expensewise/core";
+import { type SupportRequestInput, type SupportStatus, supportRequestInput } from "@financeos/core";
 import { Inject, Injectable, Logger } from "@nestjs/common";
 import { and, count, desc, eq, inArray } from "drizzle-orm";
 import { assertFound } from "../../common/errors.js";

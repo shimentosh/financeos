@@ -1,6 +1,6 @@
 "use client";
 
-import { ACCOUNT_KIND_LABELS, formatMoney, minorToInput, parseMoneyInput, today } from "@expensewise/core";
+import { ACCOUNT_KIND_LABELS, formatMoney, minorToInput, parseMoneyInput, today } from "@financeos/core";
 import { Archive, Pencil, Scale } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useId, useState } from "react";

@@ -9,7 +9,7 @@ import {
   type BillingTestInput,
   billingConfigInput,
   billingTestInput,
-} from "@expensewise/core";
+} from "@financeos/core";
 import { Body, Controller, Get, HttpCode, Inject, Param, Post, Put, Query, Req, UseGuards } from "@nestjs/common";
 import type { z } from "zod";
 import type { AppRequest, SessionUser } from "../../common/context.js";

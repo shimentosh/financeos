@@ -1,4 +1,4 @@
-import type { AiConfigView } from "@expensewise/core";
+import type { AiConfigView } from "@financeos/core";
 import { AdminPage } from "@/components/admin/admin-page";
 import { AdminAiView } from "@/components/admin/admin-views";
 import { AiProviderSettings } from "@/components/admin/ai-provider-settings";

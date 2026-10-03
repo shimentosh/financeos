@@ -1,10 +1,10 @@
-import type { TransactionType } from "@expensewise/core";
-import type { ApiKeyScope, ConnectorCategory, SyncStatus, SyncTrigger } from "@expensewise/core/contracts/integrations-extra";
+import type { TransactionType } from "@financeos/core";
+import type { ApiKeyScope, ConnectorCategory, SyncStatus, SyncTrigger } from "@financeos/core/contracts/integrations-extra";
 import type { TransactionListItem } from "@/lib/api/types";
 
 // Response shapes of the integrations endpoints: /integrations, /sync-runs,
 // /webhooks, /imports, /api-keys and the public API. Request contracts live
-// in @expensewise/core/contracts/integrations-extra.
+// in @financeos/core/contracts/integrations-extra.
 
 export type { ApiKeyScope, ConnectorCategory, SyncStatus, SyncTrigger };
 

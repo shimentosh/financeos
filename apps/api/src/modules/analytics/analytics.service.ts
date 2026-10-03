@@ -16,7 +16,7 @@ import {
   type Range,
   receivableState,
   startOfMonth,
-} from "@expensewise/core";
+} from "@financeos/core";
 import { Inject, Injectable } from "@nestjs/common";
 import { and, eq, gte, inArray, isNotNull, isNull, lte, ne, sql } from "drizzle-orm";
 import { todayFor, type WorkspaceContext } from "../../common/context.js";

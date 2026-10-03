@@ -1,6 +1,6 @@
 "use client";
 
-import type { CopilotAskResult, CopilotFact, CopilotMessageView, CopilotThreadView } from "@expensewise/core";
+import type { CopilotAskResult, CopilotFact, CopilotMessageView, CopilotThreadView } from "@financeos/core";
 import { ArrowUp, History, Link2, MessageSquarePlus, Sparkles, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";

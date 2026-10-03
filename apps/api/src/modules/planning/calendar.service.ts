@@ -8,7 +8,7 @@ import {
   dueDatesBetween,
   maxDay,
   monthlyEquivalent,
-} from "@expensewise/core";
+} from "@financeos/core";
 import {
   type AnnualCommitmentsQuery,
   annualCommitmentsQuery,
@@ -16,7 +16,7 @@ import {
   calendarQuery,
   type UpcomingQuery,
   upcomingQuery,
-} from "@expensewise/core/contracts/planning-extra";
+} from "@financeos/core/contracts/planning-extra";
 import { Inject, Injectable } from "@nestjs/common";
 import { and, between, eq, inArray, lt, or, type SQL } from "drizzle-orm";
 import { todayFor, type WorkspaceContext } from "../../common/context.js";

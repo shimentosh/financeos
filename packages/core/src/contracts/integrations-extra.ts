@@ -52,7 +52,7 @@ const accountRef = z.string().trim().max(200).nullish();
  * Any money movement, as a connector reports it. `amount` is positive minor
  * units; `direction` carries the sign. `accountRef` / `toAccountRef` name an
  * account in the source system, resolved through the connection's account map
- * (or an Expense Wise account id); omitted, the connection's account is used.
+ * (or an FinanceOS account id); omitted, the connection's account is used.
  */
 export const canonicalTransaction = z.object({
   kind: z.literal("transaction"),

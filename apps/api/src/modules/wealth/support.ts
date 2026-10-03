@@ -1,4 +1,4 @@
-import { convertMinor, type Day, normalizeName, today } from "@expensewise/core";
+import { convertMinor, type Day, normalizeName, today } from "@financeos/core";
 import { and, asc, eq } from "drizzle-orm";
 import type { WorkspaceContext } from "../../common/context.js";
 import { unprocessable } from "../../common/errors.js";

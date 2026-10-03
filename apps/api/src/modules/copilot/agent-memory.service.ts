@@ -1,4 +1,4 @@
-import { AGENT_MEMORY_LIMIT, type AgentMemoryItem, agentMemoryInput, normalizeName, uuidv7 } from "@expensewise/core";
+import { AGENT_MEMORY_LIMIT, type AgentMemoryItem, agentMemoryInput, normalizeName, uuidv7 } from "@financeos/core";
 import { Inject, Injectable } from "@nestjs/common";
 import { eq, sql } from "drizzle-orm";
 import type { WorkspaceContext } from "../../common/context.js";

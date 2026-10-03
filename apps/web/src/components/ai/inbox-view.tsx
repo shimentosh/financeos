@@ -1,6 +1,6 @@
 "use client";
 
-import { TYPE_LABELS } from "@expensewise/core";
+import { TYPE_LABELS } from "@financeos/core";
 import {
   AlertTriangle,
   Camera,

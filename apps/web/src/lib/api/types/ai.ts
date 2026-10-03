@@ -1,5 +1,5 @@
 // Response shapes of the AI endpoints: /captures, /inbox, /ai/status,
-// /ai/usage. The canonical types live in @expensewise/core (shared with the
+// /ai/usage. The canonical types live in @financeos/core (shared with the
 // API); this file re-exports them and adds the few shapes only the web uses.
 
 export type {
@@ -25,9 +25,9 @@ export type {
   SuggestedRef,
   UncategorizedItemView,
   UncategorizedView,
-} from "@expensewise/core/contracts/ai-extra";
+} from "@financeos/core/contracts/ai-extra";
 
-import type { CaptureListItem, InboxItemView } from "@expensewise/core/contracts/ai-extra";
+import type { CaptureListItem, InboxItemView } from "@financeos/core/contracts/ai-extra";
 
 /** GET /captures */
 export type CapturePage = { items: CaptureListItem[]; total: number; page: number; pageSize: number };

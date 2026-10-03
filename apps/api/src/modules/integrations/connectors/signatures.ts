@@ -41,11 +41,11 @@ export function signTimestampedHeader(secret: string, rawBody: Buffer, now: Date
 }
 
 /**
- * The Expense Wise scheme for custom apps: `x-expensewise-timestamp: <unix
- * seconds>` and `x-expensewise-signature: sha256=<hex>` where hex is
+ * The FinanceOS scheme for custom apps: `x-financeos-timestamp: <unix
+ * seconds>` and `x-financeos-signature: sha256=<hex>` where hex is
  * HMAC-SHA256 of `${timestamp}.${rawBody}` with the connection's secret.
  */
-export function verifyExpenseWiseSignature(input: {
+export function verifyFinanceOSSignature(input: {
   signature: string | undefined;
   timestamp: string | undefined;
   rawBody: Buffer;
@@ -61,7 +61,7 @@ export function verifyExpenseWiseSignature(input: {
   return safeEqual(match[1].toLowerCase(), expected);
 }
 
-export function signExpenseWise(secret: string, rawBody: Buffer, now: Date): { timestamp: string; signature: string } {
+export function signFinanceOS(secret: string, rawBody: Buffer, now: Date): { timestamp: string; signature: string } {
   const timestamp = String(Math.floor(now.getTime() / 1000));
   const signature = `sha256=${hmacSha256Hex(secret, Buffer.concat([Buffer.from(`${timestamp}.`, "utf8"), rawBody]))}`;
   return { timestamp, signature };

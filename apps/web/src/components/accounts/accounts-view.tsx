@@ -1,6 +1,6 @@
 "use client";
 
-import { ACCOUNT_KIND_LABELS, type AccountKind } from "@expensewise/core";
+import { ACCOUNT_KIND_LABELS, type AccountKind } from "@financeos/core";
 import { Banknote, CheckCircle2, CircleAlert, CreditCard, Landmark, Plus, Smartphone, Wallet } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";

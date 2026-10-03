@@ -1,6 +1,6 @@
 "use client";
 
-import { formatMoney } from "@expensewise/core";
+import { formatMoney } from "@financeos/core";
 import { AlertTriangle, CalendarClock, Info, TrendingDown, TrendingUp, Wallet } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";

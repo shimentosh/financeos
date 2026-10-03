@@ -1,4 +1,4 @@
-import type { CommitmentKind, Frequency, GoalKind, IntervalUnit, OccurrenceStatus, SubscriptionStatus } from "@expensewise/core";
+import type { CommitmentKind, Frequency, GoalKind, IntervalUnit, OccurrenceStatus, SubscriptionStatus } from "@financeos/core";
 
 // Response shapes of the planning endpoints: /commitments, /occurrences,
 // /subscriptions, /budgets, /goals. Money is minor units; `*Base` fields are in

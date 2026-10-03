@@ -16,7 +16,7 @@ import {
   subscriptionInput,
   subscriptionUpdate,
   uuidv7,
-} from "@expensewise/core";
+} from "@financeos/core";
 import {
   BILLING_CYCLES,
   type BillingCycle,
@@ -24,7 +24,7 @@ import {
   type SubscriptionQuery,
   subscriptionCancelInput,
   subscriptionQuery,
-} from "@expensewise/core/contracts/planning-extra";
+} from "@financeos/core/contracts/planning-extra";
 import { Inject, Injectable } from "@nestjs/common";
 import { and, asc, desc, eq, ilike, inArray, ne, or, type SQL } from "drizzle-orm";
 import type { z } from "zod";

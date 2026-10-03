@@ -1,4 +1,4 @@
-import { inboxActionInput, textCaptureInput } from "@expensewise/core";
+import { inboxActionInput, textCaptureInput } from "@financeos/core";
 import {
   aiUsageQuery,
   type CaptureConfirmInput,
@@ -17,7 +17,7 @@ import {
   type UncategorizedQuery,
   uncategorizedApplyInput,
   uncategorizedQuery,
-} from "@expensewise/core/contracts/ai-extra";
+} from "@financeos/core/contracts/ai-extra";
 import { Body, Controller, Get, HttpCode, Inject, Param, ParseUUIDPipe, Post, Query, UploadedFile, UseInterceptors } from "@nestjs/common";
 import type { z } from "zod";
 import type { WorkspaceContext } from "../../common/context.js";

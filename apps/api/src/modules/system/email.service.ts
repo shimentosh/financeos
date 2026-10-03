@@ -48,11 +48,11 @@ ${message.preview ? `<div style="display:none;max-height:0;overflow:hidden">${es
 <table role="presentation" width="100%" style="padding:28px 12px"><tr><td align="center">
 <table role="presentation" width="100%" style="max-width:520px;background:#ffffff;border:1px solid #e4e4e7;border-radius:14px;padding:28px">
 <tr><td>
-<p style="margin:0 0 20px;font-size:14px;font-weight:700;color:#18181b;letter-spacing:-0.01em">Expense Wise</p>
+<p style="margin:0 0 20px;font-size:14px;font-weight:700;color:#18181b;letter-spacing:-0.01em">FinanceOS</p>
 <h1 style="margin:0 0 14px;font-size:20px;line-height:1.3;color:#09090b">${escapeHtml(message.heading)}</h1>
 ${paragraphs}${details}${action}${footnote}
 </td></tr></table>
-<p style="margin:16px 0 0;font-size:11px;color:#a1a1aa">Expense Wise · <a href="${escapeHtml(env.APP_URL)}" style="color:#a1a1aa">${escapeHtml(env.APP_URL.replace(/^https?:\/\//, ""))}</a></p>
+<p style="margin:16px 0 0;font-size:11px;color:#a1a1aa">FinanceOS · <a href="${escapeHtml(env.APP_URL)}" style="color:#a1a1aa">${escapeHtml(env.APP_URL.replace(/^https?:\/\//, ""))}</a></p>
 </td></tr></table></body></html>`;
   const text = [
     message.heading,
@@ -62,7 +62,7 @@ ${paragraphs}${details}${action}${footnote}
     ...(message.action ? ["", `${message.action.label}: ${message.action.url}`] : []),
     ...(message.footnote ? ["", message.footnote] : []),
     "",
-    `Expense Wise · ${env.APP_URL}`,
+    `FinanceOS · ${env.APP_URL}`,
   ].join("\n");
   return { html, text };
 }

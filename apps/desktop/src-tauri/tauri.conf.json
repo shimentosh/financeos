@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "Expense Wise",
+  "productName": "FinanceOS",
   "version": "0.1.0",
-  "identifier": "com.expensewise.desktop",
+  "identifier": "com.financeos.desktop",
   "build": {
     "frontendDist": "../src"
   },
@@ -11,7 +11,7 @@
     "windows": [
       {
         "label": "main",
-        "title": "Expense Wise",
+        "title": "FinanceOS",
         "url": "index.html",
         "width": 1280,
         "height": 820,
@@ -27,7 +27,7 @@
   "bundle": {
     "active": true,
     "targets": ["msi"],
-    "publisher": "Expense Wise",
+    "publisher": "FinanceOS",
     "category": "Finance",
     "shortDescription": "Personal and business financial operating system",
     "icon": ["icons/32x32.png", "icons/128x128.png", "icons/128x128@2x.png", "icons/icon.icns", "icons/icon.ico"],

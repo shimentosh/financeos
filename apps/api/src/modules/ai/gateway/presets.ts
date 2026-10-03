@@ -1,4 +1,4 @@
-import type { AiCapabilities, AiProviderId, AiProviderPreset, AiStructuredMode } from "@expensewise/core";
+import type { AiCapabilities, AiProviderId, AiProviderPreset, AiStructuredMode } from "@financeos/core";
 
 // What the gateway knows about each provider. Model lists are suggestions: any
 // model id the provider accepts can be typed in, and its capabilities are

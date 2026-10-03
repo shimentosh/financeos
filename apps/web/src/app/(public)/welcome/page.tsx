@@ -23,7 +23,7 @@ import { SiteSection } from "@/components/marketing/site-chrome";
 import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = {
-  title: "Expense Wise — personal and business money in one ledger",
+  title: "FinanceOS — personal and business money in one ledger",
   description:
     "Capture receipts and screenshots, connect bKash, banks and apps, and ask in English or বাংলা. One clean ledger for your household and your company; AI does the typing, you stay in control.",
 };
@@ -185,7 +185,7 @@ export default function WelcomePage() {
           </p>
           <h1 className="font-semibold text-4xl tracking-tight md:text-5xl">Know where every taka goes.</h1>
           <p className="max-w-xl text-lg text-muted-foreground">
-            Capture receipts, SMS and screenshots, connect bKash, banks and apps, and ask in English or বাংলা. Expense Wise keeps one clean ledger for your
+            Capture receipts, SMS and screenshots, connect bKash, banks and apps, and ask in English or বাংলা. FinanceOS keeps one clean ledger for your
             household and your company — AI does the typing, you stay in control.
           </p>
           <div className="flex flex-wrap gap-3">

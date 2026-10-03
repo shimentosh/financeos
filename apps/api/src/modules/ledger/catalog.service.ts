@@ -11,7 +11,7 @@ import {
   type RuleSubject,
   ruleInput,
   titleCase,
-} from "@expensewise/core";
+} from "@financeos/core";
 import { Inject, Injectable } from "@nestjs/common";
 import { and, asc, desc, eq, ilike, inArray, or, sql } from "drizzle-orm";
 import type { z } from "zod";

@@ -1,6 +1,6 @@
 "use client";
 
-import { type BillingInterval, type CreditPack, formatMoney, type PublicPlan } from "@expensewise/core";
+import { type BillingInterval, type CreditPack, formatMoney, type PublicPlan } from "@financeos/core";
 import { Check } from "lucide-react";
 import Link from "next/link";
 import { useMemo, useState } from "react";

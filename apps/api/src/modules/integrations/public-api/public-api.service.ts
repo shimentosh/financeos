@@ -1,5 +1,5 @@
-import { endOfMonth, startOfMonth, type TransactionInput } from "@expensewise/core";
-import type { publicExpenseInput, publicRevenueInput, publicTransactionInput, publicTransactionQuery } from "@expensewise/core/contracts/integrations-extra";
+import { endOfMonth, startOfMonth, type TransactionInput } from "@financeos/core";
+import type { publicExpenseInput, publicRevenueInput, publicTransactionInput, publicTransactionQuery } from "@financeos/core/contracts/integrations-extra";
 import { Inject, Injectable } from "@nestjs/common";
 import type { z } from "zod";
 import { todayFor, type WorkspaceContext } from "../../../common/context.js";

@@ -9,7 +9,7 @@ import {
   type PriceChange,
   skipOccurrenceInput,
   type TransactionInput,
-} from "@expensewise/core";
+} from "@financeos/core";
 import {
   type MarkPaidRequest,
   markPaidRequest,
@@ -17,7 +17,7 @@ import {
   paymentMatchQuery,
   type UndoPaymentInput,
   undoPaymentInput,
-} from "@expensewise/core/contracts/planning-extra";
+} from "@financeos/core/contracts/planning-extra";
 import { Inject, Injectable, Logger, type OnModuleInit } from "@nestjs/common";
 import { and, desc, eq, gt, inArray, lt, ne } from "drizzle-orm";
 import type { z } from "zod";

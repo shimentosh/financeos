@@ -10,7 +10,7 @@ const sections: LegalSection[] = [
     title: "The service",
     body: (
       <p>
-        Expense Wise is software for recording and understanding personal and business finances: accounts, transactions, receipts, bills, budgets, goals,
+        FinanceOS is software for recording and understanding personal and business finances: accounts, transactions, receipts, bills, budgets, goals,
         assets, debts and reports. It is a record-keeping and planning tool. It does not hold or move your money, is not a bank or payment service, and does not
         give financial, tax, investment or legal advice.
       </p>
@@ -49,7 +49,7 @@ const sections: LegalSection[] = [
     body: (
       <>
         <p>
-          Everything you put into Expense Wise — transactions, files, notes and the rest — stays yours. You give us permission to store, process and display it
+          Everything you put into FinanceOS — transactions, files, notes and the rest — stays yours. You give us permission to store, process and display it
           only to provide the service to you and the people you share it with, as described in our{" "}
           <Link href="/privacy" className="underline underline-offset-4">
             Privacy Policy
@@ -109,7 +109,7 @@ const sections: LegalSection[] = [
     title: "Availability and changes",
     body: (
       <p>
-        We work to keep Expense Wise available and your data safe, and back it up regularly, but we do not promise the service will be uninterrupted or free of
+        We work to keep FinanceOS available and your data safe, and back it up regularly, but we do not promise the service will be uninterrupted or free of
         errors. We may improve, change or remove features; if a change removes something you pay for, we will tell you in advance.
       </p>
     ),
@@ -173,7 +173,7 @@ export default function TermsPage() {
       updated="26 September 2026"
       intro={
         <p>
-          These terms are the agreement between you and Expense Wise (“we”, “us”) for using the Expense Wise website and apps. Please read them; by creating an
+          These terms are the agreement between you and FinanceOS (“we”, “us”) for using the FinanceOS website and apps. Please read them; by creating an
           account you accept them.
         </p>
       }

@@ -1,6 +1,6 @@
 "use client";
 
-import { formatDay, formatMoney } from "@expensewise/core";
+import { formatDay, formatMoney } from "@financeos/core";
 import { ArrowDownLeft, CalendarRange, Receipt, Repeat, Undo2 } from "lucide-react";
 import Link from "next/link";
 import { useApp } from "@/components/app/app-context";

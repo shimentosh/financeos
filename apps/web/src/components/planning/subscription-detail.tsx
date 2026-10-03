@@ -1,6 +1,6 @@
 "use client";
 
-import { DEFAULT_REMINDER_OFFSETS, formatDay, relativeDays, today } from "@expensewise/core";
+import { DEFAULT_REMINDER_OFFSETS, formatDay, relativeDays, today } from "@financeos/core";
 import { Ban, CalendarClock, CheckCircle2, MoreHorizontal, Paperclip, Pause, Pencil, Play, Receipt, Trash2, TrendingUp, Wallet } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";

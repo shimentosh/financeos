@@ -1,4 +1,4 @@
-import { uuidv7 } from "@expensewise/core";
+import { uuidv7 } from "@financeos/core";
 import { bigint, date, numeric, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
 
 export const pk = () => uuid("id").primaryKey().$defaultFn(uuidv7);

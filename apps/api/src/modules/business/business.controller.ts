@@ -1,11 +1,11 @@
-import { employeeUpdate, payrollItemUpdate, payrollRunInput } from "@expensewise/core";
+import { employeeUpdate, payrollItemUpdate, payrollRunInput } from "@financeos/core";
 import {
   type EmployeeCreateInput,
   employeeCreateInput,
   employeeQuery,
   type FinanceRangeQuery,
   financeRangeQuery,
-} from "@expensewise/core/contracts/business-extra";
+} from "@financeos/core/contracts/business-extra";
 import { Body, Controller, Delete, Get, HttpCode, Inject, Param, ParseUUIDPipe, Patch, Post, Query } from "@nestjs/common";
 import type { z } from "zod";
 import type { WorkspaceContext } from "../../common/context.js";

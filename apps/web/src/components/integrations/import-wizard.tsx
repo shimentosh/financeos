@@ -1,6 +1,6 @@
 "use client";
 
-import { COMMON_CURRENCIES } from "@expensewise/core";
+import { COMMON_CURRENCIES } from "@financeos/core";
 import {
   ArrowLeft,
   ArrowRight,

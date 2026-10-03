@@ -1,5 +1,5 @@
-import { addMonths, type Day, eachMonth, endOfMonth, monthlyEquivalent, percentChange, previousRange, startOfMonth } from "@expensewise/core";
-import { type FinanceRangeQuery, financeRangeQuery } from "@expensewise/core/contracts/business-extra";
+import { addMonths, type Day, eachMonth, endOfMonth, monthlyEquivalent, percentChange, previousRange, startOfMonth } from "@financeos/core";
+import { type FinanceRangeQuery, financeRangeQuery } from "@financeos/core/contracts/business-extra";
 import { Inject, Injectable } from "@nestjs/common";
 import { and, asc, eq, gte, lte, ne, type SQL, sql } from "drizzle-orm";
 import { todayFor, type WorkspaceContext } from "../../common/context.js";

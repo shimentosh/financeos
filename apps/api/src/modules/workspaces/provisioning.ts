@@ -1,4 +1,4 @@
-import { DEFAULT_REMINDER_OFFSETS, type DefaultCategory, defaultCategories, SEED_RATES_TO_BDT, today, type WorkspaceKind } from "@expensewise/core";
+import { DEFAULT_REMINDER_OFFSETS, type DefaultCategory, defaultCategories, SEED_RATES_TO_BDT, today, type WorkspaceKind } from "@financeos/core";
 import { count, eq, inArray } from "drizzle-orm";
 import { db, type Executor } from "../../db/index.js";
 import { categories, exchangeRates, financialAccounts, projects, userSettings, users, workspaceMembers, workspaces } from "../../db/schema/index.js";

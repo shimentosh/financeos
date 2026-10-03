@@ -5,7 +5,7 @@ import "../load-env.js";
 // renewal history and inbox item is exactly what the app itself would write.
 process.env.EW_DISABLE_WORKER = "1";
 
-import { addDays, addMonths, type Day, eachMonth, endOfMonth, startOfMonth, today } from "@expensewise/core";
+import { addDays, addMonths, type Day, eachMonth, endOfMonth, startOfMonth, today } from "@financeos/core";
 import type { Type } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import { and, asc, eq } from "drizzle-orm";
@@ -20,8 +20,8 @@ if (process.env.NODE_ENV === "production" && process.env.SEED_ALLOW_PRODUCTION !
   process.exit(1);
 }
 
-const EMAIL = process.env.SEED_EMAIL ?? "demo@expensewise.app";
-const PASSWORD = process.env.SEED_PASSWORD ?? "demo-expense-wise";
+const EMAIL = process.env.SEED_EMAIL ?? "demo@financeos.app";
+const PASSWORD = process.env.SEED_PASSWORD ?? "demo-financeos";
 const NAME = process.env.SEED_NAME ?? "Demo Founder";
 
 /** Deterministic randomness: the same seed data every run. */
@@ -906,9 +906,9 @@ async function main() {
       description: "Self-hosted project management",
     })
   ).id;
-  const expensewise = (
+  const financeos = (
     await projectsService.create(business, {
-      name: "Expense Wise",
+      name: "FinanceOS",
       code: "EW",
       color: "#10b981",
       budgetAmount: taka(6_00_000),
@@ -1006,7 +1006,7 @@ async function main() {
     }
     for (const [day, merchant, category, min, max, account, project] of [
       [5, "OpenAI", "AI & APIs", 120, 420, payoneer, clipmesh],
-      [6, "Anthropic", "AI & APIs", 80, 300, payoneer, index > 5 ? expensewise : clipmesh],
+      [6, "Anthropic", "AI & APIs", 80, 300, payoneer, index > 5 ? financeos : clipmesh],
       [8, "Amazon Web Services", "Hosting", 90, 160, payoneer, clipmesh],
       [9, "Vercel", "Hosting", 20, 20, payoneer, teamos],
       [12, "GitHub", "Software", 21, 21, payoneer, general],
@@ -1134,7 +1134,7 @@ async function main() {
     salary: taka(60_000),
     currency: "BDT",
     payDay: 28,
-    defaultProjectId: expensewise,
+    defaultProjectId: financeos,
     accountId: dbbl,
     startDate: firstMonth,
     createSalaryCommitment: true,
@@ -1264,7 +1264,7 @@ async function main() {
     openingOutstanding: taka(45_000),
     dueDate: addDays(now, 7),
     categoryId: bcat("Contractors"),
-    projectId: expensewise,
+    projectId: financeos,
   });
   await liabilities.create(business, {
     kind: "business_debt",

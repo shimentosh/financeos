@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1.7
 #
-# Expense Wise web (Next.js standalone server). Build from the repository root:
-#   docker build -f apps/web/Dockerfile -t expensewise-web \
+# FinanceOS web (Next.js standalone server). Build from the repository root:
+#   docker build -f apps/web/Dockerfile -t financeos-web \
 #     --build-arg API_INTERNAL_URL=http://api:4100 .
 #
 # API_INTERNAL_URL is baked in at build time: it is the /api/* rewrite target
@@ -31,13 +31,16 @@ COPY apps/api/package.json apps/api/
 COPY apps/web/package.json apps/web/
 COPY apps/desktop/package.json apps/desktop/
 COPY packages/core/package.json packages/core/
-RUN pnpm install --frozen-lockfile --offline --store-dir /pnpm/store --filter "@expensewise/web..."
+RUN pnpm install --frozen-lockfile --offline --store-dir /pnpm/store --filter "@financeos/web..."
 COPY tsconfig.base.json ./
 COPY packages/core packages/core
 COPY apps/web apps/web
 ARG API_INTERNAL_URL=http://api:4100
 ENV API_INTERNAL_URL=${API_INTERNAL_URL}
-RUN pnpm --filter @expensewise/web build
+# The public origin for pages rendered at build time (robots.txt, sitemap.xml).
+ARG APP_URL=http://localhost:3100
+ENV APP_URL=${APP_URL}
+RUN pnpm --filter @financeos/web build
 
 # --- runtime: the traced standalone server, static assets and public files ------
 FROM node:${NODE_VERSION}-bookworm-slim AS runtime

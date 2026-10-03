@@ -1,6 +1,6 @@
 "use client";
 
-import { formatDay, formatMoney } from "@expensewise/core";
+import { formatDay, formatMoney } from "@financeos/core";
 import { CalendarRange, ExternalLink, Gauge, Pencil, PiggyBank, Trash2, TrendingUp, Wallet } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";

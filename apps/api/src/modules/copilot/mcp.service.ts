@@ -8,7 +8,7 @@ import { copilotTools, Evidence } from "./copilot.tools.js";
 
 /** Protocol revisions this server speaks, newest first. */
 const PROTOCOL_VERSIONS = ["2025-11-25", "2025-06-18", "2025-03-26", "2024-11-05"];
-const SERVER_INFO = { name: "expense-wise", title: "Expense Wise", version: "0.1.0" };
+const SERVER_INFO = { name: "financeos", title: "FinanceOS", version: "0.1.0" };
 
 type JsonRpcId = string | number | null;
 type JsonRpcRequest = { jsonrpc?: string; id?: JsonRpcId; method?: unknown; params?: unknown };
@@ -37,7 +37,7 @@ function errorText(error: unknown): string {
 }
 
 /**
- * Expense Wise as an MCP server, for Claude Desktop, Claude Code, Cursor and
+ * FinanceOS as an MCP server, for Claude Desktop, Claude Code, Cursor and
  * any other agent: the copilot's read-only queries, the workspace setup and
  * memory, and — for API keys with the write scope — the same actions the
  * chat suggests, applied directly through the domain services (validated,
@@ -78,7 +78,7 @@ export class McpService {
 
   private instructions(ctx: WorkspaceContext, canWrite: boolean) {
     return [
-      `Expense Wise: the financial records of the ${ctx.workspaceKind} workspace "${ctx.workspaceName}" (base currency ${ctx.baseCurrency}, time zone ${ctx.timezone}).`,
+      `FinanceOS: the financial records of the ${ctx.workspaceKind} workspace "${ctx.workspaceName}" (base currency ${ctx.baseCurrency}, time zone ${ctx.timezone}).`,
       "Call get_setup first to learn the exact account, category and project names and the notes the user saved.",
       "Money in tool inputs is in major units (500 for ৳500). Figures in results are already formatted; quote them as given and don't convert currencies yourself.",
       "Transfers between the user's own accounts, loans, debt payments, investments, asset purchases and owner equity are not income or spending.",

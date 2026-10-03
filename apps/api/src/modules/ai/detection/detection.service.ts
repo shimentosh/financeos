@@ -16,7 +16,7 @@ import {
   type SeriesPoint,
   startOfMonth,
   today,
-} from "@expensewise/core";
+} from "@financeos/core";
 import { Inject, Injectable, type OnModuleInit } from "@nestjs/common";
 import { and, asc, eq, gte, inArray, isNotNull, lte, ne, sql } from "drizzle-orm";
 import { contextFor, todayFor, type WorkspaceContext } from "../../../common/context.js";

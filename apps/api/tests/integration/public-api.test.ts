@@ -1,5 +1,5 @@
 import type { AddressInfo } from "node:net";
-import { connectInput } from "@expensewise/core";
+import { connectInput } from "@financeos/core";
 import type { ExecutionContext, INestApplication } from "@nestjs/common";
 import type { NestExpressApplication } from "@nestjs/platform-express";
 import { Test } from "@nestjs/testing";

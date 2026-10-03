@@ -1,7 +1,7 @@
 "use client";
 
-import type { StorageConfigInput, StorageConfigView, StorageProvider, StorageTestResult } from "@expensewise/core";
-import { r2AccountId } from "@expensewise/core";
+import type { StorageConfigInput, StorageConfigView, StorageProvider, StorageTestResult } from "@financeos/core";
+import { r2AccountId } from "@financeos/core";
 import {
   Check,
   ChevronDown,
@@ -337,7 +337,7 @@ export function StorageSettings({ view }: { view: StorageConfigView }) {
               id={`${id}-bucket`}
               value={form.bucket}
               onChange={(e) => set({ bucket: e.target.value.toLowerCase() })}
-              placeholder="expensewise-files"
+              placeholder="financeos-files"
               autoComplete="off"
               className="font-mono"
             />
@@ -395,7 +395,7 @@ export function StorageSettings({ view }: { view: StorageConfigView }) {
               id={`${id}-prefix`}
               value={form.prefix}
               onChange={(e) => set({ prefix: e.target.value })}
-              placeholder="expensewise/production"
+              placeholder="financeos/production"
               autoComplete="off"
               className="font-mono"
             />

@@ -1,6 +1,6 @@
 "use client";
 
-import type { AgentMemoryItem } from "@expensewise/core";
+import type { AgentMemoryItem } from "@financeos/core";
 import { Brain, Plus, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { type FormEvent, useState } from "react";

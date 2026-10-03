@@ -1,6 +1,6 @@
 "use client";
 
-import { DEFAULT_REMINDER_OFFSETS } from "@expensewise/core";
+import { DEFAULT_REMINDER_OFFSETS } from "@financeos/core";
 import { Copy, Download, KeyRound, Laptop, LogOut, MailCheck, ShieldCheck, ShieldOff, Smartphone } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useId, useMemo, useState } from "react";
@@ -387,7 +387,7 @@ function QrCode({ value, label }: { value: string; label: string }) {
 }
 
 function BackupCodes({ codes, onDone }: { codes: string[]; onDone: () => void }) {
-  const text = `Expense Wise backup codes\nEach code works once. Keep them somewhere safe.\n\n${codes.join("\n")}\n`;
+  const text = `FinanceOS backup codes\nEach code works once. Keep them somewhere safe.\n\n${codes.join("\n")}\n`;
   const copy = async () => {
     try {
       await navigator.clipboard.writeText(codes.join("\n"));
@@ -400,7 +400,7 @@ function BackupCodes({ codes, onDone }: { codes: string[]; onDone: () => void })
     const url = URL.createObjectURL(new Blob([text], { type: "text/plain" }));
     const link = document.createElement("a");
     link.href = url;
-    link.download = "expense-wise-backup-codes.txt";
+    link.download = "financeos-backup-codes.txt";
     link.click();
     URL.revokeObjectURL(url);
   };
@@ -588,7 +588,7 @@ function TwoFactorCard({ onSessionChanged }: { onSessionChanged: () => void }) {
           }}
         >
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
-            <QrCode value={step.totpURI} label="QR code to add Expense Wise to your authenticator app" />
+            <QrCode value={step.totpURI} label="QR code to add FinanceOS to your authenticator app" />
             <div className="min-w-0 flex-1 space-y-3 text-sm">
               <ol className="list-decimal space-y-1 ps-5 text-muted-foreground">
                 <li>Open your authenticator app and add an account.</li>

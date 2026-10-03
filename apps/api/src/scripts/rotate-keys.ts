@@ -10,7 +10,7 @@ import { credentialsAad, webhookAad } from "../modules/integrations/store.js";
  *
  *   1. Set ENCRYPTION_KEY to the new key and ENCRYPTION_KEY_PREVIOUS to the old
  *      one(s); deploy (the app reads both, so nothing breaks meanwhile).
- *   2. pnpm --filter @expensewise/api rotate-keys [--dry-run]
+ *   2. pnpm --filter @financeos/api rotate-keys [--dry-run]
  *      (in a built image: node dist/scripts/rotate-keys.js [--dry-run])
  *   3. When it reports nothing left on an old key, remove ENCRYPTION_KEY_PREVIOUS.
  *

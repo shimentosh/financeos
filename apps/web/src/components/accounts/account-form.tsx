@@ -1,6 +1,6 @@
 "use client";
 
-import { ACCOUNT_KIND_LABELS, ACCOUNT_KINDS, type AccountKind, minorToInput, parseMoneyInput, SELECTABLE_CURRENCIES, today } from "@expensewise/core";
+import { ACCOUNT_KIND_LABELS, ACCOUNT_KINDS, type AccountKind, minorToInput, parseMoneyInput, SELECTABLE_CURRENCIES, today } from "@financeos/core";
 import { useRouter } from "next/navigation";
 import { type FormEvent, useEffect, useId, useState } from "react";
 import { useApp } from "@/components/app/app-context";

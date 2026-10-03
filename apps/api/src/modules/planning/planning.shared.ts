@@ -1,4 +1,4 @@
-import { convertMinor, type Day, DEFAULT_REMINDER_OFFSETS, maxDay, nextDueOnOrAfter, type Schedule } from "@expensewise/core";
+import { convertMinor, type Day, DEFAULT_REMINDER_OFFSETS, maxDay, nextDueOnOrAfter, type Schedule } from "@financeos/core";
 import { eq } from "drizzle-orm";
 import { contextFor, type WorkspaceContext } from "../../common/context.js";
 import { db, type Executor } from "../../db/index.js";

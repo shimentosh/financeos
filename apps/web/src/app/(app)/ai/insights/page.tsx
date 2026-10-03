@@ -1,4 +1,4 @@
-import { addDays, diffDays, endOfMonth, minDay, startOfMonth, today } from "@expensewise/core";
+import { addDays, diffDays, endOfMonth, minDay, startOfMonth, today } from "@financeos/core";
 import type { Metadata } from "next";
 import { InsightsView } from "@/components/ai/insights-view";
 import { PageShell } from "@/components/app/page-shell";

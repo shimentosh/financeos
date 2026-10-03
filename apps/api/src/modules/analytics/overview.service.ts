@@ -1,4 +1,4 @@
-import { addDays, diffDays, previousRange, receivableState, startOfMonth } from "@expensewise/core";
+import { addDays, diffDays, previousRange, receivableState, startOfMonth } from "@financeos/core";
 import { Inject, Injectable } from "@nestjs/common";
 import { and, asc, desc, eq, inArray, ne, sql } from "drizzle-orm";
 import { todayFor, type WorkspaceContext } from "../../common/context.js";

@@ -1,6 +1,6 @@
 "use client";
 
-import { TRANSACTION_TYPES, TYPE_LABELS } from "@expensewise/core";
+import { TRANSACTION_TYPES, TYPE_LABELS } from "@financeos/core";
 import { ChevronLeft, ChevronRight, History, ListChecks, RefreshCw, Search, Send, Webhook } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useApp } from "@/components/app/app-context";

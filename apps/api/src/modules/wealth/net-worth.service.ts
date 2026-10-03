@@ -12,7 +12,7 @@ import {
   type NetWorthWarning,
   percentChange,
   startOfMonth,
-} from "@expensewise/core";
+} from "@financeos/core";
 import { Inject, Injectable } from "@nestjs/common";
 import { and, eq, ne } from "drizzle-orm";
 import { todayFor, type WorkspaceContext } from "../../common/context.js";

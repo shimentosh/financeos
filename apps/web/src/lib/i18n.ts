@@ -1,4 +1,4 @@
-// The ported UI primitives label a few controls through i18n. Expense Wise is
+// The ported UI primitives label a few controls through i18n. FinanceOS is
 // English-first, so this is a small lookup rather than a translation runtime.
 const STRINGS: Record<string, string> = {
   "common:breadcrumb.label": "Breadcrumb",

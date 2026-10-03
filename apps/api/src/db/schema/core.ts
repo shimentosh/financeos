@@ -1,4 +1,4 @@
-import type { StorageBackend } from "@expensewise/core";
+import type { StorageBackend } from "@financeos/core";
 import { sql } from "drizzle-orm";
 import { index, integer, jsonb, pgTable, text, uniqueIndex, uuid, varchar } from "drizzle-orm/pg-core";
 import { createdAt, currency, pk, ts, updatedAt } from "./_columns.js";

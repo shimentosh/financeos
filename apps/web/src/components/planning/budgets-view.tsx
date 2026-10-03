@@ -1,6 +1,6 @@
 "use client";
 
-import { addMonths, formatDay, formatMoney } from "@expensewise/core";
+import { addMonths, formatDay, formatMoney } from "@financeos/core";
 import { AlertTriangle, CheckCircle2, ChevronLeft, ChevronRight, CircleAlert, ExternalLink, PiggyBank, Plus, Wallet } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";

@@ -1,4 +1,4 @@
-import { pagination } from "@expensewise/core";
+import { pagination } from "@financeos/core";
 import { Body, Controller, Get, HttpCode, Inject, Param, ParseUUIDPipe, Post, Query, UseGuards } from "@nestjs/common";
 import { z } from "zod";
 import { AdminGuard } from "../../common/guards.js";

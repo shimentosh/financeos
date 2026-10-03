@@ -1,4 +1,4 @@
-import { DEFAULT_PLANS, type PlanId, type PlanLimits } from "@expensewise/core";
+import { DEFAULT_PLANS, type PlanId, type PlanLimits } from "@financeos/core";
 import {
   DEFAULT_STORED_CONFIG,
   encryptBillingSecret,

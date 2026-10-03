@@ -1,4 +1,4 @@
-import { type PeriodPreset, presetRange, today } from "@expensewise/core";
+import { type PeriodPreset, presetRange, today } from "@financeos/core";
 import { Suspense } from "react";
 import { PageShell } from "@/components/app/page-shell";
 import { CashFlowView, ReportsTabs, SavedReports, SummaryView } from "@/components/reports/reports-view";

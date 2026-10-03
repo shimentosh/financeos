@@ -146,7 +146,7 @@ function OrDivider() {
 
 // Messages for query parameters other screens send people here with.
 const SIGN_IN_NOTICES: Record<string, { tone: "info" | "success" | "error"; text: string }> = {
-  deleted: { tone: "info", text: "Your account was deleted. Thank you for using Expense Wise." },
+  deleted: { tone: "info", text: "Your account was deleted. Thank you for using FinanceOS." },
   reset: { tone: "success", text: "Password changed. Sign in with your new password." },
 };
 
@@ -232,7 +232,7 @@ export function AuthForm({ mode, options = DEFAULT_OPTIONS }: { mode: "sign-in" 
   if (mode === "sign-up" && !options.signUpEnabled) {
     return (
       <div className="space-y-4">
-        <AuthHeader title="Sign-ups are closed" description="This Expense Wise server is not accepting new accounts right now." />
+        <AuthHeader title="Sign-ups are closed" description="This FinanceOS server is not accepting new accounts right now." />
         <p className="text-sm text-muted-foreground">
           If someone invited you, open the link in your invitation email. Already have an account?{" "}
           <Link href={withNext("/sign-in")} className={linkClass}>

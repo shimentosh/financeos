@@ -1,5 +1,5 @@
 {
-  "name": "@expensewise/api",
+  "name": "@financeos/api",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -24,7 +24,7 @@
   "dependencies": {
     "@anthropic-ai/sdk": "^0.128.0",
     "@aws-sdk/client-s3": "^3.1141.0",
-    "@expensewise/core": "workspace:*",
+    "@financeos/core": "workspace:*",
     "@nestjs/common": "^12.1.0",
     "@nestjs/core": "^12.1.0",
     "@nestjs/platform-express": "^12.1.0",

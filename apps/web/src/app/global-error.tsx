@@ -28,11 +28,11 @@ export default function GlobalError({ error, retry }: { error: Error & { digest?
   return (
     <html lang="en">
       <body>
-        <title>Something went wrong · Expense Wise</title>
+        <title>Something went wrong · FinanceOS</title>
         {/* biome-ignore lint/security/noDangerouslySetInnerHtml: static styles for the fallback document */}
         <style dangerouslySetInnerHTML={{ __html: styles }} />
         <main>
-          <h1>Expense Wise could not load</h1>
+          <h1>FinanceOS could not load</h1>
           <p>Something went wrong on our side. Your records are safe, and the error has been reported.</p>
           <button type="button" onClick={retry}>
             Try again

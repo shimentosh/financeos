@@ -9,7 +9,7 @@ import {
   parseEntry,
   type Rule,
   type SubscriptionInput,
-} from "@expensewise/core";
+} from "@financeos/core";
 import {
   type AiConfidenceView,
   type ConfidenceField,
@@ -28,7 +28,7 @@ import {
   type UncategorizedView,
   uncategorizedApplyInput,
   uncategorizedQuery,
-} from "@expensewise/core/contracts/ai-extra";
+} from "@financeos/core/contracts/ai-extra";
 import { Inject, Injectable } from "@nestjs/common";
 import { and, asc, count, desc, eq, gte, inArray, isNull, type SQL, sql } from "drizzle-orm";
 import type { z } from "zod";

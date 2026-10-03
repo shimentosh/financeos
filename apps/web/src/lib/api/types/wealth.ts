@@ -1,4 +1,4 @@
-import type { Direction, TransactionStatus, TransactionType } from "@expensewise/core";
+import type { Direction, TransactionStatus, TransactionType } from "@financeos/core";
 
 // Response shapes of the wealth endpoints: /assets, /investments,
 // /liabilities, /payables, /receivables, /net-worth. Money is minor units;

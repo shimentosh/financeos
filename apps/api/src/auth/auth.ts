@@ -128,7 +128,7 @@ async function markOnboardingPending(userId: string) {
  * /api to this server, so the session cookie is first-party on the app origin.
  */
 export const auth = betterAuth({
-  appName: "Expense Wise",
+  appName: "FinanceOS",
   baseURL: env.APP_URL,
   basePath: "/api/auth",
   secret: env.BETTER_AUTH_SECRET,
@@ -157,12 +157,12 @@ export const auth = betterAuth({
     sendResetPassword: async ({ user, token }) => {
       await authMail.send({
         to: user.email,
-        subject: "Reset your Expense Wise password",
+        subject: "Reset your FinanceOS password",
         preview: "Choose a new password for your account.",
         heading: "Reset your password",
         paragraphs: [
           `Hi ${firstName(user.name)},`,
-          "We got a request to reset the password of your Expense Wise account. Choose a new one with the button below.",
+          "We got a request to reset the password of your FinanceOS account. Choose a new one with the button below.",
         ],
         action: { label: "Choose a new password", url: appLink(`/reset-password?token=${encodeURIComponent(token)}`) },
         footnote: "This link works once and expires in 1 hour. If you did not ask for a reset, ignore this email: your password stays the same.",
@@ -171,11 +171,11 @@ export const auth = betterAuth({
     onPasswordReset: async ({ user }) => {
       await authMail.send({
         to: user.email,
-        subject: "Your Expense Wise password was changed",
+        subject: "Your FinanceOS password was changed",
         heading: "Your password was changed",
         paragraphs: [
           `Hi ${firstName(user.name)},`,
-          "The password of your Expense Wise account was just reset, and every device was signed out.",
+          "The password of your FinanceOS account was just reset, and every device was signed out.",
           "If this was not you, reset your password again right away and tell us.",
         ],
         action: { label: "Sign in", url: appLink("/sign-in") },
@@ -185,10 +185,10 @@ export const auth = betterAuth({
     onExistingUserSignUp: async ({ user }) => {
       await authMail.send({
         to: user.email,
-        subject: "You already have an Expense Wise account",
+        subject: "You already have an FinanceOS account",
         heading: "You already have an account",
         paragraphs: [
-          "Someone tried to create an Expense Wise account with this email address, but it already has one.",
+          "Someone tried to create an FinanceOS account with this email address, but it already has one.",
           "If that was you, sign in instead, or reset your password if you have forgotten it.",
         ],
         action: { label: "Sign in", url: appLink("/sign-in") },
@@ -207,7 +207,7 @@ export const auth = betterAuth({
           to: claims.updateTo,
           subject: "Confirm your new email address",
           heading: "Confirm your new email address",
-          paragraphs: [`Confirm ${claims.updateTo} as the new sign-in address of your Expense Wise account.`],
+          paragraphs: [`Confirm ${claims.updateTo} as the new sign-in address of your FinanceOS account.`],
           action: { label: "Confirm new email", url: landOn(url, "email-changed") },
           footnote: "This link expires in 24 hours. Until you confirm, you keep signing in with your current address.",
         });
@@ -215,12 +215,12 @@ export const auth = betterAuth({
       }
       await authMail.send({
         to: user.email,
-        subject: "Verify your email for Expense Wise",
+        subject: "Verify your email for FinanceOS",
         preview: "One click to finish setting up your account.",
         heading: "Confirm your email address",
-        paragraphs: [`Hi ${firstName(user.name)},`, "Confirm this is your email address to finish setting up Expense Wise."],
+        paragraphs: [`Hi ${firstName(user.name)},`, "Confirm this is your email address to finish setting up FinanceOS."],
         action: { label: "Verify email", url: landOn(url, "verified") },
-        footnote: "This link expires in 24 hours. If you did not create an Expense Wise account, you can ignore this email.",
+        footnote: "This link expires in 24 hours. If you did not create an FinanceOS account, you can ignore this email.",
       });
     },
   },
@@ -235,7 +235,7 @@ export const auth = betterAuth({
           heading: "Approve your email change",
           paragraphs: [
             `Hi ${firstName(user.name)},`,
-            "Someone, hopefully you, asked to change the sign-in email of your Expense Wise account. If this was you, approve it below and we will send a last link to the new address.",
+            "Someone, hopefully you, asked to change the sign-in email of your FinanceOS account. If this was you, approve it below and we will send a last link to the new address.",
           ],
           details: [
             { label: "Current email", value: user.email },
@@ -283,7 +283,7 @@ export const auth = betterAuth({
     cookiePrefix: "ew",
     useSecureCookies: env.NODE_ENV === "production",
   },
-  plugins: [admin({ defaultRole: "user", adminRoles: ["admin"] }), twoFactor({ issuer: "Expense Wise" })],
+  plugins: [admin({ defaultRole: "user", adminRoles: ["admin"] }), twoFactor({ issuer: "FinanceOS" })],
   hooks: {
     // Deleting a user must also stop their paid plan and delete the workspaces they own alone:
     // that happens in DELETE /api/admin/users/:id, not in the plugin's bare delete.

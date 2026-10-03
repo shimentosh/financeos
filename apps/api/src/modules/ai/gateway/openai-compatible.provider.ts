@@ -1,4 +1,4 @@
-import type { AiCapabilities } from "@expensewise/core";
+import type { AiCapabilities } from "@financeos/core";
 import type { z } from "zod";
 import { addUsage, costFor, type ModelPrice } from "./pricing.js";
 import {

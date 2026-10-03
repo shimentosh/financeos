@@ -1,6 +1,6 @@
 "use client";
 
-import { type AssignableRole, assignableRolesFor, canManageMember, INVITATION_TTL_DAYS, ROLE_DESCRIPTIONS } from "@expensewise/core";
+import { type AssignableRole, assignableRolesFor, canManageMember, INVITATION_TTL_DAYS, ROLE_DESCRIPTIONS } from "@financeos/core";
 import { Check, Copy, Link2, MailPlus, MoreHorizontal, RotateCw, UserMinus, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { type FormEvent, useId, useState } from "react";

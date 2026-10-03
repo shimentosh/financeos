@@ -1,4 +1,4 @@
-import { isDay } from "@expensewise/core";
+import { isDay } from "@financeos/core";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { PageShell } from "@/components/app/page-shell";

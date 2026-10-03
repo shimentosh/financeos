@@ -1,5 +1,5 @@
-import { apiKeyInput } from "@expensewise/core";
-import { publicExpenseInput, publicRevenueInput, publicTransactionInput, publicTransactionQuery } from "@expensewise/core/contracts/integrations-extra";
+import { apiKeyInput } from "@financeos/core";
+import { publicExpenseInput, publicRevenueInput, publicTransactionInput, publicTransactionQuery } from "@financeos/core/contracts/integrations-extra";
 import { Body, Controller, Delete, Get, HttpCode, Inject, Param, ParseUUIDPipe, Post, Query, Res, UseGuards } from "@nestjs/common";
 import type { Response } from "express";
 import type { z } from "zod";

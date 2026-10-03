@@ -1,6 +1,6 @@
 "use client";
 
-import { formatDay, parseMoneyInput, SELECTABLE_CURRENCIES, TYPE_LABELS } from "@expensewise/core";
+import { formatDay, parseMoneyInput, SELECTABLE_CURRENCIES, TYPE_LABELS } from "@financeos/core";
 import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";

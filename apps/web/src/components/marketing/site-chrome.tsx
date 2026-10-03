@@ -6,11 +6,11 @@ import { cn } from "@/lib/cn";
 
 export function Logo({ className }: { className?: string }) {
   return (
-    <Link href="/" className={cn("flex items-center gap-2", className)} aria-label="Expense Wise home">
+    <Link href="/" className={cn("flex items-center gap-2", className)} aria-label="FinanceOS home">
       <span className="flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
         <Wallet className="size-4.5" aria-hidden />
       </span>
-      <span className="font-semibold tracking-tight">Expense Wise</span>
+      <span className="font-semibold tracking-tight">FinanceOS</span>
     </Link>
   );
 }
@@ -89,7 +89,7 @@ export function SiteFooter() {
         ))}
       </div>
       <div className="border-t border-border/70">
-        <p className="mx-auto max-w-6xl px-4 py-4 text-xs text-muted-foreground">© {new Date().getFullYear()} Expense Wise. All rights reserved.</p>
+        <p className="mx-auto max-w-6xl px-4 py-4 text-xs text-muted-foreground">© {new Date().getFullYear()} FinanceOS. All rights reserved.</p>
       </div>
     </footer>
   );

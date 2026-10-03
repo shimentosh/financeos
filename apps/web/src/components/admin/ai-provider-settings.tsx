@@ -9,7 +9,7 @@ import type {
   AiProviderId,
   AiProviderPreset,
   AiStructuredMode,
-} from "@expensewise/core";
+} from "@financeos/core";
 import { Check, ChevronDown, CircleAlert, ExternalLink, Eye, FlaskConical, HardDrive, KeyRound, RotateCcw, Save, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useId, useMemo, useState } from "react";

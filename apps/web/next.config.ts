@@ -49,7 +49,7 @@ const nextConfig: NextConfig = {
   outputFileTracingRoot: resolve(process.cwd(), "../.."),
   reactStrictMode: true,
   poweredByHeader: false,
-  transpilePackages: ["@expensewise/core"],
+  transpilePackages: ["@financeos/core"],
   env: {
     API_INTERNAL_URL: apiUrl,
   },

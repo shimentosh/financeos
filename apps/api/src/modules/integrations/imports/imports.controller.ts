@@ -5,7 +5,7 @@ import {
   importMappingRequest,
   importRowsQuery,
   importUploadFields,
-} from "@expensewise/core/contracts/integrations-extra";
+} from "@financeos/core/contracts/integrations-extra";
 import { Body, Controller, Delete, Get, HttpCode, Inject, Param, ParseUUIDPipe, Post, Put, Query, UploadedFile, UseInterceptors } from "@nestjs/common";
 import type { z } from "zod";
 import type { WorkspaceContext } from "../../../common/context.js";

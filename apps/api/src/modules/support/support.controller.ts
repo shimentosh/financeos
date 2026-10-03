@@ -1,4 +1,4 @@
-import { pagination, SUPPORT_STATUSES, type SupportRequestInput, supportRequestInput } from "@expensewise/core";
+import { pagination, SUPPORT_STATUSES, type SupportRequestInput, supportRequestInput } from "@financeos/core";
 import { Body, Controller, Get, HttpCode, Inject, Patch, Post, Query, Req, UseGuards } from "@nestjs/common";
 import { fromNodeHeaders } from "better-auth/node";
 import { z } from "zod";

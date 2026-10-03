@@ -1,0 +1,112 @@
+# FinanceOS on Dokploy (see docs/dokploy.md).
+#
+# Dokploy runs PostgreSQL as its own database service; this file holds only the
+# app: migrate (release step) → api + worker → web. Dokploy writes the
+# Environment tab to `.env` next to this file, which every service reads.
+#
+# Networks:
+#   internal         private to this stack; web reaches the API as `financeos-api`
+#                    (a unique alias, so it cannot collide with another project's
+#                    `api` on the shared network).
+#   dokploy-network  Dokploy's shared network: Traefik routes the domain to `web`,
+#                    and the app services reach the Dokploy PostgreSQL service.
+# The API is never routed publicly; the web server proxies /api/* to it.
+
+x-api-image: &api-image
+  image: financeos-api:${APP_VERSION:-latest}
+  build:
+    context: .
+    dockerfile: apps/api/Dockerfile
+    args:
+      APP_VERSION: ${APP_VERSION:-}
+  env_file: .env
+  restart: unless-stopped
+  networks:
+    - internal
+    - dokploy-network
+
+x-api-env: &api-env
+  NODE_ENV: production
+  LOG_FORMAT: ${LOG_FORMAT:-json}
+  # Uploads stay on a volume unless a bucket is configured (Admin → Storage or S3_*).
+  STORAGE_LOCAL_DIR: /app/apps/api/storage
+
+services:
+  # Applies pending migrations, then exits. api and worker start only after it
+  # succeeded, so a failed migration stops the rollout with the old schema intact.
+  migrate:
+    <<: *api-image
+    environment:
+      <<: *api-env
+    command: ["node", "--enable-source-maps", "dist/scripts/migrate.js"]
+    restart: "no"
+    healthcheck:
+      disable: true
+
+  api:
+    <<: *api-image
+    environment:
+      <<: *api-env
+      API_PORT: "4100"
+      # Jobs and schedules run in the worker service.
+      RUN_WORKER_IN_PROCESS: "false"
+    expose:
+      - "4100"
+    volumes:
+      - uploads:/app/apps/api/storage
+    networks:
+      internal:
+        aliases:
+          - financeos-api
+      dokploy-network: {}
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+  worker:
+    <<: *api-image
+    environment:
+      <<: *api-env
+    command: ["node", "--enable-source-maps", "dist/worker.js"]
+    volumes:
+      - uploads:/app/apps/api/storage
+    # No HTTP server; its liveness is the heartbeat in GET /api/admin/system.
+    healthcheck:
+      disable: true
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+  web:
+    image: financeos-web:${APP_VERSION:-latest}
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      args:
+        # Baked into the build: where the web server reaches the API.
+        API_INTERNAL_URL: http://financeos-api:4100
+        APP_URL: ${APP_URL:?set APP_URL in the Environment tab}
+    # The web server needs no secrets: only the public origin.
+    environment:
+      NODE_ENV: production
+      APP_URL: ${APP_URL:?set APP_URL in the Environment tab}
+      PORT: "3100"
+      HOSTNAME: 0.0.0.0
+    # Not published on the host: add the domain in Dokploy (service `web`, port 3100).
+    expose:
+      - "3100"
+    networks:
+      - internal
+      - dokploy-network
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+
+networks:
+  internal:
+  dokploy-network:
+    external: true
+
+volumes:
+  uploads:

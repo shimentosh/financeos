@@ -1,6 +1,6 @@
 "use client";
 
-import { addDays, addMonths, COMMITMENT_KIND_LABELS, COMMITMENT_KINDS, formatDay, formatMoney } from "@expensewise/core";
+import { addDays, addMonths, COMMITMENT_KIND_LABELS, COMMITMENT_KINDS, formatDay, formatMoney } from "@financeos/core";
 import {
   AlertTriangle,
   ArrowDownLeft,

@@ -1,4 +1,4 @@
-import { isDay, today } from "@expensewise/core";
+import { isDay, today } from "@financeos/core";
 import type { Metadata } from "next";
 import { PageShell } from "@/components/app/page-shell";
 import { AddBudgetButton, BudgetsView } from "@/components/planning/budgets-view";

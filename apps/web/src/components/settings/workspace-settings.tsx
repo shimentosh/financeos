@@ -1,6 +1,6 @@
 "use client";
 
-import { COMMON_CURRENCIES, minorToInput, parseMoneyInput } from "@expensewise/core";
+import { COMMON_CURRENCIES, minorToInput, parseMoneyInput } from "@financeos/core";
 import { Plus } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useId, useState } from "react";

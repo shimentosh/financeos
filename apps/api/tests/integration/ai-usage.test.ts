@@ -1,4 +1,4 @@
-import { monthKey, today } from "@expensewise/core";
+import { monthKey, today } from "@financeos/core";
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { db } from "../../src/db/index.js";
 import { aiUsage } from "../../src/db/schema/index.js";

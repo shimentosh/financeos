@@ -5,7 +5,7 @@ export const metadata = { title: "Notifications" };
 
 export default function Page() {
   return (
-    <SettingsPage title="Notifications" description="When and how Expense Wise reminds you.">
+    <SettingsPage title="Notifications" description="When and how FinanceOS reminds you.">
       <NotificationSettings />
     </SettingsPage>
   );

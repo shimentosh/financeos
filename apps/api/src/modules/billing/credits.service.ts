@@ -1,4 +1,4 @@
-import type { CreditKind, CreditSummary } from "@expensewise/core";
+import type { CreditKind, CreditSummary } from "@financeos/core";
 import { Inject, Injectable, Logger } from "@nestjs/common";
 import { and, eq, gte, lt, sql } from "drizzle-orm";
 import { db, type Executor } from "../../db/index.js";

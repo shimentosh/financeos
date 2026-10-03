@@ -10,7 +10,7 @@ import {
   receivablePaymentInput,
   receivableUpdate,
   valuationInput,
-} from "@expensewise/core";
+} from "@financeos/core";
 import {
   type AssetQuery,
   type AssetSellInput,
@@ -28,7 +28,7 @@ import {
   type ReceivableQuery,
   receivableQuery,
   removeLinkedQuery,
-} from "@expensewise/core/contracts/wealth-extra";
+} from "@financeos/core/contracts/wealth-extra";
 import { Body, Controller, Delete, Get, HttpCode, Inject, Param, ParseUUIDPipe, Patch, Post, Query } from "@nestjs/common";
 import type { z } from "zod";
 import type { WorkspaceContext } from "../../common/context.js";

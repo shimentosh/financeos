@@ -28,12 +28,12 @@ import {
   TRANSACTION_STATUSES,
   TRANSACTION_TYPES,
   WORKSPACE_KINDS,
-} from "@expensewise/core";
+} from "@financeos/core";
 import { pgEnum } from "drizzle-orm/pg-core";
 
 // Every enum lives here, with no table imports, so schema modules can reference
 // each other's tables without an import cycle reaching an enum too early. The
-// values come from @expensewise/core: schema, API contracts and UI share them.
+// values come from @financeos/core: schema, API contracts and UI share them.
 
 export const workspaceKind = pgEnum("workspace_kind", WORKSPACE_KINDS);
 export const memberRole = pgEnum("member_role", MEMBER_ROLES);

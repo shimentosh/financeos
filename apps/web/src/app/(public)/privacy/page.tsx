@@ -66,7 +66,7 @@ const sections: LegalSection[] = [
         <ul>
           <li>People you invite to a workspace, according to their role.</li>
           <li>
-            Service providers that run parts of Expense Wise for us: hosting and databases, file storage, email delivery, AI model providers, error monitoring
+            Service providers that run parts of FinanceOS for us: hosting and databases, file storage, email delivery, AI model providers, error monitoring
             and payment processors — each only for its task.
           </li>
           <li>Apps you connect or give an API key to, for the data you allow them to read or write.</li>
@@ -155,7 +155,7 @@ export default function PrivacyPage() {
       updated="26 September 2026"
       intro={
         <p>
-          Your financial records are about as personal as data gets. This policy explains what Expense Wise collects, why, who helps us process it, and the
+          Your financial records are about as personal as data gets. This policy explains what FinanceOS collects, why, who helps us process it, and the
           control you have over it.
         </p>
       }

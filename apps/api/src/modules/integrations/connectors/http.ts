@@ -180,7 +180,7 @@ export const defaultHttpClient: HttpClient = (request) =>
       url,
       {
         method: request.method,
-        headers: { "user-agent": "ExpenseWise-Integrations/1.0", ...(request.headers ?? {}) },
+        headers: { "user-agent": "FinanceOS-Integrations/1.0", ...(request.headers ?? {}) },
         lookup: guardedLookup(Boolean(request.allowPrivateNetwork)) as never,
       },
       (response: IncomingMessage) => {

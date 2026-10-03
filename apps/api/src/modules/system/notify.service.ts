@@ -80,7 +80,7 @@ export class NotificationsService {
         preview: notice.body ?? undefined,
         heading: notice.title,
         paragraphs: notice.body ? [notice.body] : [],
-        action: { label: "Open in Expense Wise", url: appLink(notice.link ?? "/") },
+        action: { label: "Open in FinanceOS", url: appLink(notice.link ?? "/") },
         footnote: "You get these because email alerts are on. Turn them off in Settings → Notifications.",
       });
       if (result.delivered) {

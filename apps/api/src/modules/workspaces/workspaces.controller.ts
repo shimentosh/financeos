@@ -1,4 +1,4 @@
-import { pagination, workspaceInput, workspaceUpdate } from "@expensewise/core";
+import { pagination, workspaceInput, workspaceUpdate } from "@financeos/core";
 import { Body, Controller, Get, HttpCode, Inject, Param, ParseUUIDPipe, Patch, Post, Query, Res } from "@nestjs/common";
 import { and, asc, eq } from "drizzle-orm";
 import type { Response } from "express";

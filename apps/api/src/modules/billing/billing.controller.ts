@@ -1,4 +1,4 @@
-import { type CheckoutInput, checkoutInput } from "@expensewise/core";
+import { type CheckoutInput, checkoutInput } from "@financeos/core";
 import { Body, Controller, Get, Headers, HttpCode, Inject, Post, Req, Res } from "@nestjs/common";
 import type { Response } from "express";
 import type { AppRequest, SessionUser } from "../../common/context.js";

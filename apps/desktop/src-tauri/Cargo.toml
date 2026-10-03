@@ -1,12 +1,12 @@
 [package]
-name = "expensewise-desktop"
+name = "financeos-desktop"
 version = "0.1.0"
-description = "Expense Wise desktop app"
+description = "FinanceOS desktop app"
 edition = "2021"
 publish = false
 
 [lib]
-name = "expensewise_desktop_lib"
+name = "financeos_desktop_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
 
 [build-dependencies]

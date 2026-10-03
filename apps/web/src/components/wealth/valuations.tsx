@@ -1,6 +1,6 @@
 "use client";
 
-import { formatDay, formatMoney, minorToInput, today } from "@expensewise/core";
+import { formatDay, formatMoney, minorToInput, today } from "@financeos/core";
 import { Trash2 } from "lucide-react";
 import { type FormEvent, useEffect, useId, useState } from "react";
 import { useApp } from "@/components/app/app-context";

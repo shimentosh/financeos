@@ -1,4 +1,4 @@
-import { type CreditPack, DEFAULT_CREDITS_PER_USD, DEFAULT_PLANS, PLAN_IDS, type PublicPlan } from "@expensewise/core";
+import { type CreditPack, DEFAULT_CREDITS_PER_USD, DEFAULT_PLANS, PLAN_IDS, type PublicPlan } from "@financeos/core";
 import { Sparkles } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";

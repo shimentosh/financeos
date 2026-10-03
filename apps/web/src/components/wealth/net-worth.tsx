@@ -1,6 +1,6 @@
 "use client";
 
-import { formatDay, formatMoney } from "@expensewise/core";
+import { formatDay, formatMoney } from "@financeos/core";
 import { ArrowRight, Car, ChartLine, CircleAlert, CircleCheck, HandCoins, Landmark, Plus, Scale, Wallet } from "lucide-react";
 import Link from "next/link";
 import { type ReactNode, useState } from "react";

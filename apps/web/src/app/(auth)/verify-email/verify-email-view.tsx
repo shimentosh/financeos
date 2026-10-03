@@ -111,7 +111,7 @@ export function VerifyEmailView() {
       >
         {/* A full page load, so the app renders with the new session. */}
         <Button className="w-full" render={<a href={next} />}>
-          Continue to Expense Wise
+          Continue to FinanceOS
         </Button>
       </Frame>
     );

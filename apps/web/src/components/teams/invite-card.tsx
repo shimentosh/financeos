@@ -1,6 +1,6 @@
 "use client";
 
-import { ROLE_DESCRIPTIONS } from "@expensewise/core";
+import { ROLE_DESCRIPTIONS } from "@financeos/core";
 import { Briefcase, Clock, MailWarning, ShieldAlert, User, UserX } from "lucide-react";
 import Link from "next/link";
 import { type ReactNode, useState } from "react";
@@ -99,7 +99,7 @@ function InviteHeader({ invitation }: { invitation: InvitationLookup }) {
           {invitation.inviterName} invited you to join {invitation.workspaceName}
         </h1>
         <p className="text-sm text-muted-foreground">
-          A {invitation.workspaceKind} workspace on Expense Wise. Sent to <span className="font-medium text-foreground">{invitation.email}</span>, expires{" "}
+          A {invitation.workspaceKind} workspace on FinanceOS. Sent to <span className="font-medium text-foreground">{invitation.email}</span>, expires{" "}
           {expiresIn(invitation.expiresAt)}.
         </p>
       </div>
@@ -289,7 +289,7 @@ function InviteProblem({
       </div>
       {action ?? (
         <Button className="w-full" variant="outline" render={<Link href={signedIn ? "/" : "/sign-in"} />}>
-          {signedIn ? "Go to Expense Wise" : "Sign in"}
+          {signedIn ? "Go to FinanceOS" : "Sign in"}
         </Button>
       )}
     </div>

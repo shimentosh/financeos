@@ -1,6 +1,6 @@
 "use client";
 
-import { formatDay } from "@expensewise/core";
+import { formatDay } from "@financeos/core";
 import { ArrowRight, Undo2 } from "lucide-react";
 import Link from "next/link";
 import type { ReactNode } from "react";

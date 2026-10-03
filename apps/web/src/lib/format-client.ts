@@ -1,2 +1,2 @@
-export { formatMonth } from "@expensewise/core";
+export { formatMonth } from "@financeos/core";
 export { formatDateTime, timeAgo } from "./format";

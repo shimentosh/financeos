@@ -9,7 +9,7 @@ import type {
   PaymentStatus,
   PlanId,
   SupportStatus,
-} from "@expensewise/core";
+} from "@financeos/core";
 import { sql } from "drizzle-orm";
 import { boolean, index, integer, jsonb, pgTable, primaryKey, text, uniqueIndex, uuid, varchar } from "drizzle-orm/pg-core";
 import { createdAt, currency, decimal, money, pk, ts, updatedAt } from "./_columns.js";
@@ -17,7 +17,7 @@ import { users } from "./auth.js";
 import { workspaces } from "./core.js";
 import { memberRole } from "./enums.js";
 
-// Running Expense Wise as a hosted service: invitations, plans and payments,
+// Running FinanceOS as a hosted service: invitations, plans and payments,
 // AI credits, single-run scheduling across instances, and support requests.
 
 /**

@@ -1,4 +1,4 @@
-# Expense Wise — production stack on one host (see docs/deploy.md).
+# FinanceOS — production stack on one host (see docs/deploy.md).
 #
 #   cp .env.example .env        # production values: APP_URL, secrets, POSTGRES_PASSWORD,
 #                               # DATABASE_URL=postgres://expensewise:<password>@postgres:5432/expensewise
@@ -16,7 +16,7 @@ name: expensewise
 
 # api, worker and migrate run the same image (built once; the others hit the cache).
 x-api-image: &api-image
-  image: expensewise-api:${APP_VERSION:-latest}
+  image: financeos-api:${APP_VERSION:-latest}
   build:
     context: .
     dockerfile: apps/api/Dockerfile
@@ -93,7 +93,7 @@ services:
         condition: service_completed_successfully
 
   web:
-    image: expensewise-web:${APP_VERSION:-latest}
+    image: financeos-web:${APP_VERSION:-latest}
     build:
       context: .
       dockerfile: apps/web/Dockerfile

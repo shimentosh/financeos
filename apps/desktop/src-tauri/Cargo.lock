@@ -756,7 +756,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "expensewise-desktop"
+name = "financeos-desktop"
 version = "0.1.0"
 dependencies = [
  "serde",

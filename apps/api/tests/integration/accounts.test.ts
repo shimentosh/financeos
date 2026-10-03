@@ -1,5 +1,5 @@
 import type { AddressInfo } from "node:net";
-import { today } from "@expensewise/core";
+import { today } from "@financeos/core";
 import type { INestApplication } from "@nestjs/common";
 import { Test } from "@nestjs/testing";
 import { and, count, eq } from "drizzle-orm";
@@ -145,8 +145,8 @@ describe("data export", () => {
     }>(owner, "GET", "/account/export", { workspaceId: owner.personalId });
     expect(exported.status).toBe(200);
     expect(exported.headers.get("content-type")).toContain("application/json");
-    expect(exported.headers.get("content-disposition")).toMatch(/^attachment; filename="expense-wise-personal-\d{4}-\d{2}-\d{2}\.json"$/);
-    expect(exported.body.format).toBe("expense-wise-export");
+    expect(exported.headers.get("content-disposition")).toMatch(/^attachment; filename="financeos-personal-\d{4}-\d{2}-\d{2}\.json"$/);
+    expect(exported.body.format).toBe("financeos-export");
     expect(exported.body.workspace.id).toBe(owner.personalId);
     expect(exported.body.data.transactions.map((t) => t.id).sort()).toEqual([tricky, dollars].sort());
     expect(exported.body.data.ledgerEntries.length).toBeGreaterThanOrEqual(2);
@@ -208,7 +208,7 @@ describe("data export", () => {
     const response = await call(owner, "GET", "/account/export/transactions.csv", { workspaceId: owner.personalId });
     expect(response.status).toBe(200);
     expect(response.headers.get("content-type")).toContain("text/csv");
-    expect(response.headers.get("content-disposition")).toMatch(/^attachment; filename="expense-wise-personal-transactions-\d{4}-\d{2}-\d{2}\.csv"$/);
+    expect(response.headers.get("content-disposition")).toMatch(/^attachment; filename="financeos-personal-transactions-\d{4}-\d{2}-\d{2}\.csv"$/);
     expect(response.text.startsWith("﻿")).toBe(true);
     // The raw text: quotes doubled, fields with commas, quotes or newlines quoted.
     expect(response.text).toContain('"Coffee, ""Beans""\nShop"');
@@ -328,7 +328,7 @@ describe("account deletion", () => {
     expect(audit.map((row) => row.action).sort()).toEqual(["account.deleted", "workspace.deleted", "workspace.deleted"]);
     expect(audit.find((row) => row.action === "account.deleted")).toMatchObject({ targetType: "user", targetId: leaving.userId, actorEmail: leaving.email });
     expect(audit.filter((row) => row.action === "workspace.deleted").every((row) => row.details.reason === "account_deleted")).toBe(true);
-    expect(emails).toHaveBeenCalledWith(expect.objectContaining({ to: leaving.email, subject: "Your Expense Wise account was deleted" }));
+    expect(emails).toHaveBeenCalledWith(expect.objectContaining({ to: leaving.email, subject: "Your FinanceOS account was deleted" }));
     emails.mockRestore();
 
     // The old session no longer works.

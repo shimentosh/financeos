@@ -1,6 +1,6 @@
 "use client";
 
-import { monthKey, TYPE_LABELS } from "@expensewise/core";
+import { monthKey, TYPE_LABELS } from "@financeos/core";
 import { ArrowLeftRight, ChevronLeft, ChevronRight, Paperclip, Plus, Search, Sparkles, X } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";

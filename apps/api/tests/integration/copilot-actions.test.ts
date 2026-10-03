@@ -1,4 +1,4 @@
-import { today } from "@expensewise/core";
+import { today } from "@financeos/core";
 import { and, eq } from "drizzle-orm";
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import type { WorkspaceContext } from "../../src/common/context.js";
@@ -210,7 +210,7 @@ describe("MCP", () => {
       false,
       rpc("initialize", { protocolVersion: "2025-06-18", capabilities: {}, clientInfo: { name: "test", version: "1" } }),
     );
-    expect(init).toMatchObject({ result: { protocolVersion: "2025-06-18", capabilities: { tools: {} }, serverInfo: { name: "expense-wise" } } });
+    expect(init).toMatchObject({ result: { protocolVersion: "2025-06-18", capabilities: { tools: {} }, serverInfo: { name: "financeos" } } });
     expect(await mcp.handle(ctx, false, { jsonrpc: "2.0", method: "notifications/initialized" })).toBeNull();
 
     const read = (await mcp.handle(ctx, false, rpc("tools/list"))) as { result: { tools: Array<{ name: string; inputSchema: { type: string } }> } };
@@ -300,7 +300,7 @@ describe("files and storage", () => {
           provider: "s3",
           endpoint: "http://127.0.0.1:9",
           region: "us-east-1",
-          bucket: "expensewise-test",
+          bucket: "financeos-test",
           accessKeyId: "AKIATESTTESTTEST",
           secretAccessKey: "secretsecretsecret",
         },

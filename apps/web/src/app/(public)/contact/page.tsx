@@ -4,7 +4,7 @@ import Link from "next/link";
 import { SiteSection } from "@/components/marketing/site-chrome";
 import { SupportForm } from "@/components/marketing/support-form";
 
-export const metadata: Metadata = { title: "Contact", description: "Questions, problems, billing or privacy requests: write to the Expense Wise team." };
+export const metadata: Metadata = { title: "Contact", description: "Questions, problems, billing or privacy requests: write to the FinanceOS team." };
 
 const TOPICS = [
   { icon: LifeBuoy, title: "Something isn't working", body: "Tell us what you did and what happened; a screenshot helps." },

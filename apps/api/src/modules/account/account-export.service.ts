@@ -1,4 +1,4 @@
-import { minorToInput } from "@expensewise/core";
+import { minorToInput } from "@financeos/core";
 import { Injectable } from "@nestjs/common";
 import { asc, desc, eq } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
@@ -40,7 +40,7 @@ import {
   workspaces,
 } from "../../db/schema/index.js";
 
-export const EXPORT_FORMAT = "expense-wise-export";
+export const EXPORT_FORMAT = "financeos-export";
 export const EXPORT_VERSION = 1;
 const AUDIT_EXPORT_LIMIT = 1000;
 

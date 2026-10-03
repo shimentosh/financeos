@@ -1,6 +1,6 @@
-//! Expense Wise desktop shell.
+//! FinanceOS desktop shell.
 //!
-//! The desktop app is a native window around the Expense Wise web app: the
+//! The desktop app is a native window around the FinanceOS web app: the
 //! ledger, API and database stay on the server. On launch the bundled connect
 //! page (`src/index.html`) checks the saved server address and navigates the
 //! window to it; the web app then runs exactly as it does in a browser, so
@@ -15,8 +15,8 @@ use tauri::{
 };
 
 /// First-run server address. Override at build time with
-/// `EXPENSEWISE_SERVER_URL=https://books.example.com pnpm desktop:build`.
-const DEFAULT_SERVER_URL: &str = match option_env!("EXPENSEWISE_SERVER_URL") {
+/// `FINANCEOS_SERVER_URL=https://books.example.com pnpm desktop:build`.
+const DEFAULT_SERVER_URL: &str = match option_env!("FINANCEOS_SERVER_URL") {
     Some(url) => url,
     None => "http://localhost:3100",
 };
@@ -140,5 +140,5 @@ pub fn run() {
         })
         .invoke_handler(tauri::generate_handler![get_server_url, connect])
         .run(tauri::generate_context!())
-        .expect("error while running Expense Wise");
+        .expect("error while running FinanceOS");
 }

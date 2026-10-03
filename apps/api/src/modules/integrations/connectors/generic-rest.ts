@@ -1,5 +1,5 @@
-import { TRANSACTION_TYPES, type TransactionType } from "@expensewise/core";
-import type { CanonicalRecordInput } from "@expensewise/core/contracts/integrations-extra";
+import { TRANSACTION_TYPES, type TransactionType } from "@financeos/core";
+import type { CanonicalRecordInput } from "@financeos/core/contracts/integrations-extra";
 import { z } from "zod";
 import { assertSafeUrl, DEFAULT_TIMEOUT_MS, type HttpClient } from "./http.js";
 import { type ConnectionInfo, ConnectorError, defineConnector, type RawRecord } from "./types.js";

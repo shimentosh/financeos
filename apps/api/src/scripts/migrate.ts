@@ -16,7 +16,7 @@ import { migrationsFolder } from "../db/migrations.js";
  * at once), and each migration runs in a transaction, so a failed run leaves
  * the schema as it was.
  */
-const LOCK_ID = 7_342_001; // arbitrary, constant: "expense wise migrations"
+const LOCK_ID = 7_342_001; // arbitrary, constant: "FinanceOS migrations"
 
 async function main() {
   const target = process.argv.includes("--test") ? process.env.DATABASE_URL_TEST : process.env.DATABASE_URL;

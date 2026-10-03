@@ -1,5 +1,5 @@
-import { uuidv7 } from "@expensewise/core";
-import { SYNC_TRIGGERS, type SyncTrigger, type syncRunQuery } from "@expensewise/core/contracts/integrations-extra";
+import { uuidv7 } from "@financeos/core";
+import { SYNC_TRIGGERS, type SyncTrigger, type syncRunQuery } from "@financeos/core/contracts/integrations-extra";
 import { Inject, Injectable, Logger, type OnModuleInit } from "@nestjs/common";
 import { and, count, desc, eq, gte, inArray, isNull, lt, ne, or, sql } from "drizzle-orm";
 import type { z } from "zod";

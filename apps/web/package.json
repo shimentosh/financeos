@@ -1,5 +1,5 @@
 {
-  "name": "@expensewise/web",
+  "name": "@financeos/web",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",
-    "@expensewise/core": "workspace:*",
+    "@financeos/core": "workspace:*",
     "@fontsource-variable/geist": "5.3.0",
     "@fontsource-variable/geist-mono": "5.3.0",
     "better-auth": "^1.7.6",

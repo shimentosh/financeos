@@ -1,4 +1,4 @@
-import { addMonths, endOfMonth, startOfMonth, today } from "@expensewise/core";
+import { addMonths, endOfMonth, startOfMonth, today } from "@financeos/core";
 import { eq } from "drizzle-orm";
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { db } from "../../src/db/index.js";

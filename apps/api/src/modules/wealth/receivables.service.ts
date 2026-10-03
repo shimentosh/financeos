@@ -1,5 +1,5 @@
-import { type Day, formatMoney, type ReceivableState, receivableInput, receivablePaymentInput, receivableState, receivableUpdate } from "@expensewise/core";
-import { type ReceivableQuery, receivableQuery } from "@expensewise/core/contracts/wealth-extra";
+import { type Day, formatMoney, type ReceivableState, receivableInput, receivablePaymentInput, receivableState, receivableUpdate } from "@financeos/core";
+import { type ReceivableQuery, receivableQuery } from "@financeos/core/contracts/wealth-extra";
 import { Inject, Injectable } from "@nestjs/common";
 import { and, asc, desc, eq, ilike, inArray, ne, or, type SQL } from "drizzle-orm";
 import type { z } from "zod";

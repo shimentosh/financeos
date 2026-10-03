@@ -398,20 +398,22 @@ function UserMenu() {
           </DropdownMenuItem>
         )}
         <DropdownMenuSeparator />
-        <DropdownMenuLabel className="px-2 pt-1 pb-1 text-[11px] uppercase tracking-wide">Theme</DropdownMenuLabel>
-        <div className="flex gap-1 px-1.5 pb-1.5">
-          {(
-            [
-              ["light", Sun],
-              ["dark", Moon],
-              ["system", Monitor],
-            ] as const
-          ).map(([theme, Icon]) => (
-            <Button key={theme} variant="outline" size="xs" className="flex-1 capitalize" onClick={() => setTheme(theme)}>
-              <Icon className="size-3.5" /> {theme}
-            </Button>
-          ))}
-        </div>
+        <DropdownMenuGroup>
+          <DropdownMenuLabel className="px-2 pt-1 pb-1 text-[11px] uppercase tracking-wide">Theme</DropdownMenuLabel>
+          <div className="flex gap-1 px-1.5 pb-1.5">
+            {(
+              [
+                ["light", Sun],
+                ["dark", Moon],
+                ["system", Monitor],
+              ] as const
+            ).map(([theme, Icon]) => (
+              <Button key={theme} variant="outline" size="xs" className="flex-1 capitalize" onClick={() => setTheme(theme)}>
+                <Icon className="size-3.5" /> {theme}
+              </Button>
+            ))}
+          </div>
+        </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onClick={async () => {

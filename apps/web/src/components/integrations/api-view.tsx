@@ -21,7 +21,7 @@ import { CodeBlock, ConfirmDialog, CopyField } from "./shared";
 
 /** The app's own origin, for copy-pasteable examples (known only in the browser). */
 function useOrigin() {
-  const [origin, setOrigin] = useState("https://your-expensewise-domain");
+  const [origin, setOrigin] = useState("https://your-financeos-domain");
   useEffect(() => setOrigin(window.location.origin), []);
   return origin;
 }
@@ -357,11 +357,11 @@ const MCP_WRITE_TOOLS = [
  */
 function McpDocs({ origin }: { origin: string }) {
   const url = `${origin}/api/mcp`;
-  const claudeCode = `claude mcp add --transport http expensewise ${url} \\
+  const claudeCode = `claude mcp add --transport http financeos ${url} \\
   --header "Authorization: Bearer ew_live_…"`;
   const cursor = `{
   "mcpServers": {
-    "expensewise": {
+    "financeos": {
       "url": "${url}",
       "headers": { "Authorization": "Bearer ew_live_…" }
     }
@@ -369,10 +369,10 @@ function McpDocs({ origin }: { origin: string }) {
 }`;
   const desktop = `{
   "mcpServers": {
-    "expensewise": {
+    "financeos": {
       "command": "npx",
-      "args": ["-y", "mcp-remote", "${url}", "--header", "Authorization:\${EXPENSEWISE_AUTH}"],
-      "env": { "EXPENSEWISE_AUTH": "Bearer ew_live_…" }
+      "args": ["-y", "mcp-remote", "${url}", "--header", "Authorization:\${FINANCEOS_AUTH}"],
+      "env": { "FINANCEOS_AUTH": "Bearer ew_live_…" }
     }
   }
 }`;
@@ -445,7 +445,7 @@ function McpDocs({ origin }: { origin: string }) {
 function ApiDocs({ origin }: { origin: string }) {
   const base = `${origin}/api/v1`;
   const revenue = `curl -X POST ${base}/revenue \\
-  -H "Authorization: Bearer $EXPENSEWISE_API_KEY" \\
+  -H "Authorization: Bearer $FINANCEOS_API_KEY" \\
   -H "Content-Type: application/json" \\
   -d '{
     "external_id": "order_1001",
@@ -461,7 +461,7 @@ function ApiDocs({ origin }: { origin: string }) {
     "metadata": { "channel": "website" }
   }'`;
   const expense = `curl -X POST ${base}/expenses \\
-  -H "Authorization: Bearer $EXPENSEWISE_API_KEY" \\
+  -H "Authorization: Bearer $FINANCEOS_API_KEY" \\
   -H "Content-Type: application/json" \\
   -d '{
     "external_id": "bill_2026_09_link3",
@@ -473,9 +473,9 @@ function ApiDocs({ origin }: { origin: string }) {
     "description": "September internet bill"
   }'`;
   const read = `curl "${base}/transactions?from=2026-09-01&type=income&pageSize=20" \\
-  -H "Authorization: Bearer $EXPENSEWISE_API_KEY"
+  -H "Authorization: Bearer $FINANCEOS_API_KEY"
 
-curl ${base}/summary -H "Authorization: Bearer $EXPENSEWISE_API_KEY"`;
+curl ${base}/summary -H "Authorization: Bearer $FINANCEOS_API_KEY"`;
   const response = `{
   "id": "0199…",
   "duplicate": false,
@@ -584,8 +584,8 @@ function WebhookDocs({ customWebhooks }: { customWebhooks: Connection[] }) {
   const { canManage } = useApp();
   const node = `import { createHmac } from "node:crypto";
 
-const url = process.env.EXPENSEWISE_WEBHOOK_URL;       // from the connection page
-const secret = process.env.EXPENSEWISE_WEBHOOK_SECRET; // shown once, when connected
+const url = process.env.FINANCEOS_WEBHOOK_URL;       // from the connection page
+const secret = process.env.FINANCEOS_WEBHOOK_SECRET; // shown once, when connected
 
 const body = JSON.stringify({
   id: "order_1001",            // your event id: sending it twice is safe
@@ -605,20 +605,20 @@ const response = await fetch(url, {
   method: "POST",
   headers: {
     "Content-Type": "application/json",
-    "X-ExpenseWise-Timestamp": timestamp,
-    "X-ExpenseWise-Signature": \`sha256=\${signature}\`,
+    "X-FinanceOS-Timestamp": timestamp,
+    "X-FinanceOS-Signature": \`sha256=\${signature}\`,
   },
   body, // send exactly the bytes you signed
 });
 console.log(response.status, await response.json()); // 200 { status: "received" | "duplicate" }`;
   const shell = `BODY='{"id":"order_1001","type":"revenue","data":{"amount":149950,"currency":"BDT","date":"2026-09-21","customer":"Rafiq Ahmed"}}'
 TS=$(date +%s)
-SIG=$(printf '%s.%s' "$TS" "$BODY" | openssl dgst -sha256 -hmac "$EXPENSEWISE_WEBHOOK_SECRET" -hex | sed 's/^.* //')
+SIG=$(printf '%s.%s' "$TS" "$BODY" | openssl dgst -sha256 -hmac "$FINANCEOS_WEBHOOK_SECRET" -hex | sed 's/^.* //')
 
-curl -X POST "$EXPENSEWISE_WEBHOOK_URL" \\
+curl -X POST "$FINANCEOS_WEBHOOK_URL" \\
   -H "Content-Type: application/json" \\
-  -H "X-ExpenseWise-Timestamp: $TS" \\
-  -H "X-ExpenseWise-Signature: sha256=$SIG" \\
+  -H "X-FinanceOS-Timestamp: $TS" \\
+  -H "X-FinanceOS-Signature: sha256=$SIG" \\
   --data "$BODY"`;
   const payload = `{
   "id": "evt_or_order_id",          // idempotency key (required)
@@ -649,10 +649,10 @@ curl -X POST "$EXPENSEWISE_WEBHOOK_URL" \\
           <div className="space-y-1">
             <p className="font-medium text-foreground">Signature</p>
             <p>
-              <code className="font-mono">X-ExpenseWise-Timestamp</code>: the current Unix time in seconds.
+              <code className="font-mono">X-FinanceOS-Timestamp</code>: the current Unix time in seconds.
             </p>
             <p>
-              <code className="font-mono">X-ExpenseWise-Signature</code>: <code className="font-mono">sha256=</code> followed by the hex HMAC-SHA256 of{" "}
+              <code className="font-mono">X-FinanceOS-Signature</code>: <code className="font-mono">sha256=</code> followed by the hex HMAC-SHA256 of{" "}
               <code className="font-mono">{"<timestamp>.<raw body>"}</code> (the timestamp, a dot, then the exact bytes you send), keyed with the
               connection&apos;s secret.
             </p>

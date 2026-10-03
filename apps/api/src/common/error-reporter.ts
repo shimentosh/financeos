@@ -38,7 +38,7 @@ export function parseDsn(value: string | undefined | null): Dsn | null {
 }
 
 export function authHeader(dsn: Pick<Dsn, "key">): string {
-  return `Sentry sentry_version=7, sentry_key=${dsn.key}, sentry_client=expensewise/0.1`;
+  return `Sentry sentry_version=7, sentry_key=${dsn.key}, sentry_client=financeos/0.1`;
 }
 
 const SENSITIVE_HEADERS = new Set(["cookie", "set-cookie", "authorization", "proxy-authorization", "x-cron-secret", "x-api-key"]);
@@ -142,7 +142,7 @@ export function buildEvent(error: unknown, context: ReportContext, meta: { envir
     timestamp: Date.now() / 1000,
     platform: "node",
     level: context.level ?? "error",
-    logger: "expensewise",
+    logger: "financeos",
     server_name: meta.serverName,
     environment: meta.environment,
     release: meta.release,

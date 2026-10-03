@@ -7,7 +7,7 @@ import {
   aiConfigInput,
   aiConfigTestInput,
   today,
-} from "@expensewise/core";
+} from "@financeos/core";
 import { Inject, Injectable, Logger } from "@nestjs/common";
 import { eq } from "drizzle-orm";
 import sharp from "sharp";

@@ -1,4 +1,4 @@
-import { addDays, endOfMonth, startOfWeek, today } from "@expensewise/core";
+import { addDays, endOfMonth, startOfWeek, today } from "@financeos/core";
 import type { Metadata } from "next";
 import { PageShell } from "@/components/app/page-shell";
 import { AddCommitmentButton, type CommitmentsTab, CommitmentsView, type CommitmentsViewProps } from "@/components/planning/commitments-view";

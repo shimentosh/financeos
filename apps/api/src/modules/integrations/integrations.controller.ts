@@ -1,5 +1,5 @@
-import { connectInput } from "@expensewise/core";
-import { connectionPatch, connectionRecordsQuery, syncRunQuery, webhookTestInput } from "@expensewise/core/contracts/integrations-extra";
+import { connectInput } from "@financeos/core";
+import { connectionPatch, connectionRecordsQuery, syncRunQuery, webhookTestInput } from "@financeos/core/contracts/integrations-extra";
 import { Body, Controller, Delete, Get, HttpCode, Inject, Param, ParseUUIDPipe, Patch, Post, Query, Req } from "@nestjs/common";
 import type { z } from "zod";
 import type { AppRequest, WorkspaceContext } from "../../common/context.js";

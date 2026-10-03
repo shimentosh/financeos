@@ -159,7 +159,7 @@ export function DataAccountSettings({ check }: { check: DeletionCheck }) {
                 : "Only the workspace owner or an admin can export the whole workspace."
             }
             path="/account/export"
-            filename="expense-wise-export.json"
+            filename="financeos-export.json"
             disabled={!canManage}
           />
           <ExportRow
@@ -171,7 +171,7 @@ export function DataAccountSettings({ check }: { check: DeletionCheck }) {
                 : "Only the workspace owner or an admin can export transactions."
             }
             path="/account/export/transactions.csv"
-            filename="expense-wise-transactions.csv"
+            filename="financeos-transactions.csv"
             disabled={!canManage}
           />
           <ExportRow
@@ -179,7 +179,7 @@ export function DataAccountSettings({ check }: { check: DeletionCheck }) {
             title="Your profile"
             description="JSON: your details, preferences, workspace memberships and signed-in devices."
             path="/account/me/export"
-            filename="expense-wise-profile.json"
+            filename="financeos-profile.json"
           />
         </ul>
         <p className="text-xs text-muted-foreground">Receipts and other files are not inside the export; open them from their transactions.</p>

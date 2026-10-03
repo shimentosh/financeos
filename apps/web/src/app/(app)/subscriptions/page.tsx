@@ -1,4 +1,4 @@
-import { today } from "@expensewise/core";
+import { today } from "@financeos/core";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { PageShell } from "@/components/app/page-shell";

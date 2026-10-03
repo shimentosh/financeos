@@ -1,4 +1,4 @@
-import { type BillingOverview, type BillingPlansView, type CheckoutInput, checkoutInput, PLAN_IDS, type PlanId, UNLIMITED_LIMITS } from "@expensewise/core";
+import { type BillingOverview, type BillingPlansView, type CheckoutInput, checkoutInput, PLAN_IDS, type PlanId, UNLIMITED_LIMITS } from "@financeos/core";
 import { Inject, Injectable } from "@nestjs/common";
 import { desc, eq } from "drizzle-orm";
 import type { SessionUser } from "../../common/context.js";

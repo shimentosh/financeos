@@ -15,7 +15,7 @@ async function main() {
   const { AppModule } = await import("./app.module.js");
   const app = await NestFactory.createApplicationContext(AppModule, { logger });
   app.enableShutdownHooks();
-  logger.log("Expense Wise worker running", "Worker");
+  logger.log("FinanceOS worker running", "Worker");
 }
 
 main().catch(async (error: unknown) => {

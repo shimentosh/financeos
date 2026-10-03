@@ -1,6 +1,6 @@
 "use client";
 
-import { type CommitmentKind, DEFAULT_REMINDER_OFFSETS, formatDay, relativeDays } from "@expensewise/core";
+import { type CommitmentKind, DEFAULT_REMINDER_OFFSETS, formatDay, relativeDays } from "@financeos/core";
 import {
   Banknote,
   BookOpen,

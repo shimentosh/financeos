@@ -60,33 +60,33 @@ jobs:
         run: pnpm exec biome check .
 
       - name: Typecheck core
-        run: pnpm --filter @expensewise/core typecheck
+        run: pnpm --filter @financeos/core typecheck
 
       - name: Typecheck API
-        run: pnpm --filter @expensewise/api typecheck
+        run: pnpm --filter @financeos/api typecheck
 
       - name: Typecheck web
         run: |
-          pnpm --filter @expensewise/web exec next typegen
-          pnpm --filter @expensewise/web typecheck
+          pnpm --filter @financeos/web exec next typegen
+          pnpm --filter @financeos/web typecheck
 
       - name: Core tests
-        run: pnpm --filter @expensewise/core test
+        run: pnpm --filter @financeos/core test
 
       - name: Migrate the test database
-        run: pnpm --filter @expensewise/api db:migrate:test
+        run: pnpm --filter @financeos/api db:migrate:test
 
       - name: API unit tests
-        run: pnpm --filter @expensewise/api test:unit
+        run: pnpm --filter @financeos/api test:unit
 
       - name: API integration tests
-        run: pnpm --filter @expensewise/api test:integration
+        run: pnpm --filter @financeos/api test:integration
 
       - name: Build API
-        run: pnpm --filter @expensewise/api build
+        run: pnpm --filter @financeos/api build
 
       - name: Build web
-        run: pnpm --filter @expensewise/web build
+        run: pnpm --filter @financeos/web build
 
   images:
     name: Docker images

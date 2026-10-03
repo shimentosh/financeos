@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { connectInput } from "@expensewise/core";
+import { connectInput } from "@financeos/core";
 import { and, eq } from "drizzle-orm";
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import type { WorkspaceContext } from "../../src/common/context.js";
@@ -9,7 +9,7 @@ import { inboxItems, integrationConnections, jobs, syncRuns, transactions, webho
 import { ConnectionsService } from "../../src/modules/integrations/connections.service.js";
 import { demoPaymentsConnector } from "../../src/modules/integrations/connectors/demo-payments.js";
 import { type HttpClient, jsonResponse } from "../../src/modules/integrations/connectors/http.js";
-import { signExpenseWise, signTimestampedHeader } from "../../src/modules/integrations/connectors/signatures.js";
+import { signFinanceOS, signTimestampedHeader } from "../../src/modules/integrations/connectors/signatures.js";
 import { SyncService } from "../../src/modules/integrations/sync.service.js";
 import { WebhooksService } from "../../src/modules/integrations/webhooks.service.js";
 import { AccountsService } from "../../src/modules/ledger/accounts.service.js";
@@ -166,8 +166,8 @@ describe("custom webhook", () => {
     const now = new Date();
     const send = (payload: unknown) => {
       const body = Buffer.from(JSON.stringify(payload));
-      const { timestamp, signature } = signExpenseWise(secret, body, now);
-      return webhooks.receive(publicId, { "X-ExpenseWise-Timestamp": timestamp, "X-ExpenseWise-Signature": signature }, body, now);
+      const { timestamp, signature } = signFinanceOS(secret, body, now);
+      return webhooks.receive(publicId, { "X-FinanceOS-Timestamp": timestamp, "X-FinanceOS-Signature": signature }, body, now);
     };
 
     const order = {
@@ -225,8 +225,8 @@ describe("distinct records that look alike", () => {
     const now = new Date();
     const send = async (payload: unknown) => {
       const body = Buffer.from(JSON.stringify(payload));
-      const { timestamp, signature } = signExpenseWise(secret, body, now);
-      const receipt = await webhooks.receive(publicId, { "x-expensewise-timestamp": timestamp, "x-expensewise-signature": signature }, body, now);
+      const { timestamp, signature } = signFinanceOS(secret, body, now);
+      const receipt = await webhooks.receive(publicId, { "x-financeos-timestamp": timestamp, "x-financeos-signature": signature }, body, now);
       return webhooks.process(receipt.webhookEventId as string);
     };
     const charge = (id: string, reference?: string) => ({

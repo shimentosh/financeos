@@ -182,7 +182,7 @@ describe("webhook signatures", () => {
     ).toBe(false);
   });
 
-  it("verifies the Expense Wise scheme for custom webhooks", () => {
+  it("verifies the FinanceOS scheme for custom webhooks", () => {
     const connectionWithConfig = { ...connection, config: {} };
     const event = genericWebhookConnector.buildTestEvent?.({ connection: connectionWithConfig, secret: "whsec_custom", now });
     if (!event) throw new Error("no test event");
@@ -190,7 +190,7 @@ describe("webhook signatures", () => {
     expect(genericWebhookConnector.verifyWebhook?.({ headers, rawBody: event.rawBody, secret: "whsec_custom", now })).toBe(true);
     expect(
       genericWebhookConnector.verifyWebhook?.({
-        headers: { ...headers, "x-expensewise-timestamp": String(Number(headers["x-expensewise-timestamp"]) + 1) },
+        headers: { ...headers, "x-financeos-timestamp": String(Number(headers["x-financeos-timestamp"]) + 1) },
         rawBody: event.rawBody,
         secret: "whsec_custom",
         now,

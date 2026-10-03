@@ -8,7 +8,7 @@ import {
   liabilityOutstanding,
   liabilityUpdate,
   uuidv7,
-} from "@expensewise/core";
+} from "@financeos/core";
 import {
   type LiabilityPaymentRequest,
   type LiabilityQuery,
@@ -16,7 +16,7 @@ import {
   liabilityQuery,
   type PayablesQuery,
   payablesQuery,
-} from "@expensewise/core/contracts/wealth-extra";
+} from "@financeos/core/contracts/wealth-extra";
 import { Inject, Injectable } from "@nestjs/common";
 import { and, asc, desc, eq, inArray, isNull, ne, or, sql } from "drizzle-orm";
 import type { z } from "zod";

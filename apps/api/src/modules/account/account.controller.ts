@@ -1,4 +1,4 @@
-import { deleteAccountInput, onboardingInput, today } from "@expensewise/core";
+import { deleteAccountInput, onboardingInput, today } from "@financeos/core";
 import { Body, Controller, Delete, Get, HttpCode, Inject, Param, Post, Req, StreamableFile, UseGuards } from "@nestjs/common";
 import type { z } from "zod";
 import { authFeatures } from "../../auth/auth.js";
@@ -41,7 +41,7 @@ export class AccountController {
     const data = await this.exports.workspace(ctx, user);
     return download(
       JSON.stringify(data, null, 2),
-      `expense-wise-${fileSlug(ctx.workspaceName)}-${today(ctx.timezone)}.json`,
+      `financeos-${fileSlug(ctx.workspaceName)}-${today(ctx.timezone)}.json`,
       "application/json; charset=utf-8",
     );
   }
@@ -53,7 +53,7 @@ export class AccountController {
   @RateLimit("account-export", 30, 3600)
   async exportTransactions(@Ctx() ctx: WorkspaceContext) {
     const csv = await this.exports.transactionsCsv(ctx);
-    return download(csv, `expense-wise-${fileSlug(ctx.workspaceName)}-transactions-${today(ctx.timezone)}.csv`, "text/csv; charset=utf-8");
+    return download(csv, `financeos-${fileSlug(ctx.workspaceName)}-transactions-${today(ctx.timezone)}.csv`, "text/csv; charset=utf-8");
   }
 
   /** Your profile, preferences, memberships and sign-in history. */
@@ -61,7 +61,7 @@ export class AccountController {
   @RateLimit("account-export", 30, 3600)
   async exportMe(@CurrentUser() user: SessionUser) {
     const data = await this.exports.user(user);
-    return download(JSON.stringify(data, null, 2), `expense-wise-profile-${new Date().toISOString().slice(0, 10)}.json`, "application/json; charset=utf-8");
+    return download(JSON.stringify(data, null, 2), `financeos-profile-${new Date().toISOString().slice(0, 10)}.json`, "application/json; charset=utf-8");
   }
 
   /** Which of your workspaces would be deleted, and which block deleting the account. */

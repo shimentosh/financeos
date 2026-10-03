@@ -12,8 +12,8 @@ type Holder = { pool?: Pool; db?: Database };
 
 // One pool per process. Next.js dev reloads modules on every edit, so the pool
 // is kept on globalThis instead of being re-created (and leaked) each time.
-const holder = globalThis as typeof globalThis & { __expenseWiseDb?: Holder };
-holder.__expenseWiseDb ??= {};
+const holder = globalThis as typeof globalThis & { __financeOsDb?: Holder };
+holder.__financeOsDb ??= {};
 
 function createPool(connectionString: string) {
   return new Pool({
@@ -25,7 +25,7 @@ function createPool(connectionString: string) {
 }
 
 export function getDb(): Database {
-  const state = holder.__expenseWiseDb as Holder;
+  const state = holder.__financeOsDb as Holder;
   if (!state.db) {
     const url = process.env.DATABASE_URL;
     if (!url) throw new Error("DATABASE_URL is not set");
@@ -37,7 +37,7 @@ export function getDb(): Database {
 
 /** For tests and scripts that point the app at another database. */
 export function setDatabaseUrl(url: string) {
-  const state = holder.__expenseWiseDb as Holder;
+  const state = holder.__financeOsDb as Holder;
   void state.pool?.end();
   state.pool = createPool(url);
   state.db = drizzle(state.pool, { schema });
@@ -45,7 +45,7 @@ export function setDatabaseUrl(url: string) {
 }
 
 export async function closeDb() {
-  const state = holder.__expenseWiseDb as Holder;
+  const state = holder.__financeOsDb as Holder;
   await state.pool?.end();
   state.pool = undefined;
   state.db = undefined;

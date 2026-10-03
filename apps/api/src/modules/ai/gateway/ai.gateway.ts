@@ -1,4 +1,4 @@
-import type { AiStatusView } from "@expensewise/core/contracts/ai-extra";
+import type { AiStatusView } from "@financeos/core/contracts/ai-extra";
 import { Inject, Injectable, Logger, Optional } from "@nestjs/common";
 import type { WorkspaceContext } from "../../../common/context.js";
 import { CreditsService } from "../../billing/credits.service.js";

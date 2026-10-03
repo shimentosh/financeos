@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { type StorageBackend, uuidv7 } from "@expensewise/core";
+import { type StorageBackend, uuidv7 } from "@financeos/core";
 import { Inject, Injectable, Logger, type OnModuleInit } from "@nestjs/common";
 import { and, asc, eq, gt, isNotNull, isNull, ne, or, type SQL } from "drizzle-orm";
 import type { WorkspaceContext } from "../../common/context.js";

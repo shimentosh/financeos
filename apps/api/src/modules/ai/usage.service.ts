@@ -1,5 +1,5 @@
-import { addMonths, eachDay, endOfMonth, monthKey, today } from "@expensewise/core";
-import type { AiUsageReportView } from "@expensewise/core/contracts/ai-extra";
+import { addMonths, eachDay, endOfMonth, monthKey, today } from "@financeos/core";
+import type { AiUsageReportView } from "@financeos/core/contracts/ai-extra";
 import { Injectable, Logger } from "@nestjs/common";
 import { and, desc, eq, gte, lt, sql } from "drizzle-orm";
 import type { WorkspaceContext } from "../../common/context.js";

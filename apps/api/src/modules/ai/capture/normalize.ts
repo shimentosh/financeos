@@ -10,8 +10,8 @@ import {
   type TransactionType,
   TYPE_RULES,
   toMinor,
-} from "@expensewise/core";
-import type { BillingCycle, SubscriptionSuggestion } from "@expensewise/core/contracts/ai-extra";
+} from "@financeos/core";
+import type { BillingCycle, SubscriptionSuggestion } from "@financeos/core/contracts/ai-extra";
 import type { ExtractionOutput, PaymentMethod } from "../gateway/schemas.js";
 
 // Pure mapping from what a model or the parser read to values the ledger can

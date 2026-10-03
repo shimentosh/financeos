@@ -1,6 +1,6 @@
 "use client";
 
-import { today } from "@expensewise/core";
+import { today } from "@financeos/core";
 import { AlertTriangle, ArrowLeft, Camera, Copy, ExternalLink, FileText, Minus, Plus, Repeat, RotateCcw, Sparkles, Trash2, ZoomIn } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";

@@ -1,4 +1,4 @@
-import { type BillingInterval, type BillingStatus, PLAN_IDS, type PlanId, uuidv7 } from "@expensewise/core";
+import { type BillingInterval, type BillingStatus, PLAN_IDS, type PlanId, uuidv7 } from "@financeos/core";
 import { Inject, Injectable, Logger } from "@nestjs/common";
 import { and, eq, or } from "drizzle-orm";
 import { badRequest, unprocessable } from "../../common/errors.js";
@@ -116,7 +116,7 @@ export class StripeService {
                   currency,
                   unit_amount: item.amount,
                   recurring: { interval: item.interval },
-                  product_data: { name: `Expense Wise ${config.plans[item.plan].name}` },
+                  product_data: { name: `FinanceOS ${config.plans[item.plan].name}` },
                 },
               },
             ],

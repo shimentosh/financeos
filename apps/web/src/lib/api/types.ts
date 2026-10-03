@@ -1,4 +1,4 @@
-import type { AccountKind, Direction, MemberRole, TransactionSource, TransactionStatus, TransactionType, WorkspaceKind } from "@expensewise/core";
+import type { AccountKind, Direction, MemberRole, TransactionSource, TransactionStatus, TransactionType, WorkspaceKind } from "@financeos/core";
 
 // Response shapes of the ledger and workspace endpoints. Domain areas add
 // their own files next to this one (types/<area>.ts).

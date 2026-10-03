@@ -1,4 +1,4 @@
-import { type BillingInterval, currencyDecimals, minorToInput, type PlanId, toMinor } from "@expensewise/core";
+import { type BillingInterval, currencyDecimals, minorToInput, type PlanId, toMinor } from "@financeos/core";
 import { Inject, Injectable, Logger } from "@nestjs/common";
 import { unprocessable } from "../../common/errors.js";
 import { randomBase62 } from "../integrations/crypto.js";
@@ -92,7 +92,7 @@ export class SslcommerzService {
         total_amount: "10.00",
         currency: "BDT",
         tran_id: `EWTEST-${randomBase62(10)}`,
-        cus_name: "Expense Wise",
+        cus_name: "FinanceOS",
         cus_email: "test@example.com",
         product_name: "Credential check",
       });
@@ -114,7 +114,7 @@ export class SslcommerzService {
     const tranId = `EW-${Date.now().toString(36)}-${randomBase62(8)}`.slice(0, 30);
     const product =
       item.purpose === "plan"
-        ? `Expense Wise ${config.plans[item.plan].name} (${item.interval === "year" ? "1 year" : "1 month"})`
+        ? `FinanceOS ${config.plans[item.plan].name} (${item.interval === "year" ? "1 year" : "1 month"})`
         : `${item.credits.toLocaleString("en-US")} AI credits`;
     const payment = await this.payments.create({
       userId: user.id,

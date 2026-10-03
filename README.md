@@ -1,4 +1,4 @@
-# Expense Wise
+# FinanceOS
 
 An AI-powered personal **and** business financial operating system. It captures money from screenshots, receipts, text, voice, imports and connected apps; keeps a double-entry ledger as the single source of truth; and turns it into budgets, project economics, net worth, forecasts and reports you can trace back to individual transactions.
 
@@ -61,7 +61,7 @@ In development the first account created becomes the platform admin; in producti
 
 ### Demo data
 
-`pnpm db:seed` signs up **demo@expensewise.app** / **demo-expense-wise** (override with `SEED_EMAIL`, `SEED_PASSWORD`) with a year of activity through the real services:
+`pnpm db:seed` signs up **demo@financeos.app** / **demo-financeos** (override with `SEED_EMAIL`, `SEED_PASSWORD`) with a year of activity through the real services:
 
 - **Personal workspace:** salary and freelance income, bKash/Nagad/card/cash spending, subscriptions with renewal history and a real price change, rent and school fees, budgets, assets, investments with monthly valuations, a car loan, money lent and borrowed, and goals.
 - **Business workspace "Shimanto Labs":** Stripe and Payoneer revenue, three projects, payroll, AI and hosting costs, an annual Figma renewal, invoices, a payable and an SME loan.
@@ -125,14 +125,14 @@ Put a TLS reverse proxy in front of the web container. Health: `GET /api/health`
 
 ## Desktop app (Windows MSI)
 
-`apps/desktop` is a Tauri 2 shell around the web app. The ledger, API and database stay on the server; the desktop app connects to a running Expense Wise web server (default `http://localhost:3100`) and remembers the address. Use **File → Change server…** to point it somewhere else.
+`apps/desktop` is a Tauri 2 shell around the web app. The ledger, API and database stay on the server; the desktop app connects to a running FinanceOS web server (default `http://localhost:3100`) and remembers the address. Use **File → Change server…** to point it somewhere else.
 
 Requirements: Rust (MSVC toolchain) and WebView2 (built into Windows 10/11). WiX is downloaded automatically by the Tauri CLI.
 
 ```bash
 pnpm desktop:dev                # run the shell against your running server
 pnpm desktop:build              # → apps/desktop/src-tauri/target/release/bundle/msi/*.msi
-EXPENSEWISE_SERVER_URL=https://books.example.com pnpm desktop:build   # bake in a default server
+FINANCEOS_SERVER_URL=https://books.example.com pnpm desktop:build   # bake in a default server
 ```
 
 The server's `APP_URL` must match the address the desktop app connects to (Better Auth checks the origin).

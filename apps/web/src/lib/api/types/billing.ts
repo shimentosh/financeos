@@ -1,5 +1,5 @@
 // Response shapes of /billing and /admin/billing. The canonical types live in
-// @expensewise/core (shared with the API); this file re-exports them.
+// @financeos/core (shared with the API); this file re-exports them.
 
 export type {
   AdminBillingPayment,
@@ -22,7 +22,7 @@ export type {
   PlanId,
   PlanLimits,
   PublicPlan,
-} from "@expensewise/core";
+} from "@financeos/core";
 
 /** The body of an HTTP 402 `plan_limit` error. */
 export type PlanLimitDetails = { limit: string; plan: string; used?: number; allowed?: number | null };

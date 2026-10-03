@@ -1,4 +1,4 @@
-import type { CanonicalRecordInput } from "@expensewise/core/contracts/integrations-extra";
+import type { CanonicalRecordInput } from "@financeos/core/contracts/integrations-extra";
 import { z } from "zod";
 import { parseJsonObject } from "./demo-payments.js";
 import type { HttpClient, HttpResponse } from "./http.js";

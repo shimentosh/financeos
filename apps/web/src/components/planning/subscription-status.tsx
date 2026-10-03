@@ -1,6 +1,6 @@
 "use client";
 
-import type { SubscriptionStatus } from "@expensewise/core";
+import type { SubscriptionStatus } from "@financeos/core";
 import { Ban, Check, ChevronDown, Pause, Play } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useId, useState } from "react";

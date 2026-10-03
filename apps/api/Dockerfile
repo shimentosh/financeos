@@ -1,12 +1,12 @@
 # syntax=docker/dockerfile:1.7
 #
-# Expense Wise API (NestJS). One image, three roles:
+# FinanceOS API (NestJS). One image, three roles:
 #   node dist/main.js               the HTTP API (default)
 #   node dist/worker.js             a background worker (jobs, events, schedules)
 #   node dist/scripts/migrate.js    the release step: apply database migrations
 #
 # Build from the repository root:
-#   docker build -f apps/api/Dockerfile -t expensewise-api --build-arg APP_VERSION=$(git rev-parse --short HEAD) .
+#   docker build -f apps/api/Dockerfile -t financeos-api --build-arg APP_VERSION=$(git rev-parse --short HEAD) .
 #
 # packages/core ships as TypeScript source and runs through Node's type
 # stripping, so the image keeps the workspace layout (packages/core next to
@@ -38,17 +38,17 @@ COPY packages/core/package.json packages/core/
 
 # --- build: compile with SWC (nest build) -------------------------------------
 FROM manifests AS build
-RUN pnpm install --frozen-lockfile --offline --store-dir /pnpm/store --filter "@expensewise/api..."
+RUN pnpm install --frozen-lockfile --offline --store-dir /pnpm/store --filter "@financeos/api..."
 COPY tsconfig.base.json ./
 COPY packages/core packages/core
 COPY apps/api apps/api
-RUN pnpm --filter @expensewise/api build
+RUN pnpm --filter @financeos/api build
 
 # --- prod-deps: runtime dependencies only --------------------------------------
 # `pnpm fetch` also linked every package (dev tools, the web app's) into
 # node_modules; start clean so only the API's runtime dependencies are linked.
 FROM manifests AS prod-deps
-RUN rm -rf node_modules && pnpm install --frozen-lockfile --offline --prod --store-dir /pnpm/store --filter "@expensewise/api..."
+RUN rm -rf node_modules && pnpm install --frozen-lockfile --offline --prod --store-dir /pnpm/store --filter "@financeos/api..."
 
 # --- runtime -------------------------------------------------------------------
 FROM node:${NODE_VERSION}-bookworm-slim AS runtime

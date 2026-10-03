@@ -1,5 +1,5 @@
 import { rmSync } from "node:fs";
-import { importMappingRequest } from "@expensewise/core/contracts/integrations-extra";
+import { importMappingRequest } from "@financeos/core/contracts/integrations-extra";
 import { and, eq } from "drizzle-orm";
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 

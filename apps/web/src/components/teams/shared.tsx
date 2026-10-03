@@ -1,6 +1,6 @@
 "use client";
 
-import type { MemberRole } from "@expensewise/core";
+import type { MemberRole } from "@financeos/core";
 import Link from "next/link";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { ApiError } from "@/lib/api/shared";

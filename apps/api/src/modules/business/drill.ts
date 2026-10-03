@@ -1,5 +1,5 @@
-import type { TransactionType } from "@expensewise/core";
-import { type Day, endOfMonth, type PeriodPreset, presetRange, startOfMonth } from "@expensewise/core";
+import type { TransactionType } from "@financeos/core";
+import { type Day, endOfMonth, type PeriodPreset, presetRange, startOfMonth } from "@financeos/core";
 import { todayFor, type WorkspaceContext } from "../../common/context.js";
 
 /**

@@ -1,4 +1,4 @@
-import type { CanonicalRecordInput, ConnectorCategory, SyncTrigger } from "@expensewise/core/contracts/integrations-extra";
+import type { CanonicalRecordInput, ConnectorCategory, SyncTrigger } from "@financeos/core/contracts/integrations-extra";
 import type { z } from "zod";
 import type { HttpClient } from "./http.js";
 

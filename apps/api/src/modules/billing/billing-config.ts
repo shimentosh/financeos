@@ -11,7 +11,7 @@ import {
   type PublicPlan,
   TRIAL_DAYS,
   TRIAL_PLAN,
-} from "@expensewise/core";
+} from "@financeos/core";
 import { Logger } from "@nestjs/common";
 import { eq } from "drizzle-orm";
 import { db } from "../../db/index.js";

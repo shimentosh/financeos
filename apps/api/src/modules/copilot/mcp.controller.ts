@@ -43,7 +43,7 @@ export class McpController {
     if (!key) {
       response
         .status(401)
-        .setHeader("WWW-Authenticate", 'Bearer realm="expense-wise"')
+        .setHeader("WWW-Authenticate", 'Bearer realm="financeos"')
         .json(rpcError(-32001, token ? "This API key is invalid, revoked or expired" : "Send a workspace API key as Authorization: Bearer ew_live_…"));
       return;
     }

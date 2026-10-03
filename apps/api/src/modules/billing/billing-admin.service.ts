@@ -20,7 +20,7 @@ import {
   type PlanId,
   type PlanLimits,
   STRIPE_WEBHOOK_EVENTS,
-} from "@expensewise/core";
+} from "@financeos/core";
 import { Inject, Injectable } from "@nestjs/common";
 import { and, desc, eq, gte, ilike, inArray, or, sql } from "drizzle-orm";
 import type { z } from "zod";

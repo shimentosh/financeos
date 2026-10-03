@@ -1,4 +1,4 @@
-import type { onboardingInput } from "@expensewise/core";
+import type { onboardingInput } from "@financeos/core";
 import { Inject, Injectable } from "@nestjs/common";
 import { and, asc, eq, sql } from "drizzle-orm";
 import type { z } from "zod";
@@ -151,18 +151,18 @@ export class AccountService {
     });
     await this.email.send({
       to: check.email,
-      subject: "Your Expense Wise account was deleted",
+      subject: "Your FinanceOS account was deleted",
       heading: "Your account was deleted",
       paragraphs: [
-        `Your Expense Wise account (${check.email}) has been deleted${actor.action === "account.deleted" ? "" : " by the people who run this service"}${check.deletes.length ? `, together with ${check.deletes.length === 1 ? "the workspace" : `the ${check.deletes.length} workspaces`} you owned and every record and file in ${check.deletes.length === 1 ? "it" : "them"}` : ""}. This cannot be undone.`,
+        `Your FinanceOS account (${check.email}) has been deleted${actor.action === "account.deleted" ? "" : " by the people who run this service"}${check.deletes.length ? `, together with ${check.deletes.length === 1 ? "the workspace" : `the ${check.deletes.length} workspaces`} you owned and every record and file in ${check.deletes.length === 1 ? "it" : "them"}` : ""}. This cannot be undone.`,
         ...(check.leaves.length
           ? [
               `You were also removed from ${check.leaves.length === 1 ? "1 workspace" : `${check.leaves.length} workspaces`} that other people own; their books are unchanged.`,
             ]
           : []),
-        "Thank you for using Expense Wise. You are welcome back any time.",
+        "Thank you for using FinanceOS. You are welcome back any time.",
       ],
-      action: { label: "Visit Expense Wise", url: appLink("/") },
+      action: { label: "Visit FinanceOS", url: appLink("/") },
       footnote:
         actor.action === "account.deleted"
           ? env.SUPPORT_EMAIL

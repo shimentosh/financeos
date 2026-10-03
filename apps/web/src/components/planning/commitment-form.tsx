@@ -12,7 +12,7 @@ import {
   minorToInput,
   parseMoneyInput,
   today,
-} from "@expensewise/core";
+} from "@financeos/core";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { type FormEvent, useEffect, useId, useState } from "react";

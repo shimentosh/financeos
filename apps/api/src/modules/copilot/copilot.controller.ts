@@ -5,7 +5,7 @@ import {
   type CopilotAskInput,
   copilotActionsInput,
   copilotAskInput,
-} from "@expensewise/core";
+} from "@financeos/core";
 import { Body, Controller, Delete, Get, HttpCode, Inject, Param, ParseUUIDPipe, Post } from "@nestjs/common";
 import type { WorkspaceContext } from "../../common/context.js";
 import { AllowViewer, Ctx, WorkspaceScoped } from "../../common/guards.js";

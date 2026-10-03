@@ -1,4 +1,4 @@
-import type { AgentMemoryItem } from "@expensewise/core";
+import type { AgentMemoryItem } from "@financeos/core";
 
 // Shapes of the JSONB columns. JSONB holds flexible metadata and configuration;
 // every figure that is summed or reported lives in a typed column instead.

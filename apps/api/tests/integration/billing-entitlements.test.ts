@@ -1,5 +1,5 @@
 import { randomBytes } from "node:crypto";
-import { connectInput, UNLIMITED_LIMITS } from "@expensewise/core";
+import { connectInput, UNLIMITED_LIMITS } from "@financeos/core";
 import { and, eq } from "drizzle-orm";
 import sharp from "sharp";
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";

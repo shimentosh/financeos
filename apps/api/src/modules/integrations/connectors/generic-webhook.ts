@@ -1,9 +1,9 @@
-import { today } from "@expensewise/core";
-import { type CanonicalRecordInput, inboundWebhookEvent } from "@expensewise/core/contracts/integrations-extra";
+import { today } from "@financeos/core";
+import { type CanonicalRecordInput, inboundWebhookEvent } from "@financeos/core/contracts/integrations-extra";
 import { z } from "zod";
 import { randomBase62 } from "../crypto.js";
 import { parseJsonObject } from "./demo-payments.js";
-import { signExpenseWise, verifyExpenseWiseSignature } from "./signatures.js";
+import { signFinanceOS, verifyFinanceOSSignature } from "./signatures.js";
 import { ConnectorError, defineConnector, type RawRecord } from "./types.js";
 
 /**
@@ -12,8 +12,8 @@ import { ConnectorError, defineConnector, type RawRecord } from "./types.js";
  * the public API's snake_case fields.
  */
 
-export const EXPENSEWISE_SIGNATURE_HEADER = "x-expensewise-signature";
-export const EXPENSEWISE_TIMESTAMP_HEADER = "x-expensewise-timestamp";
+export const FINANCEOS_SIGNATURE_HEADER = "x-financeos-signature";
+export const FINANCEOS_TIMESTAMP_HEADER = "x-financeos-timestamp";
 
 const configSchema = z.object({}).loose();
 
@@ -84,18 +84,18 @@ export const genericWebhookConnector = defineConnector<Record<string, unknown>, 
   requiresAccount: false,
   defaultSyncFrequency: "manual",
   webhookDocs: {
-    signatureHeader: EXPENSEWISE_SIGNATURE_HEADER,
+    signatureHeader: FINANCEOS_SIGNATURE_HEADER,
     scheme:
-      "x-expensewise-timestamp: <unix seconds>; x-expensewise-signature: sha256=<hex HMAC-SHA256 of <timestamp>.<raw body> with the webhook secret>; 5-minute tolerance. Body: { id, type: transaction | revenue | expense, data }",
+      "x-financeos-timestamp: <unix seconds>; x-financeos-signature: sha256=<hex HMAC-SHA256 of <timestamp>.<raw body> with the webhook secret>; 5-minute tolerance. Body: { id, type: transaction | revenue | expense, data }",
     events: ["transaction", "revenue", "expense"],
   },
 
   normalize: (raw) => normalizeInboundEvent(raw),
 
   verifyWebhook({ headers, rawBody, secret, now }) {
-    return verifyExpenseWiseSignature({
-      signature: headers[EXPENSEWISE_SIGNATURE_HEADER],
-      timestamp: headers[EXPENSEWISE_TIMESTAMP_HEADER],
+    return verifyFinanceOSSignature({
+      signature: headers[FINANCEOS_SIGNATURE_HEADER],
+      timestamp: headers[FINANCEOS_TIMESTAMP_HEADER],
       rawBody,
       secret,
       now,
@@ -120,16 +120,16 @@ export const genericWebhookConnector = defineConnector<Record<string, unknown>, 
         date: today(connection.timezone, now),
         customer: "Test customer",
         product: "Test order",
-        description: "Test event from Expense Wise",
+        description: "Test event from FinanceOS",
         metadata: { test: true },
       },
     };
     const rawBody = Buffer.from(JSON.stringify(body));
-    const { timestamp, signature } = signExpenseWise(secret, rawBody, now);
+    const { timestamp, signature } = signFinanceOS(secret, rawBody, now);
     return {
       eventType: "revenue",
       rawBody,
-      headers: { "content-type": "application/json", [EXPENSEWISE_TIMESTAMP_HEADER]: timestamp, [EXPENSEWISE_SIGNATURE_HEADER]: signature },
+      headers: { "content-type": "application/json", [FINANCEOS_TIMESTAMP_HEADER]: timestamp, [FINANCEOS_SIGNATURE_HEADER]: signature },
     };
   },
 });

@@ -1,4 +1,4 @@
-import { type AccountInput, accountInput, accountUpdate, type Day, today } from "@expensewise/core";
+import { type AccountInput, accountInput, accountUpdate, type Day, today } from "@financeos/core";
 import { Inject, Injectable } from "@nestjs/common";
 import { and, asc, eq, inArray, lte, sql } from "drizzle-orm";
 import type { z } from "zod";

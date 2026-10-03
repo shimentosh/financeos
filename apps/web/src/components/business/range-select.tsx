@@ -1,6 +1,6 @@
 "use client";
 
-import { formatDay } from "@expensewise/core";
+import { formatDay } from "@financeos/core";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useTransition } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";

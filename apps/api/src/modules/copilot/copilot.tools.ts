@@ -1,4 +1,4 @@
-import { type CopilotFact, type CopilotSource, type Day, isDay, type Range, TRANSACTION_TYPES } from "@expensewise/core";
+import { type CopilotFact, type CopilotSource, type Day, isDay, type Range, TRANSACTION_TYPES } from "@financeos/core";
 import { z } from "zod";
 import type { WorkspaceContext } from "../../common/context.js";
 import type { ToolDefinition } from "../ai/gateway/types.js";

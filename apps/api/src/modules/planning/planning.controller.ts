@@ -8,7 +8,7 @@ import {
   goalUpdate,
   skipOccurrenceInput,
   subscriptionUpdate,
-} from "@expensewise/core";
+} from "@financeos/core";
 import {
   type AnnualCommitmentsQuery,
   annualCommitmentsQuery,
@@ -36,7 +36,7 @@ import {
   type UpcomingQuery,
   undoPaymentInput,
   upcomingQuery,
-} from "@expensewise/core/contracts/planning-extra";
+} from "@financeos/core/contracts/planning-extra";
 import { Body, Controller, Delete, Get, HttpCode, Inject, Param, ParseUUIDPipe, Patch, Post, Query } from "@nestjs/common";
 import type { z } from "zod";
 import type { WorkspaceContext } from "../../common/context.js";

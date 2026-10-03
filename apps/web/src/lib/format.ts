@@ -1,4 +1,4 @@
-import { formatDay, formatMoney, type MoneyFormatOptions, relativeDays } from "@expensewise/core";
+import { formatDay, formatMoney, type MoneyFormatOptions, relativeDays } from "@financeos/core";
 
 export { formatDay, relativeDays };
 

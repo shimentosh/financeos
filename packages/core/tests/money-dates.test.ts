@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   addMonths,
   convertMinor,
+  currencyCode,
   currencyDecimals,
   diffDays,
   formatMoney,
@@ -20,6 +21,19 @@ describe("money", () => {
     expect(currencyDecimals("BDT")).toBe(2);
     expect(currencyDecimals("usd")).toBe(2);
     expect(currencyDecimals("JPY")).toBe(0);
+  });
+
+  it("handles digital currencies: precision, symbols, conversion and 4-letter codes", () => {
+    expect(currencyDecimals("BTC")).toBe(8);
+    expect(currencyDecimals("usdt")).toBe(2);
+    expect(parseMoneyInput("0.0025", "BTC")).toBe(250_000);
+    expect(formatMoney(50_000_000, "BTC")).toBe("₿0.50000000");
+    expect(formatMoney(-150_050, "USDT", { signed: true })).toBe("-₮1,500.50");
+    expect(formatMoney(123_456_789, "SOL")).toBe("SOL 1.23456789");
+    // 0.5 BTC at ৳1,20,00,000 a coin.
+    expect(convertMinor(50_000_000, "BTC", "BDT", "12000000")).toBe(600_000_000);
+    expect(currencyCode.parse("usdt")).toBe("USDT");
+    expect(currencyCode.safeParse("US").success).toBe(false);
   });
 
   it("parses typed amounts including lakh grouping and Bangla digits", () => {

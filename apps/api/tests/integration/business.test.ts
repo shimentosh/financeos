@@ -3,7 +3,7 @@ import { and, eq } from "drizzle-orm";
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { todayFor, type WorkspaceContext } from "../../src/common/context.js";
 import { db } from "../../src/db/index.js";
-import { auditLogs, categories } from "../../src/db/schema/index.js";
+import { auditLogs, categories, files } from "../../src/db/schema/index.js";
 import { nextPayDate, PayrollService } from "../../src/modules/business/payroll.service.js";
 import { ProjectFinanceService } from "../../src/modules/business/project-finance.service.js";
 import { RevenueService } from "../../src/modules/business/revenue.service.js";
@@ -344,6 +344,63 @@ describe("payroll", () => {
     expect(actions).toEqual(expect.arrayContaining(["payroll_run.created", "payroll_item.updated", "payroll_run.posted", "payroll_run.unposted"]));
     expect(await payroll.removeEmployee(ctx, karim.id)).toEqual({ deactivated: true });
     expect((await payroll.listRuns(ctx))[0]).toMatchObject({ period, itemCount: 3 });
+  });
+
+  it("pays one employee for one month with proof, never twice, and the run skips them", async () => {
+    const proof = async () => {
+      const [row] = await db
+        .insert(files)
+        .values({
+          workspaceId: ctx.workspaceId,
+          storageKey: `test/${crypto.randomUUID()}`,
+          filename: "bkash.png",
+          contentType: "image/png",
+          size: 10,
+          sha256: crypto.randomUUID(),
+        })
+        .returning();
+      return row?.id as string;
+    };
+    const rahim = await payroll.createEmployee(ctx, { name: "Rahim Uddin", salary: 5_000_000, currency: "BDT", accountId: bank, defaultProjectId: app });
+    const karim = await payroll.createEmployee(ctx, { name: "Karim Ahmed", salary: 4_000_000, currency: "BDT", accountId: bank, defaultProjectId: app });
+    const period = monthKey(m1);
+
+    // Proof is required.
+    await expect(payroll.payEmployee(ctx, rahim.id, { period, paidOn: m1, attachmentFileIds: [] })).rejects.toThrow();
+
+    const detail = await payroll.payEmployee(ctx, rahim.id, { period, paidOn: addDays(m1, 2), attachmentFileIds: [await proof()] });
+    const month = detail.months.find((m) => m.period === period);
+    expect(month).toMatchObject({ status: "paid", amount: 5_000_000, paidOn: addDays(m1, 2) });
+    const paid = await transactions.get(ctx, month?.transactionId as string);
+    expect(paid).toMatchObject({ type: "expense", amount: 5_000_000, projectId: app, categoryId: await category("Payroll") });
+    expect(paid.attachmentFileId).toBeTruthy();
+
+    await expect(payroll.payEmployee(ctx, rahim.id, { period, paidOn: m1, attachmentFileIds: [await proof()] })).rejects.toMatchObject({
+      code: "already_paid",
+    });
+
+    // The month's run already has Rahim paid; posting pays only Karim.
+    const run = (await payroll.listRuns(ctx)).find((r) => r.period === period);
+    const runId = run?.id as string;
+    const withKarim = await payroll.runDetail(ctx, runId);
+    expect(withKarim.items.map((i) => i.employeeId)).toEqual([rahim.id]);
+    await expect(payroll.deleteRun(ctx, runId)).rejects.toMatchObject({ code: "run_has_payments" });
+    await payroll.payEmployee(ctx, karim.id, { period, paidOn: m1, amount: 3_500_000, attachmentFileIds: [await proof()] });
+    const posted = await payroll.post(ctx, runId);
+    const salaryTx = (await transactions.list(ctx, { type: ["expense"], categoryId: await category("Payroll") })).items.filter(
+      (t) => t.status !== "void",
+    );
+    expect(salaryTx.map((t) => t.amount).sort()).toEqual([3_500_000, 5_000_000]);
+    expect(posted.status).toBe("posted");
+
+    // Un-posting the run keeps the payments made one by one.
+    await payroll.unpost(ctx, runId);
+    expect((await payroll.employeeDetail(ctx, rahim.id)).months.find((m) => m.period === period)?.status).toBe("paid");
+
+    // Undoing a payment voids the expense and the month is unpaid again.
+    const undone = await payroll.unpayEmployee(ctx, rahim.id, { period });
+    expect(undone.months.find((m) => m.period === period)?.status).toBe("unpaid");
+    expect((await transactions.get(ctx, month?.transactionId as string)).status).toBe("void");
   });
 
   it("is only available in business workspaces", async () => {

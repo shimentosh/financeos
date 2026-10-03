@@ -1,6 +1,6 @@
 "use client";
 
-import { COMMON_CURRENCIES, today } from "@expensewise/core";
+import { SELECTABLE_CURRENCIES, today } from "@expensewise/core";
 import { ChevronLeft, ChevronRight, Plus, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -97,7 +97,7 @@ export function CurrencySettings({ rates }: { rates: ExchangeRate[] }) {
                   <SelectValue>{from}</SelectValue>
                 </SelectTrigger>
                 <SelectContent>
-                  {COMMON_CURRENCIES.filter((c) => c !== workspace.baseCurrency).map((code) => (
+                  {SELECTABLE_CURRENCIES.filter((c) => c !== workspace.baseCurrency).map((code) => (
                     <SelectItem key={code} value={code}>
                       {code}
                     </SelectItem>

@@ -1,12 +1,12 @@
 "use client";
 
 import {
-  COMMON_CURRENCIES,
   currencyDecimals,
   endOfMonth,
   minorToInput,
   monthKey,
   parseMoneyInput,
+  SELECTABLE_CURRENCIES,
   type TransactionType,
   TYPE_LABELS,
   TYPE_RULES,
@@ -349,7 +349,7 @@ export function TransactionFormDialog({
                     <SelectValue>{form.currency}</SelectValue>
                   </SelectTrigger>
                   <SelectContent>
-                    {[...new Set([form.currency, ...COMMON_CURRENCIES])].map((code) => (
+                    {[...new Set([form.currency, ...SELECTABLE_CURRENCIES])].map((code) => (
                       <SelectItem key={code} value={code}>
                         {code}
                       </SelectItem>

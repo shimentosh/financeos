@@ -1,6 +1,6 @@
 "use client";
 
-import { COMMON_CURRENCIES, formatDay, parseMoneyInput, TYPE_LABELS } from "@expensewise/core";
+import { formatDay, parseMoneyInput, SELECTABLE_CURRENCIES, TYPE_LABELS } from "@expensewise/core";
 import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -217,7 +217,7 @@ export function CurrencySelect({ id, value, onChange, disabled }: { id?: string;
         <SelectValue>{value}</SelectValue>
       </SelectTrigger>
       <SelectContent>
-        {[...new Set([value, ...COMMON_CURRENCIES])].map((code) => (
+        {[...new Set([value, ...SELECTABLE_CURRENCIES])].map((code) => (
           <SelectItem key={code} value={code}>
             {code}
           </SelectItem>

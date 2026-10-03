@@ -589,7 +589,9 @@ export class CopilotActions {
       description: "Add a money account: a bank account, cash, a mobile wallet (bKash, Nagad, Rocket), a card, savings or a loan account.",
       inputSchema: z.object({
         name: z.string().trim().min(1).max(80),
-        kind: z.enum(ACCOUNT_KINDS).describe("bank, cash, mobile_wallet, card, digital_wallet, payment_processor, savings, loan or other"),
+        kind: z
+          .enum(ACCOUNT_KINDS)
+          .describe("bank, cash, mobile_wallet, card, digital_wallet, payment_processor, savings, loan, other or crypto_wallet (digital currency)"),
         currency,
         openingBalance: z.number().nullish().describe("Major units; negative for money owed on a card or loan. Defaults to 0"),
         openingDate: day.nullish().describe("Defaults to today"),

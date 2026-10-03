@@ -4,7 +4,7 @@ import { isDay } from "../dates.ts";
 export const dayString = z.string().refine(isDay, "Expected a date as YYYY-MM-DD");
 export const currencyCode = z
   .string()
-  .regex(/^[A-Za-z]{3}$/, "Expected a 3-letter currency code")
+  .regex(/^[A-Za-z]{3,5}$/, "Expected a currency code such as BDT, USD or USDT")
   .transform((code) => code.toUpperCase());
 /** Minor units, strictly positive. */
 export const positiveMinor = z.number().int().positive().max(Number.MAX_SAFE_INTEGER);

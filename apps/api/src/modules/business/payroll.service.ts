@@ -1,7 +1,14 @@
 import { addMonths, type Day, daysInMonth, employeeUpdate, endOfMonth, payrollItemUpdate, payrollRunInput } from "@expensewise/core";
-import { type EmployeeCreateInput, employeeCreateInput, employeeQuery } from "@expensewise/core/contracts/business-extra";
+import {
+  type EmployeeCreateInput,
+  type EmployeePayInput,
+  employeeCreateInput,
+  employeePayInput,
+  employeeQuery,
+  employeeUnpayInput,
+} from "@expensewise/core/contracts/business-extra";
 import { Inject, Injectable } from "@nestjs/common";
-import { and, asc, desc, eq, gte, inArray, isNull, lte, or } from "drizzle-orm";
+import { and, asc, desc, eq, gte, inArray, isNotNull, isNull, lte, or } from "drizzle-orm";
 import type { z } from "zod";
 import { todayFor, type WorkspaceContext } from "../../common/context.js";
 import { assertFound, badRequest, conflict, unprocessable } from "../../common/errors.js";
@@ -106,9 +113,12 @@ export class PayrollService {
           deductions: payrollItems.deductions,
           net: payrollItems.net,
           transactionId: payrollItems.transactionId,
+          paidOn: transactions.date,
+          transactionStatus: transactions.status,
         })
         .from(payrollItems)
         .innerJoin(payrollRuns, eq(payrollRuns.id, payrollItems.runId))
+        .leftJoin(transactions, eq(transactions.id, payrollItems.transactionId))
         .where(and(eq(payrollItems.workspaceId, ctx.workspaceId), eq(payrollItems.employeeId, id)))
         .orderBy(desc(payrollRuns.period))
         .limit(24),
@@ -139,8 +149,160 @@ export class PayrollService {
       accountName: row?.accountName ?? null,
       counterpartyName: row?.counterpartyName ?? null,
       payrollHistory: history,
+      months: this.salaryMonths(ctx, employee, history),
       commitments: schedules,
     };
+  }
+
+  /**
+   * Each month the employee was on the books (the last 12 at most, newest
+   * first) and whether that month's salary has been paid.
+   */
+  private salaryMonths(
+    ctx: WorkspaceContext,
+    employee: EmployeeRow,
+    history: Array<{ period: string; net: number; transactionId: string | null; paidOn: Day | null; transactionStatus: string | null; runStatus: string }>,
+  ) {
+    const current = todayFor(ctx).slice(0, 7);
+    const last = employee.endDate && employee.endDate.slice(0, 7) < current ? employee.endDate.slice(0, 7) : current;
+    const months: string[] = [];
+    for (let month = last; months.length < 12; month = addMonths(`${month}-01`, -1).slice(0, 7)) {
+      if (employee.startDate && month < employee.startDate.slice(0, 7)) break;
+      months.push(month);
+    }
+    return months.map((period) => {
+      const item = history.find((h) => h.period === period);
+      const paid = Boolean(item?.transactionId && item.transactionStatus !== "void");
+      return {
+        period,
+        status: paid ? ("paid" as const) : ("unpaid" as const),
+        amount: paid && item ? item.net : employee.salary,
+        currency: employee.currency,
+        paidOn: paid ? (item?.paidOn ?? null) : null,
+        transactionId: paid ? (item?.transactionId ?? null) : null,
+      };
+    });
+  }
+
+  /**
+   * Pays one employee for one month: an expense in the Payroll category on
+   * their project, with the proof of payment attached. It shares the month's
+   * payroll run, so posting the run later never pays them twice.
+   */
+  async payEmployee(ctx: WorkspaceContext, employeeId: string, raw: EmployeePayInput) {
+    assertBusiness(ctx);
+    const input = employeePayInput.parse(raw);
+    await db.transaction(async (tx) => {
+      const employee = await this.getEmployee(ctx, employeeId, tx);
+      const accountId = input.accountId ?? employee.accountId;
+      if (!accountId) throw unprocessable(`Choose the account ${employee.name} was paid from`, "missing_account");
+      await this.checkRefs(tx, ctx, { accountId });
+      const amount = input.amount ?? employee.salary;
+
+      let [run] = await tx
+        .select()
+        .from(payrollRuns)
+        .where(and(eq(payrollRuns.workspaceId, ctx.workspaceId), eq(payrollRuns.period, input.period)))
+        .limit(1);
+      if (!run) {
+        [run] = await tx
+          .insert(payrollRuns)
+          .values({ workspaceId: ctx.workspaceId, period: input.period, payDate: input.paidOn, currency: ctx.baseCurrency, createdBy: ctx.userId })
+          .returning();
+      }
+      const payrollRun = assertFound(run, "Payroll run");
+
+      const [existing] = await tx
+        .select({ item: payrollItems, transactionStatus: transactions.status })
+        .from(payrollItems)
+        .leftJoin(transactions, eq(transactions.id, payrollItems.transactionId))
+        .where(and(eq(payrollItems.runId, payrollRun.id), eq(payrollItems.employeeId, employee.id)))
+        .limit(1);
+      if (existing?.item.transactionId && existing.transactionStatus !== "void") {
+        throw conflict(`${employee.name} is already paid for ${input.period}`, "already_paid");
+      }
+      const values = { gross: amount, deductions: 0, net: amount, accountId, projectId: employee.defaultProjectId, note: input.note ?? null };
+      const [item] = existing
+        ? await tx.update(payrollItems).set(values).where(eq(payrollItems.id, existing.item.id)).returning()
+        : await tx
+            .insert(payrollItems)
+            .values({ workspaceId: ctx.workspaceId, runId: payrollRun.id, employeeId: employee.id, ...values })
+            .returning();
+      const payrollItem = assertFound(item, "Payroll item");
+
+      let counterpartyId = employee.counterpartyId;
+      if (!counterpartyId) {
+        counterpartyId = (await this.counterparties.findOrCreate(tx, ctx.workspaceId, employee.name, "employee"))?.id ?? null;
+        if (counterpartyId) await tx.update(employees).set({ counterpartyId }).where(eq(employees.id, employee.id));
+      }
+      const categoryId = await ensureCategory(tx, ctx, this.audit, PAYROLL_CATEGORY);
+      const { transaction } = await this.transactions.create(
+        ctx,
+        {
+          type: "expense",
+          direction: "out",
+          accountId,
+          amount,
+          currency: employee.currency,
+          date: input.paidOn,
+          categoryId,
+          projectId: employee.defaultProjectId,
+          counterpartyId,
+          description: `Salary ${input.period}: ${employee.name}`,
+          notes: input.note ?? null,
+          attachmentFileIds: input.attachmentFileIds,
+        },
+        {
+          exec: tx,
+          skipLearning: true,
+          metadata: {
+            payrollRunId: payrollRun.id,
+            payrollItemId: payrollItem.id,
+            employeeId: employee.id,
+            gross: amount,
+            deductions: 0,
+            paidIndividually: true,
+          },
+        },
+      );
+      await tx.update(payrollItems).set({ transactionId: transaction.id }).where(eq(payrollItems.id, payrollItem.id));
+      await this.runTotal(tx, ctx, payrollRun);
+      await this.audit.record(tx, ctx, {
+        action: "payroll.employee_paid",
+        entityType: "employee",
+        entityId: employee.id,
+        after: { period: input.period, amount, transactionId: transaction.id, payrollRunId: payrollRun.id },
+      });
+    });
+    return this.employeeDetail(ctx, employeeId);
+  }
+
+  /** Undoes one month's salary payment: the expense is voided and the month is unpaid again. */
+  async unpayEmployee(ctx: WorkspaceContext, employeeId: string, raw: z.input<typeof employeeUnpayInput>) {
+    assertBusiness(ctx);
+    const input = employeeUnpayInput.parse(raw);
+    await db.transaction(async (tx) => {
+      const employee = await this.getEmployee(ctx, employeeId, tx);
+      const [row] = await tx
+        .select({ item: payrollItems, run: payrollRuns })
+        .from(payrollItems)
+        .innerJoin(payrollRuns, eq(payrollRuns.id, payrollItems.runId))
+        .where(and(eq(payrollItems.workspaceId, ctx.workspaceId), eq(payrollItems.employeeId, employee.id), eq(payrollRuns.period, input.period)))
+        .limit(1);
+      if (!row?.item.transactionId) throw conflict(`${employee.name} has no salary payment for ${input.period}`, "not_paid");
+      await this.transactions.void(ctx, row.item.transactionId, `Salary ${input.period} payment undone`, { exec: tx });
+      // A posted run no longer pays them this month; a draft keeps them in line to be paid.
+      if (row.run.status === "posted") await tx.delete(payrollItems).where(eq(payrollItems.id, row.item.id));
+      else await tx.update(payrollItems).set({ transactionId: null }).where(eq(payrollItems.id, row.item.id));
+      await this.runTotal(tx, ctx, row.run);
+      await this.audit.record(tx, ctx, {
+        action: "payroll.employee_unpaid",
+        entityType: "employee",
+        entityId: employee.id,
+        before: { period: input.period, transactionId: row.item.transactionId },
+      });
+    });
+    return this.employeeDetail(ctx, employeeId);
   }
 
   private async checkRefs(tx: Executor, ctx: WorkspaceContext, refs: { projectId?: string | null; accountId?: string | null }) {
@@ -405,6 +567,12 @@ export class PayrollService {
     return db.transaction(async (tx) => {
       const run = await this.getRun(ctx, id, tx);
       if (run.status !== "draft") throw conflict("Un-post the run before deleting it", "run_posted");
+      const [paid] = await tx
+        .select({ id: payrollItems.id })
+        .from(payrollItems)
+        .where(and(eq(payrollItems.runId, id), isNotNull(payrollItems.transactionId)))
+        .limit(1);
+      if (paid) throw conflict("Someone in this run is already paid. Undo their salary payment first.", "run_has_payments");
       await tx.delete(payrollRuns).where(eq(payrollRuns.id, id));
       await this.audit.record(tx, ctx, { action: "payroll_run.deleted", entityType: "payroll_run", entityId: id, before: run });
       return { deleted: true };
@@ -423,6 +591,7 @@ export class PayrollService {
         .where(and(eq(payrollItems.id, itemId), eq(payrollItems.runId, runId), eq(payrollItems.workspaceId, ctx.workspaceId)))
         .limit(1);
       const item = assertFound(before, "Payroll item");
+      if (item.transactionId) throw conflict("This salary is already paid. Undo the payment to change it.", "item_paid");
       await this.checkRefs(tx, ctx, { projectId: input.projectId, accountId: input.accountId });
       const gross = input.gross ?? item.gross;
       const deductions = input.deductions ?? item.deductions;
@@ -458,7 +627,7 @@ export class PayrollService {
       if (run.status !== "draft") throw conflict("This run is already posted", "run_posted");
       const items = await this.items(ctx, [runId], tx);
       if (!items.length) throw unprocessable("The run has no employees", "empty_run");
-      const missing = items.filter((item) => item.net > 0 && !item.accountId);
+      const missing = items.filter((item) => item.net > 0 && !item.accountId && !item.transactionId);
       if (missing.length) {
         throw unprocessable(
           `Choose the account to pay ${missing.map((item) => item.employeeName).join(", ")} from`,
@@ -469,7 +638,8 @@ export class PayrollService {
       const categoryId = await ensureCategory(tx, ctx, this.audit, PAYROLL_CATEGORY);
       const posted: Array<{ itemId: string; transactionId: string }> = [];
       for (const item of items) {
-        if (item.net <= 0) continue;
+        // Already paid on their own (with proof); the run must not pay them twice.
+        if (item.net <= 0 || (item.transactionId && item.transactionStatus !== "void")) continue;
         let counterpartyId = item.counterpartyId;
         if (!counterpartyId) {
           counterpartyId = (await this.counterparties.findOrCreate(tx, ctx.workspaceId, item.employeeName, "employee"))?.id ?? null;
@@ -517,14 +687,19 @@ export class PayrollService {
     await db.transaction(async (tx) => {
       const run = await this.getRun(ctx, runId, tx);
       if (run.status !== "posted") throw conflict("This run is not posted", "run_not_posted");
-      const items = await tx.select().from(payrollItems).where(eq(payrollItems.runId, runId));
+      const items = await tx
+        .select({ item: payrollItems, metadata: transactions.metadata })
+        .from(payrollItems)
+        .leftJoin(transactions, eq(transactions.id, payrollItems.transactionId))
+        .where(eq(payrollItems.runId, runId));
       const voided: string[] = [];
-      for (const item of items) {
-        if (!item.transactionId) continue;
+      for (const { item, metadata } of items) {
+        // Salaries paid one by one, with their proof, stay paid.
+        if (!item.transactionId || (metadata as Record<string, unknown> | null)?.paidIndividually) continue;
         await this.transactions.void(ctx, item.transactionId, `Payroll ${run.period} un-posted`, { exec: tx });
+        await tx.update(payrollItems).set({ transactionId: null }).where(eq(payrollItems.id, item.id));
         voided.push(item.transactionId);
       }
-      await tx.update(payrollItems).set({ transactionId: null }).where(eq(payrollItems.runId, runId));
       await tx.update(payrollRuns).set({ status: "draft", postedAt: null }).where(eq(payrollRuns.id, runId));
       await this.audit.record(tx, ctx, {
         action: "payroll_run.unposted",

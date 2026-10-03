@@ -1,6 +1,8 @@
 // Money is integer minor units everywhere: poisha for BDT, cents for USD.
 // Floats appear only at the edges (display), never in arithmetic.
 
+import { CRYPTO_CURRENCIES, isCryptoCurrency } from "./constants.ts";
+
 const decimalsCache = new Map<string, number>();
 
 /** Minor-unit digits for a currency: BDT 2, USD 2, JPY 0, KWD 3. */
@@ -8,6 +10,7 @@ export function currencyDecimals(currency: string): number {
   const code = currency.toUpperCase();
   const cached = decimalsCache.get(code);
   if (cached !== undefined) return cached;
+  if (isCryptoCurrency(code)) return CRYPTO_CURRENCIES[code].decimals;
   let digits = 2;
   try {
     digits = new Intl.NumberFormat("en", { style: "currency", currency: code }).resolvedOptions().maximumFractionDigits ?? 2;
@@ -141,6 +144,17 @@ export function formatMoney(minor: number, currency: string, options: MoneyForma
   const major = minor / 10 ** digits;
   const fractionDigits = options.compact || (options.trimZeroFraction && Number.isInteger(major)) ? 0 : digits;
   const key = `${locale}|${code}|${options.compact ? "c" : "s"}|${fractionDigits}|${options.signed ? "+" : ""}`;
+  // Digital currencies are not ISO codes, so Intl cannot format them as currency.
+  if (isCryptoCurrency(code)) {
+    const number = formatter(`${key}|n`, locale, {
+      notation: options.compact ? "compact" : "standard",
+      minimumFractionDigits: options.compact ? 0 : fractionDigits,
+      maximumFractionDigits: options.compact ? 1 : fractionDigits,
+    }).format(Math.abs(major));
+    const sign = major < 0 ? "-" : options.signed && major > 0 ? "+" : "";
+    const symbol = CRYPTO_CURRENCIES[code].symbol;
+    return `${sign}${symbol}${symbol.length > 1 ? " " : ""}${number}`;
+  }
   const format = formatter(key, locale, {
     style: "currency",
     currency: code,

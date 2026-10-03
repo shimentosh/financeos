@@ -43,6 +43,13 @@
       "when": 1790899953420,
       "tag": "0005_reminders_daily_last_3_days",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1791031460361,
+      "tag": "0006_digital_currency",
+      "breakpoints": true
     }
   ]
 }

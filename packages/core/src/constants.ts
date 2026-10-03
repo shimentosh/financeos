@@ -7,7 +7,18 @@ export type WorkspaceKind = (typeof WORKSPACE_KINDS)[number];
 export const MEMBER_ROLES = ["owner", "admin", "member", "viewer"] as const;
 export type MemberRole = (typeof MEMBER_ROLES)[number];
 
-export const ACCOUNT_KINDS = ["bank", "cash", "mobile_wallet", "card", "digital_wallet", "payment_processor", "savings", "loan", "other"] as const;
+export const ACCOUNT_KINDS = [
+  "bank",
+  "cash",
+  "mobile_wallet",
+  "card",
+  "digital_wallet",
+  "payment_processor",
+  "savings",
+  "loan",
+  "other",
+  "crypto_wallet",
+] as const;
 export type AccountKind = (typeof ACCOUNT_KINDS)[number];
 
 export const TRANSACTION_TYPES = [
@@ -173,6 +184,7 @@ export const ACCOUNT_KIND_LABELS: Record<AccountKind, string> = {
   mobile_wallet: "Mobile wallet",
   card: "Credit card",
   digital_wallet: "Digital wallet",
+  crypto_wallet: "Digital currency (crypto)",
   payment_processor: "Payment processor",
   savings: "Savings",
   loan: "Loan account",
@@ -220,3 +232,26 @@ export const SUBSCRIPTION_STATUS_LABELS: Record<SubscriptionStatus, string> = {
 
 /** Currencies offered in pickers; any ISO code still works via the API. */
 export const COMMON_CURRENCIES = ["BDT", "USD", "EUR", "GBP", "INR", "AED", "SAR", "SGD", "MYR", "CAD", "AUD", "JPY", "CNY"] as const;
+
+/**
+ * Digital currencies an account or transaction can hold. They are not ISO
+ * codes, so each carries its own precision (minor units per coin) and symbol.
+ * Prices move fast: their exchange rates are entered, never seeded.
+ */
+export const CRYPTO_CURRENCIES = {
+  BTC: { name: "Bitcoin", symbol: "₿", decimals: 8 },
+  ETH: { name: "Ethereum", symbol: "Ξ", decimals: 8 },
+  USDT: { name: "Tether", symbol: "₮", decimals: 2 },
+  USDC: { name: "USD Coin", symbol: "USDC", decimals: 2 },
+  BNB: { name: "BNB", symbol: "BNB", decimals: 8 },
+  SOL: { name: "Solana", symbol: "SOL", decimals: 8 },
+} as const satisfies Record<string, { name: string; symbol: string; decimals: number }>;
+export type CryptoCurrency = keyof typeof CRYPTO_CURRENCIES;
+export const CRYPTO_CURRENCY_CODES = Object.keys(CRYPTO_CURRENCIES) as CryptoCurrency[];
+
+export function isCryptoCurrency(code: string): code is CryptoCurrency {
+  return Object.hasOwn(CRYPTO_CURRENCIES, code.toUpperCase());
+}
+
+/** Everything a money field can be in: common fiat first, then digital currencies. */
+export const SELECTABLE_CURRENCIES: string[] = [...COMMON_CURRENCIES, ...CRYPTO_CURRENCY_CODES];

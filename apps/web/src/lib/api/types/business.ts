@@ -274,6 +274,15 @@ export type EmployeeDetail = Employee & {
     net: number;
     transactionId: string | null;
   }>;
+  /** The last months they were employed, newest first, with whether each salary is paid. */
+  months: Array<{
+    period: string;
+    status: "paid" | "unpaid";
+    amount: number;
+    currency: string;
+    paidOn: string | null;
+    transactionId: string | null;
+  }>;
   commitments: Array<{
     id: string;
     name: string;

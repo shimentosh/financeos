@@ -1,8 +1,11 @@
 import { employeeUpdate, payrollItemUpdate, payrollRunInput } from "@expensewise/core";
 import {
   type EmployeeCreateInput,
+  type EmployeePayInput,
   employeeCreateInput,
+  employeePayInput,
   employeeQuery,
+  employeeUnpayInput,
   type FinanceRangeQuery,
   financeRangeQuery,
 } from "@expensewise/core/contracts/business-extra";
@@ -67,6 +70,18 @@ export class PayrollController {
   @Patch("employees/:id")
   updateEmployee(@Ctx() ctx: WorkspaceContext, @Param("id", uuidParam) id: string, @Body(zod(employeeUpdate)) input: z.input<typeof employeeUpdate>) {
     return this.service.updateEmployee(ctx, id, input);
+  }
+
+  @Post("employees/:id/pay")
+  @HttpCode(200)
+  payEmployee(@Ctx() ctx: WorkspaceContext, @Param("id", uuidParam) id: string, @Body(zod(employeePayInput)) input: EmployeePayInput) {
+    return this.service.payEmployee(ctx, id, input);
+  }
+
+  @Post("employees/:id/unpay")
+  @HttpCode(200)
+  unpayEmployee(@Ctx() ctx: WorkspaceContext, @Param("id", uuidParam) id: string, @Body(zod(employeeUnpayInput)) input: z.input<typeof employeeUnpayInput>) {
+    return this.service.unpayEmployee(ctx, id, input);
   }
 
   @Delete("employees/:id")

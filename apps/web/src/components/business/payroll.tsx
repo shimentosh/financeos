@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { type FormEvent, useEffect, useId, useState } from "react";
 import { useApp } from "@/components/app/app-context";
+import { type Attachment, AttachmentField, discardNewAttachments } from "@/components/app/attachment-field";
 import { EmptyNote, EmptyState, Section, StatCard, StatusBadge } from "@/components/app/blocks";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,9 +27,10 @@ import {
   useRefresh,
 } from "@/components/wealth/shared";
 import { clientApi, errorMessage } from "@/lib/api/client";
-import type { Employee, EmployeeList, EmploymentType, PayrollItem, PayrollRun, PayrollRunDetail } from "@/lib/api/types/business";
+import type { Employee, EmployeeDetail, EmployeeList, EmploymentType, PayrollItem, PayrollRun, PayrollRunDetail } from "@/lib/api/types/business";
 import { cn } from "@/lib/cn";
 import { toast } from "@/lib/toast";
+import { useApi } from "@/lib/use-api";
 
 const EMPLOYMENT_LABELS: Record<EmploymentType, string> = {
   full_time: "Full-time",
@@ -95,6 +97,7 @@ export function ProjectPayroll({ employees, projectId }: { employees: EmployeeLi
 function EmployeesTab({ employees, projectId }: { employees: EmployeeList; projectId?: string }) {
   const { money, canWrite } = useApp();
   const [editing, setEditing] = useState<Employee | null>(null);
+  const [viewing, setViewing] = useState<Employee | null>(null);
   const [creating, setCreating] = useState(false);
   const { items, totals } = employees;
 
@@ -160,9 +163,18 @@ function EmployeesTab({ employees, projectId }: { employees: EmployeeList; proje
           </thead>
           <tbody className="divide-y divide-border">
             {items.map((e) => (
-              <tr key={e.id} className={cn("[&>td]:px-3 [&>td]:py-2", e.status === "inactive" && "text-muted-foreground")}>
+              <tr
+                key={e.id}
+                onClick={() => setViewing(e)}
+                className={cn(
+                  "cursor-pointer transition-colors hover:bg-accent/40 [&>td]:px-3 [&>td]:py-2",
+                  e.status === "inactive" && "text-muted-foreground",
+                )}
+              >
                 <td className="min-w-0">
-                  <span className="block truncate font-medium">{e.name}</span>
+                  <button type="button" className="block max-w-full truncate text-left font-medium hover:underline underline-offset-4">
+                    {e.name}
+                  </button>
                   <span className="block truncate text-xs text-muted-foreground">
                     {[e.title, EMPLOYMENT_LABELS[e.employmentType]].filter(Boolean).join(" · ")}
                   </span>
@@ -176,7 +188,15 @@ function EmployeesTab({ employees, projectId }: { employees: EmployeeList; proje
                 </td>
                 {canWrite && (
                   <td className="text-right">
-                    <Button size="icon-sm" variant="ghost" aria-label={`Edit ${e.name}`} onClick={() => setEditing(e)}>
+                    <Button
+                      size="icon-sm"
+                      variant="ghost"
+                      aria-label={`Edit ${e.name}`}
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        setEditing(e);
+                      }}
+                    >
                       <Pencil className="size-3.5" />
                     </Button>
                   </td>
@@ -188,6 +208,14 @@ function EmployeesTab({ employees, projectId }: { employees: EmployeeList; proje
       </div>
       <EmployeeFormDialog open={creating} onOpenChange={setCreating} defaultProjectId={projectId} />
       <EmployeeFormDialog open={editing !== null} onOpenChange={(open) => !open && setEditing(null)} employee={editing} />
+      <EmployeeSalaryDialog
+        employee={viewing}
+        onOpenChange={(open) => !open && setViewing(null)}
+        onEdit={(employee) => {
+          setViewing(null);
+          setEditing(employee);
+        }}
+      />
     </div>
   );
 }
@@ -830,5 +858,253 @@ function ItemRow({ runId, item, editable }: { runId: string; item: PayrollItem; 
         </td>
       )}
     </tr>
+  );
+}
+
+/**
+ * One employee's salary, month by month: which months are paid (with the
+ * proof) and which are not, and a way to pay or undo a month.
+ */
+export function EmployeeSalaryDialog({
+  employee,
+  onOpenChange,
+  onEdit,
+}: {
+  employee: Employee | null;
+  onOpenChange: (open: boolean) => void;
+  onEdit: (employee: Employee) => void;
+}) {
+  const { money, canWrite } = useApp();
+  const refresh = useRefresh();
+  const detail = useApi<EmployeeDetail>(employee ? `/payroll/employees/${employee.id}` : null);
+  const [paying, setPaying] = useState<EmployeeDetail["months"][number] | null>(null);
+  const [undoing, setUndoing] = useState<EmployeeDetail["months"][number] | null>(null);
+  const months = detail.data?.months ?? [];
+  const paidCount = months.filter((m) => m.status === "paid").length;
+
+  const changed = () => {
+    void detail.reload();
+    refresh("/payroll");
+  };
+
+  return (
+    <Dialog open={employee !== null} onOpenChange={onOpenChange}>
+      <DialogPopup className="w-full max-w-lg">
+        <DialogHeader>
+          <DialogTitle>{employee?.name}</DialogTitle>
+          {employee && (
+            <p className="text-sm text-muted-foreground">
+              {money(employee.salary, employee.currency)} a month · paid on the {ordinal(employee.payDay)}
+              {employee.projectName ? ` · ${employee.projectName}` : ""}
+            </p>
+          )}
+        </DialogHeader>
+        <DialogPanel className="space-y-3">
+          <div className="flex items-center justify-between gap-2">
+            <p className="text-sm font-medium">Salary by month</p>
+            {months.length > 0 && (
+              <span className="text-xs text-muted-foreground">
+                {paidCount} of {months.length} paid
+              </span>
+            )}
+          </div>
+          {detail.loading && !detail.data ? (
+            <p className="py-6 text-center text-sm text-muted-foreground">Loading…</p>
+          ) : months.length === 0 ? (
+            <EmptyNote>No months yet. Set when they started in their details.</EmptyNote>
+          ) : (
+            <ul className="divide-y divide-border rounded-xl border border-border">
+              {months.map((m) => (
+                <li key={m.period} className="flex items-center gap-3 px-3 py-2.5">
+                  <span
+                    className={cn(
+                      "grid size-8 shrink-0 place-items-center rounded-lg",
+                      m.status === "paid" ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" : "bg-muted text-muted-foreground",
+                    )}
+                  >
+                    {m.status === "paid" ? <Check className="size-4" /> : <CalendarDays className="size-4" />}
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-medium">{formatMonth(m.period)}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {m.status === "paid" ? (
+                        <>
+                          Paid {m.paidOn ? formatDay(m.paidOn) : ""} ·{" "}
+                          <Link href={`/transactions?period=all_time&ids=${m.transactionId}`} className="underline underline-offset-2 hover:text-foreground">
+                            View payment & proof
+                          </Link>
+                        </>
+                      ) : (
+                        "Not paid yet"
+                      )}
+                    </p>
+                  </div>
+                  <span className={cn("shrink-0 text-sm tabular-nums", m.status === "paid" && "font-medium")}>{money(m.amount, m.currency)}</span>
+                  {canWrite &&
+                    (m.status === "paid" ? (
+                      <Button size="xs" variant="ghost" onClick={() => setUndoing(m)} aria-label={`Undo ${formatMonth(m.period)} payment`}>
+                        <Undo2 className="size-3.5" /> Undo
+                      </Button>
+                    ) : (
+                      <Button size="xs" onClick={() => setPaying(m)}>
+                        Pay
+                      </Button>
+                    ))}
+                </li>
+              ))}
+            </ul>
+          )}
+        </DialogPanel>
+        <DialogFooter>
+          {canWrite && employee && (
+            <Button type="button" variant="outline" size="sm" onClick={() => onEdit(employee)}>
+              <Pencil className="size-3.5" /> Edit details
+            </Button>
+          )}
+          <Button type="button" size="sm" onClick={() => onOpenChange(false)}>
+            Done
+          </Button>
+        </DialogFooter>
+      </DialogPopup>
+      {employee && (
+        <PaySalaryDialog
+          employee={employee}
+          month={paying}
+          onOpenChange={(open) => !open && setPaying(null)}
+          onPaid={() => {
+            setPaying(null);
+            changed();
+          }}
+        />
+      )}
+      <ConfirmDialog
+        open={undoing !== null}
+        onOpenChange={(open) => !open && setUndoing(null)}
+        title={undoing ? `Undo ${formatMonth(undoing.period)} salary?` : "Undo salary?"}
+        description="The salary expense is cancelled (kept in history as void) and the month shows as not paid again."
+        confirmLabel="Undo payment"
+        onConfirm={async () => {
+          if (!employee || !undoing) return;
+          try {
+            await clientApi(`/payroll/employees/${employee.id}/unpay`, { method: "POST", body: { period: undoing.period } });
+            toast.success(`${formatMonth(undoing.period)} salary undone`);
+            setUndoing(null);
+            changed();
+          } catch (err) {
+            toast.error(errorMessage(err));
+          }
+        }}
+      />
+    </Dialog>
+  );
+}
+
+/** Records one month's salary as paid, with the screenshot or slip as proof. */
+function PaySalaryDialog({
+  employee,
+  month,
+  onOpenChange,
+  onPaid,
+}: {
+  employee: Employee;
+  month: EmployeeDetail["months"][number] | null;
+  onOpenChange: (open: boolean) => void;
+  onPaid: () => void;
+}) {
+  const id = useId();
+  const { workspace } = useApp();
+  const [amount, setAmount] = useState("");
+  const [paidOn, setPaidOn] = useState("");
+  const [accountId, setAccountId] = useState<string | null>(null);
+  const [note, setNote] = useState("");
+  const [proof, setProof] = useState<Attachment[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
+  const open = month !== null;
+
+  useEffect(() => {
+    if (!month) return;
+    setAmount(minorToInput(month.amount, month.currency));
+    setPaidOn(today(workspace.timezone));
+    setAccountId(employee.accountId);
+    setNote("");
+    setProof([]);
+    setError(null);
+  }, [month, employee.accountId, workspace.timezone]);
+
+  const close = (next: boolean) => {
+    if (!next) discardNewAttachments(proof);
+    onOpenChange(next);
+  };
+
+  const submit = async (event: FormEvent) => {
+    event.preventDefault();
+    if (!month) return;
+    setError(null);
+    const minor = toMinor(amount, month.currency);
+    if (!minor) return setError("Enter the amount paid");
+    if (!paidOn) return setError("Choose the day it was paid");
+    if (!accountId) return setError("Choose the account it was paid from");
+    if (!proof.length) return setError("Attach the payment screenshot. If it is still uploading, wait for it to finish.");
+    setSaving(true);
+    try {
+      await clientApi(`/payroll/employees/${employee.id}/pay`, {
+        method: "POST",
+        body: { period: month.period, paidOn, amount: minor, accountId, note: note.trim() || null, attachmentFileIds: proof.map((f) => f.id) },
+      });
+      toast.success(`${employee.name}'s ${formatMonth(month.period)} salary recorded`, {
+        description: employee.projectName ? `Added to ${employee.projectName}'s cost.` : undefined,
+      });
+      setProof([]);
+      onPaid();
+    } catch (err) {
+      setError(errorMessage(err));
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={close}>
+      <DialogPopup className="w-full max-w-md">
+        <form onSubmit={submit} className="flex min-h-0 flex-1 flex-col">
+          <DialogHeader>
+            <DialogTitle>Pay {month ? formatMonth(month.period) : ""} salary</DialogTitle>
+            <p className="text-sm text-muted-foreground">{employee.name}</p>
+          </DialogHeader>
+          <DialogPanel className="space-y-3">
+            <div className="grid grid-cols-2 gap-3">
+              <Field label="Amount paid" htmlFor={`${id}-amount`}>
+                <MoneyInput id={`${id}-amount`} value={amount} onChange={setAmount} currency={month?.currency ?? employee.currency} />
+              </Field>
+              <Field label="Paid on" htmlFor={`${id}-paid-on`}>
+                <Input id={`${id}-paid-on`} type="date" value={paidOn} onChange={(e) => setPaidOn(e.target.value)} />
+              </Field>
+            </div>
+            <Field label="Paid from" htmlFor={`${id}-account`}>
+              <AccountSelect id={`${id}-account`} value={accountId} onChange={setAccountId} enabled={open} />
+            </Field>
+            <AttachmentField
+              value={proof}
+              onChange={setProof}
+              label="Payment screenshot (required)"
+              hint="The bank, bKash or Nagad screenshot, or a salary slip. You can also paste it."
+            />
+            <Field label="Note" htmlFor={`${id}-note`}>
+              <Input id={`${id}-note`} value={note} onChange={(e) => setNote(e.target.value)} placeholder="Optional, e.g. includes bonus" />
+            </Field>
+            <FormError error={error} />
+          </DialogPanel>
+          <DialogFooter>
+            <Button type="button" variant="outline" size="sm" onClick={() => close(false)}>
+              Cancel
+            </Button>
+            <Button type="submit" size="sm" loading={saving}>
+              Mark as paid
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogPopup>
+    </Dialog>
   );
 }

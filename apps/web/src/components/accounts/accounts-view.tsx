@@ -1,7 +1,7 @@
 "use client";
 
 import { ACCOUNT_KIND_LABELS, type AccountKind } from "@expensewise/core";
-import { Banknote, CheckCircle2, CircleAlert, CreditCard, Landmark, Plus, Smartphone, Wallet } from "lucide-react";
+import { Banknote, Bitcoin, CheckCircle2, CircleAlert, CreditCard, Landmark, Plus, Smartphone, Wallet } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { useApp } from "@/components/app/app-context";
@@ -17,9 +17,10 @@ const KIND_ICON: Partial<Record<AccountKind, typeof Wallet>> = {
   cash: Banknote,
   mobile_wallet: Smartphone,
   card: CreditCard,
+  crypto_wallet: Bitcoin,
 };
 
-const ORDER: AccountKind[] = ["bank", "mobile_wallet", "cash", "digital_wallet", "payment_processor", "savings", "card", "loan", "other"];
+const ORDER: AccountKind[] = ["bank", "mobile_wallet", "cash", "digital_wallet", "payment_processor", "crypto_wallet", "savings", "card", "loan", "other"];
 
 export function AccountsView({ accounts }: { accounts: Account[] }) {
   const { money, canWrite } = useApp();

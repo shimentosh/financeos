@@ -10,7 +10,7 @@ export const pk = () => uuid("id").primaryKey().$defaultFn(uuidv7);
  */
 export const money = (name: string) => bigint(name, { mode: "number" });
 
-export const currency = (name = "currency") => varchar(name, { length: 3 });
+export const currency = (name = "currency") => varchar(name, { length: 5 });
 
 /** A calendar day, as `YYYY-MM-DD`. Financial dates are days, not instants. */
 export const day = (name: string) => date(name, { mode: "string" });

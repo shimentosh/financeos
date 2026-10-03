@@ -41,3 +41,20 @@ export const employeeQuery = z.object({
   /** Only the people whose cost belongs to this project. */
   projectId: uuid.optional(),
 });
+
+const period = z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/, "Expected a month as YYYY-MM");
+
+/** Pays one employee for one month, with the proof of payment. */
+export const employeePayInput = z.object({
+  period,
+  paidOn: dayString,
+  /** Minor units in the employee's salary currency; defaults to their salary. */
+  amount: z.number().int().positive().optional(),
+  /** Defaults to the employee's own "paid from" account. */
+  accountId: uuid.nullish(),
+  attachmentFileIds: z.array(uuid).min(1, "Attach the payment screenshot").max(10),
+  note: z.string().trim().max(500).nullish(),
+});
+export type EmployeePayInput = z.input<typeof employeePayInput>;
+
+export const employeeUnpayInput = z.object({ period });

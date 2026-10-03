@@ -1,6 +1,6 @@
 "use client";
 
-import { ACCOUNT_KIND_LABELS, ACCOUNT_KINDS, type AccountKind, COMMON_CURRENCIES, minorToInput, parseMoneyInput, today } from "@expensewise/core";
+import { ACCOUNT_KIND_LABELS, ACCOUNT_KINDS, type AccountKind, minorToInput, parseMoneyInput, SELECTABLE_CURRENCIES, today } from "@expensewise/core";
 import { useRouter } from "next/navigation";
 import { type FormEvent, useEffect, useId, useState } from "react";
 import { useApp } from "@/components/app/app-context";
@@ -29,6 +29,8 @@ export const PROVIDERS: Array<{ value: string; label: string; kind: AccountKind;
   { value: "payoneer", label: "Payoneer", kind: "digital_wallet", currency: "USD" },
   { value: "paypal", label: "PayPal", kind: "digital_wallet", currency: "USD" },
   { value: "stripe", label: "Stripe", kind: "payment_processor", currency: "USD" },
+  { value: "binance", label: "Binance", kind: "crypto_wallet", currency: "USDT" },
+  { value: "crypto", label: "Crypto wallet", kind: "crypto_wallet", currency: "BTC" },
   { value: "other", label: "Other", kind: "other" },
 ];
 
@@ -154,7 +156,7 @@ export function AccountFormDialog({ open, onOpenChange, account }: { open: boole
                     <SelectValue>{currency}</SelectValue>
                   </SelectTrigger>
                   <SelectContent>
-                    {[...new Set([currency, ...COMMON_CURRENCIES])].map((code) => (
+                    {[...new Set([currency, ...SELECTABLE_CURRENCIES])].map((code) => (
                       <SelectItem key={code} value={code}>
                         {code}
                       </SelectItem>

@@ -17,9 +17,18 @@ with AI that reads your receipts and answers your questions, but never touches t
 [![Self-host with Docker](https://img.shields.io/badge/self--host-Docker-2496ed?logo=docker&logoColor=white)](#self-hosting)
 [![PRs welcome](https://img.shields.io/badge/PRs-welcome-10b981.svg)](./CONTRIBUTING.md)
 
-[Features](#features) · [Why FinanceOS](#why-financeos) · [Quick start](#quick-start) · [AI providers](#bring-your-own-ai) · [Self-hosting](#self-hosting) · [Architecture](#architecture) · [Contributing](#contributing)
+[Screenshots](#screenshots) · [Features](#features) · [Why FinanceOS](#why-financeos) · [Quick start](#quick-start) · [AI providers](#bring-your-own-ai) · [Self-hosting](#self-hosting) · [Architecture](#architecture) · [Contributing](#contributing)
 
 ⭐ **If FinanceOS is useful to you, star the repo** — it helps other people find it.
+
+<br />
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/dashboard-dark.webp" />
+  <img src="docs/screenshots/dashboard.webp" alt="FinanceOS dashboard showing net worth, cash position, monthly income and spending, goals and AI insights" width="100%" />
+</picture>
+
+<sub>The personal overview with demo data: net worth, cash, income vs. spending, goals and AI insights — every number links to its transactions.</sub>
 
 </div>
 
@@ -62,6 +71,74 @@ Capture → Connect → Understand → Act
 | 👥 **Teams** | Personal and business workspaces, email invitations, owner/admin/member/viewer roles, two-factor authentication |
 | 🛠️ **Admin** | Platform panel: users, workspaces, job queue and schedules, AI spend and credits, storage (S3 / Cloudflare R2), integration health, audit log |
 | 🖥️ **Desktop** | A Windows app (Tauri 2, MSI installer) that wraps your FinanceOS server in a native window |
+
+## Screenshots
+
+> All screenshots use the built-in demo data (`pnpm db:seed`) — a year of personal and business activity.
+
+### Everyday money
+
+<table>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/transactions.webp" alt="Transactions list with bKash, card and cash expenses, categories and AI review badges" /><p align="center"><b>Transactions</b> — every account and currency in one ledger, with AI drafts flagged for review</p></td>
+    <td width="50%"><img src="docs/screenshots/subscriptions.webp" alt="Subscription tracker with monthly cost, renewals due and mark-as-paid" /><p align="center"><b>Subscriptions</b> — what you pay a month, what renews next, one-click "mark paid"</p></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/commitments.webp" alt="Payment calendar of upcoming bills, rent, salary and insurance" /><p align="center"><b>Commitments</b> — rent, bills, salary and insurance on one payment calendar</p></td>
+    <td width="50%"><img src="docs/screenshots/budgets.webp" alt="Budgets versus actual spending by category with on-track and over-budget status" /><p align="center"><b>Budgets</b> — budget vs. actual with pace warnings before you overspend</p></td>
+  </tr>
+</table>
+
+### Wealth & goals
+
+<table>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/net-worth.webp" alt="Net worth over time with assets, investments, loans and receivables" /><p align="center"><b>Net worth</b> — history over time, what you own and what you owe</p></td>
+    <td width="50%"><img src="docs/screenshots/investments.webp" alt="Investment portfolio with cost basis, gains and ROI per holding" /><p align="center"><b>Investments</b> — cost basis, realised and unrealised gains, ROI</p></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/goals.webp" alt="Savings goals with progress, monthly contribution needed and target dates" /><p align="center"><b>Goals</b> — savings goals and dream purchases with the monthly amount needed</p></td>
+    <td width="50%"><img src="docs/screenshots/forecast.webp" alt="90-day cash-flow forecast with projected balance and scheduled payments" /><p align="center"><b>Cash-flow forecast</b> — 30/60/90-day projection from your real schedules</p></td>
+  </tr>
+</table>
+
+### AI that drafts, you decide
+
+<table>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/inbox.webp" alt="AI Inbox with drafts to review, recurring charges and unusual spending anomalies" /><p align="center"><b>AI Inbox</b> — drafts, duplicates, recurring charges and anomalies, each with evidence</p></td>
+    <td width="50%"><img src="docs/screenshots/reports.webp" alt="Monthly report with income, spending, savings rate and charts" /><p align="center"><b>Reports</b> — weekly, monthly and quarterly reports built from computed figures</p></td>
+  </tr>
+</table>
+
+### Business
+
+<table>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/business-dashboard.webp" alt="Business dashboard with revenue, costs, monthly burn and receivables" /><p align="center"><b>Business overview</b> — revenue, costs, burn and receivables for your company</p></td>
+    <td width="50%"><img src="docs/screenshots/projects.webp" alt="Projects with revenue, cost, net contribution and budget use" /><p align="center"><b>Projects</b> — profit per project, budget use and recurring costs</p></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/revenue.webp" alt="Revenue analytics by month, customer and project" /><p align="center"><b>Revenue</b> — by month, by customer and by project</p></td>
+    <td width="50%"><img src="docs/screenshots/payroll.webp" alt="Payroll with employees, monthly salaries and payment status" /><p align="center"><b>Payroll</b> — salaries paid month by month, with proof</p></td>
+  </tr>
+</table>
+
+### On your phone
+
+<table>
+  <tr>
+    <td width="33%"><img src="docs/screenshots/dashboard-mobile.webp" alt="FinanceOS mobile overview" /></td>
+    <td width="33%"><img src="docs/screenshots/inbox-mobile.webp" alt="FinanceOS mobile AI inbox" /></td>
+    <td width="33%"><img src="docs/screenshots/subscriptions-mobile.webp" alt="FinanceOS mobile subscriptions" /></td>
+  </tr>
+</table>
+
+<details>
+<summary><b>Public landing page</b></summary>
+
+<img src="docs/screenshots/landing.webp" alt="FinanceOS landing page: Know where every taka goes" />
+</details>
 
 ## Who is it for?
 

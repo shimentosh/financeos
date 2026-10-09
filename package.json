@@ -1,6 +1,31 @@
 {
   "name": "financeos",
   "version": "0.1.0",
+  "description": "Open-source, self-hostable AI financial operating system for personal and business finance — double-entry ledger, subscriptions, projects, payroll, net worth, forecasts.",
+  "license": "AGPL-3.0-only",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/shimentosh/financeos.git"
+  },
+  "homepage": "https://github.com/shimentosh/financeos#readme",
+  "bugs": {
+    "url": "https://github.com/shimentosh/financeos/issues"
+  },
+  "keywords": [
+    "finance",
+    "personal-finance",
+    "accounting",
+    "expense-tracker",
+    "budgeting",
+    "double-entry",
+    "ledger",
+    "self-hosted",
+    "ai",
+    "nextjs",
+    "nestjs",
+    "postgresql",
+    "bkash"
+  ],
   "private": true,
   "type": "module",
   "packageManager": "pnpm@10.32.1",

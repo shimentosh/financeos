@@ -1,0 +1,59 @@
+name: Bug report
+description: Something isn't working as expected
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting! For security problems, please use a private [security advisory](https://github.com/shimentosh/financeos/security/advisories/new) instead.
+        **Never paste real financial data, API keys or secrets here.**
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What did you expect, and what happened instead?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Go to …
+        2. Click …
+        3. See …
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Ledger / transactions
+        - Subscriptions / schedules
+        - Business / projects / payroll
+        - Wealth / net worth
+        - AI extraction / Copilot
+        - Integrations / imports
+        - Reports
+        - Teams / auth
+        - Admin
+        - Desktop app
+        - Self-hosting / Docker
+        - Other
+  - type: input
+    id: version
+    attributes:
+      label: Version or commit
+      placeholder: e.g. main @ 8689478
+  - type: textarea
+    id: env
+    attributes:
+      label: Environment
+      description: OS, browser, Node version, Docker or local, AI provider (if relevant)
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs or screenshots
+      description: Include the `requestId` from the error response if there is one.
+      render: shell

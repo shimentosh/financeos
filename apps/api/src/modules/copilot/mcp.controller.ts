@@ -1,23 +1,24 @@
 import { Controller, Delete, Get, HttpCode, Inject, Post, Req, Res } from "@nestjs/common";
 import type { Response } from "express";
-import { type AppRequest, contextFor } from "../../common/context.js";
+import type { AppRequest } from "../../common/context.js";
 import { DomainError } from "../../common/errors.js";
 import { Public } from "../../common/guards.js";
 import { env } from "../../env.js";
 import { EntitlementsService } from "../billing/entitlements.service.js";
-import { API_KEY_RATE_LIMIT } from "../integrations/public-api/api-key.guard.js";
+import { API_KEY_RATE_LIMIT, requestedWorkspace } from "../integrations/public-api/api-key.guard.js";
 import { ApiKeysService } from "../integrations/public-api/api-keys.service.js";
-import { loadWorkspace } from "../integrations/store.js";
 import { hit } from "../system/rate-limit.js";
-import { type JsonRpcResponse, McpService } from "./mcp.service.js";
+import { type JsonRpcResponse, McpService, type McpWorkspaces } from "./mcp.service.js";
 
 const rpcError = (code: number, message: string): JsonRpcResponse => ({ jsonrpc: "2.0", id: null, error: { code, message } });
 
 /**
  * /api/mcp — the MCP endpoint. Authenticated with a workspace API key
  * (`Authorization: Bearer ew_live_…`): read keys get the queries, keys with
- * the write scope also get the actions. The key decides the workspace; the
- * request can't choose another.
+ * the write scope also get the actions. The key decides the workspace; a key
+ * with the all_workspaces scope also reaches its creator's other workspaces,
+ * named per call (tool argument `workspace`) or per connection
+ * (X-Workspace-Id header or `?workspace=`). Nothing else can pick a workspace.
  */
 @Controller("mcp")
 @Public()
@@ -52,20 +53,28 @@ export class McpController {
       return;
     }
     // AI agents (MCP) come with the workspace owner's plan.
+    const open = async (workspace: string | undefined) => {
+      const target = await this.keys.contextFor(key, workspace, request.ip);
+      await this.entitlements.assertApiAccess(target.ctx.workspaceId);
+      return target;
+    };
+    let target: Awaited<ReturnType<typeof open>>;
     try {
-      await this.entitlements.assertApiAccess(key.workspaceId);
+      target = await open(requestedWorkspace(request));
     } catch (error) {
       if (!(error instanceof DomainError)) throw error;
-      response.status(error.status).json(rpcError(-32003, error.message));
+      response.status(error.status).json(rpcError(error.status === 402 ? -32003 : -32004, error.message));
       return;
     }
-    const ctx = contextFor(await loadWorkspace(key.workspaceId), { userId: null, actorType: "api", apiKeyId: key.id, role: "member", ip: request.ip });
-    const canWrite = key.scopes.includes("write");
+    const { ctx, canWrite } = target;
+    const workspaces: McpWorkspaces | undefined = key.scopes.includes("all_workspaces")
+      ? { write: key.scopes.includes("write"), list: async () => ({ workspaces: await this.keys.workspacesFor(ctx) }), open }
+      : undefined;
 
     const body = request.body as unknown;
     if (Array.isArray(body)) {
       // Older clients may batch; answer every request in the batch, skip notifications.
-      const replies = (await Promise.all(body.slice(0, 20).map((message) => this.mcp.handle(ctx, canWrite, message ?? {})))).filter(Boolean);
+      const replies = (await Promise.all(body.slice(0, 20).map((message) => this.mcp.handle(ctx, canWrite, message ?? {}, workspaces)))).filter(Boolean);
       if (replies.length) response.json(replies);
       else response.status(202).end();
       return;
@@ -74,7 +83,7 @@ export class McpController {
       response.status(400).json(rpcError(-32700, "Parse error: send a JSON-RPC message as application/json"));
       return;
     }
-    const reply = await this.mcp.handle(ctx, canWrite, body as Record<string, unknown>);
+    const reply = await this.mcp.handle(ctx, canWrite, body as Record<string, unknown>, workspaces);
     if (reply) response.json(reply);
     else response.status(202).end();
   }

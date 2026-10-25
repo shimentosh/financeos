@@ -9,7 +9,7 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { AppModule } from "../../src/app.module.js";
 import type { AppRequest } from "../../src/common/context.js";
 import { db } from "../../src/db/index.js";
-import { apiKeys, auditLogs, jobs, rateLimits, transactions, webhookEvents } from "../../src/db/schema/index.js";
+import { apiKeys, auditLogs, jobs, rateLimits, transactions, webhookEvents, workspaceMembers } from "../../src/db/schema/index.js";
 import { ConnectionsService } from "../../src/modules/integrations/connections.service.js";
 import { signTimestampedHeader } from "../../src/modules/integrations/connectors/signatures.js";
 import { ApiKeyGuard } from "../../src/modules/integrations/public-api/api-key.guard.js";
@@ -309,5 +309,86 @@ describe("webhooks over HTTP", () => {
       [false, "failed"],
       [true, "received"],
     ]);
+  });
+});
+
+describe("keys for all workspaces", () => {
+  const rpc = (key: string, method: string, params?: unknown, query = "") =>
+    call(`/mcp${query}`, { method: "POST", key, body: { jsonrpc: "2.0", id: 1, method, ...(params === undefined ? {} : { params }) } });
+
+  it("reaches the creator's other workspaces by header, query or MCP argument", async () => {
+    const everywhere = (await keys.create(user.business, { name: "Grok", scopes: ["write", "all_workspaces"] })).key;
+    const cash = (await accounts.create(user.personal, { name: "Wallet", kind: "cash", currency: "BDT", openingBalance: 0, openingDate: "2026-01-01" })).id;
+
+    const listed = await json(await call("/v1/workspaces", { key: everywhere }));
+    expect(listed).toEqual([
+      expect.objectContaining({ id: user.business.workspaceId, kind: "business", home: true, canWrite: true }),
+      expect.objectContaining({ id: user.personal.workspaceId, kind: "personal", home: false, canWrite: true }),
+    ]);
+
+    // Without a workspace the key's own workspace answers; by kind, name or id the others do.
+    const home = await json(await call("/v1/accounts", { key: everywhere }));
+    expect(home.items.map((a: Json) => a.id)).toContain(bank);
+    for (const pick of ["personal", user.personal.workspaceName, user.personal.workspaceId]) {
+      const personal = await json(await call("/v1/accounts", { key: everywhere, headers: { "X-Workspace-Id": pick } }));
+      expect(personal.items.map((a: Json) => a.id)).toContain(cash);
+      expect(personal.items.map((a: Json) => a.id)).not.toContain(bank);
+    }
+    const byQuery = await json(await call("/v1/accounts?workspace=personal", { key: everywhere }));
+    expect(byQuery.items.map((a: Json) => a.id)).toContain(cash);
+
+    const expense = await call("/v1/expenses", {
+      method: "POST",
+      key: everywhere,
+      headers: { "X-Workspace-Id": "personal" },
+      body: { external_id: "tea-1", amount: 50, amount_unit: "major", currency: "BDT", date: "2026-09-20", account_id: cash, status: "posted" },
+    });
+    expect(expense.status).toBe(201);
+    const [row] = await db.select().from(transactions).where(eq(transactions.externalId, "tea-1"));
+    expect(row?.workspaceId).toBe(user.personal.workspaceId);
+
+    // MCP: list_workspaces, then `workspace` on any tool; or pin the connection with ?workspace=.
+    const tools = await json(await rpc(everywhere, "tools/list"));
+    const names = tools.result.tools.map((t: Json) => t.name);
+    expect(names).toContain("list_workspaces");
+    expect(tools.result.tools.find((t: Json) => t.name === "get_balances").inputSchema.properties.workspace).toBeTruthy();
+    const ws = await json(await rpc(everywhere, "tools/call", { name: "list_workspaces", arguments: {} }));
+    expect(ws.result.structuredContent.workspaces).toHaveLength(2);
+    const setup = await json(await rpc(everywhere, "tools/call", { name: "get_setup", arguments: { workspace: "personal" } }));
+    expect(setup.result.isError).toBe(false);
+    expect(JSON.stringify(setup.result.structuredContent)).toContain("Wallet");
+    const pinned = await json(await rpc(everywhere, "initialize", { protocolVersion: "2025-06-18" }, "?workspace=personal"));
+    expect(pinned.result.instructions).toContain(user.personal.workspaceName);
+  });
+
+  it("keeps ordinary keys in their workspace and viewer workspaces read-only", async () => {
+    const refused = await call("/v1/accounts", { key: readKey, headers: { "X-Workspace-Id": "personal" } });
+    expect(refused.status).toBe(403);
+    expect(await json(refused)).toMatchObject({ error: "workspace_not_allowed" });
+    expect((await json(await rpc(readKey, "tools/list"))).result.tools.map((t: Json) => t.name)).not.toContain("list_workspaces");
+    expect((await rpc(readKey, "initialize", {}, "?workspace=personal")).status).toBe(403);
+
+    // Another user's workspace the creator only views.
+    const other = await createUser("Nadia Rahman");
+    await db.insert(workspaceMembers).values({ workspaceId: other.business.workspaceId, userId: user.userId, role: "viewer" });
+    const everywhere = (await keys.create(user.business, { name: "Grok", scopes: ["read", "write", "all_workspaces"] })).key;
+    const reach = await json(await call("/v1/workspaces", { key: everywhere }));
+    expect(reach.find((w: Json) => w.id === other.business.workspaceId)).toMatchObject({ canWrite: false });
+    expect((await call("/v1/accounts", { key: everywhere, headers: { "X-Workspace-Id": other.business.workspaceId } })).status).toBe(200);
+    const write = await call("/v1/expenses", {
+      method: "POST",
+      key: everywhere,
+      headers: { "X-Workspace-Id": other.business.workspaceId },
+      body: { external_id: "x-1", amount: 50, currency: "BDT", date: "2026-09-20" },
+    });
+    expect(write.status).toBe(403);
+    const mcpWrite = await json(
+      await rpc(everywhere, "tools/call", { name: "create_category", arguments: { workspace: other.business.workspaceId, name: "Snacks", kind: "expense" } }),
+    );
+    expect(mcpWrite.result.isError).toBe(true);
+
+    // Leaving a workspace takes the key out of it.
+    await db.delete(workspaceMembers).where(and(eq(workspaceMembers.workspaceId, other.business.workspaceId), eq(workspaceMembers.userId, user.userId)));
+    expect((await call("/v1/accounts", { key: everywhere, headers: { "X-Workspace-Id": other.business.workspaceId } })).status).toBe(403);
   });
 });

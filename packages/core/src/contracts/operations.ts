@@ -74,7 +74,7 @@ export const importMappingInput = z.object({
 export const apiKeyInput = z.object({
   name: z.string().trim().min(1).max(80),
   scopes: z
-    .array(z.enum(["read", "write"]))
+    .array(z.enum(["read", "write", "all_workspaces"]))
     .min(1)
     .default(["read"]),
   expiresInDays: z.number().int().min(1).max(3650).nullish(),

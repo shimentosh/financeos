@@ -14,7 +14,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogDescription, DialogFooter, DialogHeader, DialogPanel, DialogPopup, DialogTitle } from "@/components/ui/side-dialog";
 import { clientApi, errorMessage } from "@/lib/api/client";
-import type { ApiKey, ApiKeyCreated, Connection } from "@/lib/api/types/integrations";
+import type { ApiKey, ApiKeyCreated, ApiKeyScope, Connection } from "@/lib/api/types/integrations";
 import { formatDateTime, timeAgo } from "@/lib/format";
 import { toast } from "@/lib/toast";
 import { CodeBlock, ConfirmDialog, CopyField } from "./shared";
@@ -47,6 +47,8 @@ const EXPIRY: Array<{ value: string; label: string }> = [
   { value: "365", label: "1 year" },
 ];
 
+const SCOPE_LABEL: Record<ApiKeyScope, string> = { read: "read", write: "write", all_workspaces: "all workspaces" };
+
 function ApiKeysSection({ keys }: { keys: ApiKey[] | null }) {
   const { canManage } = useApp();
   const router = useRouter();
@@ -72,7 +74,7 @@ function ApiKeysSection({ keys }: { keys: ApiKey[] | null }) {
   return (
     <Section
       title="API keys"
-      hint="Keys let your own apps and scripts read and write this workspace through the public API."
+      hint="Keys let your own apps, scripts and AI agents read and write this workspace — or all your workspaces — through the public API and MCP."
       actions={
         canManage ? (
           <Button size="xs" onClick={() => setCreating(true)}>
@@ -120,8 +122,8 @@ function ApiKeysSection({ keys }: { keys: ApiKey[] | null }) {
                   <td>
                     <span className="flex flex-wrap gap-1">
                       {key.scopes.map((scope) => (
-                        <Badge key={scope} variant={scope === "write" ? "warning" : "outline"} size="sm">
-                          {scope}
+                        <Badge key={scope} variant={scope === "write" ? "warning" : scope === "all_workspaces" ? "info" : "outline"} size="sm">
+                          {SCOPE_LABEL[scope]}
                         </Badge>
                       ))}
                     </span>
@@ -160,6 +162,7 @@ function CreateKeyDialog({ open, onOpenChange }: { open: boolean; onOpenChange: 
   const id = useId();
   const [name, setName] = useState("");
   const [write, setWrite] = useState(false);
+  const [everywhere, setEverywhere] = useState(false);
   const [expiry, setExpiry] = useState("never");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -169,6 +172,7 @@ function CreateKeyDialog({ open, onOpenChange }: { open: boolean; onOpenChange: 
     if (!open) return;
     setName("");
     setWrite(false);
+    setEverywhere(false);
     setExpiry("never");
     setError(null);
     setCreated(null);
@@ -181,7 +185,11 @@ function CreateKeyDialog({ open, onOpenChange }: { open: boolean; onOpenChange: 
     try {
       const data = await clientApi<ApiKeyCreated>("/api-keys", {
         method: "POST",
-        body: { name: name.trim(), scopes: write ? ["read", "write"] : ["read"], expiresInDays: expiry === "never" ? null : Number(expiry) },
+        body: {
+          name: name.trim(),
+          scopes: ["read", ...(write ? ["write"] : []), ...(everywhere ? ["all_workspaces"] : [])],
+          expiresInDays: expiry === "never" ? null : Number(expiry),
+        },
       });
       setCreated(data);
       router.refresh();
@@ -209,7 +217,7 @@ function CreateKeyDialog({ open, onOpenChange }: { open: boolean; onOpenChange: 
                 label="API key"
                 value={created.key}
                 secret
-                hint={`Scopes: ${created.apiKey.scopes.join(", ")} · recognise it later by ${created.apiKey.prefix}…`}
+                hint={`Scopes: ${created.apiKey.scopes.map((scope) => SCOPE_LABEL[scope]).join(", ")} · recognise it later by ${created.apiKey.prefix}…`}
               />
             </DialogPanel>
             <DialogFooter>
@@ -254,6 +262,16 @@ function CreateKeyDialog({ open, onOpenChange }: { open: boolean; onOpenChange: 
                     </span>
                   </span>
                 </Label>
+                <Label className="flex items-start gap-2 rounded-lg border border-border px-3 py-2 font-normal">
+                  <Checkbox checked={everywhere} onCheckedChange={(checked) => setEverywhere(checked === true)} className="mt-0.5" />
+                  <span>
+                    All my workspaces
+                    <span className="block text-[11px] text-muted-foreground">
+                      One key for Personal and every business you belong to. Requests pick one with the X-Workspace-Id header (an id or name); agents use
+                      list_workspaces. Where you&apos;re a viewer it stays read-only.
+                    </span>
+                  </span>
+                </Label>
               </div>
               <div className="space-y-1">
                 <Label htmlFor={`${id}-expiry`}>Expiry</Label>
@@ -294,6 +312,7 @@ function CreateKeyDialog({ open, onOpenChange }: { open: boolean; onOpenChange: 
 // ------------------------------------------------------------------ docs
 
 const ENDPOINTS: Array<{ method: "GET" | "POST"; path: string; scope: "read" | "write"; description: string }> = [
+  { method: "GET", path: "/v1/workspaces", scope: "read", description: "The workspaces this key reaches (more than one with All my workspaces)" },
   { method: "GET", path: "/v1/accounts", scope: "read", description: "Accounts with balances (account and base currency)" },
   {
     method: "GET",
@@ -311,6 +330,7 @@ const ERRORS: Array<[string, string]> = [
   ["400 validation_failed", "The body is invalid; `issues` lists each field."],
   ["401 missing_api_key / invalid_api_key", "No key, or a key that is wrong, revoked or expired."],
   ["403 insufficient_scope", "A read-only key tried to write."],
+  ["403 workspace_not_allowed", "X-Workspace-Id names a workspace this key can't reach."],
   ["422 missing_account", '`status: "posted"` needs `account_id`.'],
   ["429 rate_limited", "More than 120 requests a minute with one key."],
 ];
@@ -318,6 +338,7 @@ const ERRORS: Array<[string, string]> = [
 // ------------------------------------------------------------------- MCP
 
 const MCP_READ_TOOLS = [
+  "list_workspaces",
   "get_setup",
   "get_summary",
   "get_spending",
@@ -392,6 +413,13 @@ function McpDocs({ origin }: { origin: string }) {
             <p>
               <span className="font-medium text-foreground">Authentication.</span> Create an API key above and send it as{" "}
               <code className="font-mono">Authorization: Bearer ew_live_…</code>. The key decides the workspace.
+            </p>
+            <p>
+              <span className="font-medium text-foreground">Personal and business together.</span> A key made with{" "}
+              <span className="font-medium text-foreground">All my workspaces</span> reaches all of them: the agent calls{" "}
+              <code className="font-mono">list_workspaces</code> and passes <code className="font-mono">workspace</code> (e.g.{" "}
+              <code className="font-mono">&quot;personal&quot;</code>) to any tool. To pin a connection to one workspace instead, add{" "}
+              <code className="font-mono">?workspace=personal</code> to the URL.
             </p>
             <p>
               <span className="font-medium text-foreground">Read keys</span> get the questions: balances, spending, budgets, bills, net worth, search.{" "}
@@ -475,7 +503,11 @@ function ApiDocs({ origin }: { origin: string }) {
   const read = `curl "${base}/transactions?from=2026-09-01&type=income&pageSize=20" \\
   -H "Authorization: Bearer $FINANCEOS_API_KEY"
 
-curl ${base}/summary -H "Authorization: Bearer $FINANCEOS_API_KEY"`;
+curl ${base}/summary -H "Authorization: Bearer $FINANCEOS_API_KEY"
+
+# A key with "All my workspaces": pick one per request
+curl ${base}/workspaces -H "Authorization: Bearer $FINANCEOS_API_KEY"
+curl ${base}/summary -H "Authorization: Bearer $FINANCEOS_API_KEY" -H "X-Workspace-Id: personal"`;
   const response = `{
   "id": "0199…",
   "duplicate": false,

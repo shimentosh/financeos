@@ -29,7 +29,8 @@ export const IMPORT_STATUSES = ["uploaded", "mapped", "previewed", "importing", 
 export const IMPORT_ROW_STATUSES = ["valid", "invalid", "duplicate", "imported", "skipped"] as const;
 export type ImportRowStatus = (typeof IMPORT_ROW_STATUSES)[number];
 
-export const API_KEY_SCOPES = ["read", "write"] as const;
+/** `all_workspaces`: the key also reaches every other workspace its creator belongs to. */
+export const API_KEY_SCOPES = ["read", "write", "all_workspaces"] as const;
 export type ApiKeyScope = (typeof API_KEY_SCOPES)[number];
 
 const queryBoolean = z

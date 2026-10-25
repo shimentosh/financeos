@@ -41,7 +41,16 @@ export class ApiKeysController {
 @Public()
 @UseGuards(ApiKeyGuard)
 export class PublicApiController {
-  constructor(@Inject(PublicApiService) private readonly api: PublicApiService) {}
+  constructor(
+    @Inject(PublicApiService) private readonly api: PublicApiService,
+    @Inject(ApiKeysService) private readonly keys: ApiKeysService,
+  ) {}
+
+  /** The workspaces this key reaches; pick one with X-Workspace-Id (or ?workspace=) on any other call. */
+  @Get("workspaces")
+  workspaces(@Ctx() ctx: WorkspaceContext) {
+    return this.keys.workspacesFor(ctx);
+  }
 
   @Get("accounts")
   accounts(@Ctx() ctx: WorkspaceContext) {
